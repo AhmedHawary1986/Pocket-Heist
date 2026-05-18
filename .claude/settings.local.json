@@ -1,0 +1,11 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(python -c \"import sys,json; d=json.load\\(sys.stdin\\); print\\(d['version']\\)\")",
+      "PowerShell(\\(Get-Content \"node_modules\\\\next\\\\package.json\" | ConvertFrom-Json\\).version)",
+      "WebSearch",
+      "Bash(git init)",
+      "Bash(git switch:*)"
+    ]
+  }
+}

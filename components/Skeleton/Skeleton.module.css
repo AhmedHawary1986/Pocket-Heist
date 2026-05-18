@@ -1,0 +1,60 @@
+@reference "../../app/globals.css";
+
+@keyframes shimmer {
+  0%   { background-position: -200% 0; }
+  100% { background-position:  200% 0; }
+}
+
+.card {
+  @apply bg-light rounded-lg p-6 flex flex-col gap-6;
+}
+
+.header {
+  @apply flex items-center gap-4;
+}
+
+.avatar {
+  @apply rounded-full shrink-0;
+  width: 4rem;
+  height: 4rem;
+  background: var(--shimmer);
+  animation: shimmer 1.6s infinite linear;
+}
+
+.headerLines {
+  @apply flex flex-col gap-3 flex-1;
+}
+
+.body {
+  @apply flex flex-col gap-3;
+}
+
+.line {
+  @apply rounded-md;
+  height: 0.75rem;
+  background: var(--shimmer);
+  animation: shimmer 1.6s infinite linear;
+}
+
+.lineLong   { width: 65%; }
+.lineMedium { width: 50%; }
+.lineFull   { width: 100%; }
+.lineShort  { width: 45%; }
+
+/* shimmer gradient using theme colours */
+.card {
+  --shimmer-base: #101828;   /* lighter */
+  --shimmer-highlight: #1d2a40;
+  --shimmer: linear-gradient(
+    90deg,
+    var(--shimmer-base)      0%,
+    var(--shimmer-highlight) 50%,
+    var(--shimmer-base)      100%
+  );
+  background-size: 200% 100%;
+}
+
+.avatar,
+.line {
+  background-size: 200% 100%;
+}
