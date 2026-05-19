@@ -1,5 +1,6 @@
 // preview page for newly created UI components
 import Skeleton from "@/components/Skeleton"
+import Avatar from "@/components/Avatar"
 
 export default function PreviewPage() {
   return (
@@ -9,6 +10,14 @@ export default function PreviewPage() {
         {Array.from({ length: 6 }).map((_, i) => (
           <Skeleton key={i} />
         ))}
+      </div>
+
+      <h3 className="mt-8 mb-4 font-bold">Avatar</h3>
+      <div className="flex gap-4 items-center">
+        <Avatar name="alice" />
+        <Avatar name="PocketHeist" />
+        <Avatar name="Alice" />
+        <Avatar name="JohnDoe" />
       </div>
     </div>
   )
