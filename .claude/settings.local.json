@@ -1,4 +1,22 @@
 {
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Write|Edit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "echo \"Hello,Ahmed , I am claude finished the task\"",
+            "shell": "powershell"
+          },
+          {
+            "type": "command",
+            "command": "jq . >> tool-use.json"
+          }
+        ]
+      }
+    ]
+  },
   "permissions": {
     "allow": [
       "Bash(python -c \"import sys,json; d=json.load\\(sys.stdin\\); print\\(d['version']\\)\")",
