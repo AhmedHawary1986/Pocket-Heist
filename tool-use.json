@@ -412,3 +412,192 @@
   "tool_use_id": "toolu_015z3hwHk1EWvWVaccZ3Wuic",
   "duration_ms": 27
 }
+{
+  "session_id": "80726b01-c5d9-4a60-b63b-4f365956a38f",
+  "transcript_path": "C:\\Users\\Ahmed.Elhawary\\.claude\\projects\\D--Learn-AgenticAI-pocket-heist\\80726b01-c5d9-4a60-b63b-4f365956a38f.jsonl",
+  "cwd": "D:\\Learn\\AgenticAI\\pocket-heist",
+  "permission_mode": "acceptEdits",
+  "effort": {
+    "level": "low"
+  },
+  "hook_event_name": "PostToolUse",
+  "tool_name": "Edit",
+  "tool_input": {
+    "file_path": "D:\\Learn\\AgenticAI\\pocket-heist\\CLAUDE.md",
+    "old_string": "**`app/(dashboard)/`** — Authenticated pages. Layout injects `<Navbar />` above `<main>`. Pages:\n- `/heists` — lists active, assigned, and expired heists\n- `/heists/create` — create heist form\n- `/heists/[id]` — heist detail view",
+    "new_string": "**`app/(dashboard)/`** — Authenticated pages. Layout injects `<Navbar />` above `<main>`. Pages:\n- `/heists` — lists active, assigned, and expired heists\n- `/heists/create` — create heist form (skeleton, not yet implemented)\n- `/heists/[id]` — heist detail view (skeleton, not yet implemented)",
+    "replace_all": false
+  },
+  "tool_response": {
+    "filePath": "D:\\Learn\\AgenticAI\\pocket-heist\\CLAUDE.md",
+    "oldString": "**`app/(dashboard)/`** — Authenticated pages. Layout injects `<Navbar />` above `<main>`. Pages:\n- `/heists` — lists active, assigned, and expired heists\n- `/heists/create` — create heist form\n- `/heists/[id]` — heist detail view",
+    "newString": "**`app/(dashboard)/`** — Authenticated pages. Layout injects `<Navbar />` above `<main>`. Pages:\n- `/heists` — lists active, assigned, and expired heists\n- `/heists/create` — create heist form (skeleton, not yet implemented)\n- `/heists/[id]` — heist detail view (skeleton, not yet implemented)",
+    "originalFile": "# CLAUDE.md\n\nThis file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.\n\n## Project Overview\n\nPocket Heist is a Next.js 16 app (App Router) built with TypeScript, Tailwind CSS v4, and Vitest. It is a starter project for the Claude Code Masterclass — a small task/mission management app with a heist theme.\n\n## Development Commands\n\nAll commands run from the project root (`pocket-heist/`):\n\n```bash\nnpm run dev    # Start dev server at localhost:3000\nnpm run build  # Production build\nnpm start      # Start production server\nnpm run lint   # Run ESLint (next core-web-vitals + typescript rules)\nnpm test       # Run all Vitest tests in watch mode\nnpx vitest run # Run all tests once (CI mode)\nnpx vitest run tests/components/Navbar.test.tsx  # Run a single test file\n```\n\n## Architecture\n\n### Route Groups\n\nThe app uses two Next.js route groups that enforce separate layouts:\n\n**`app/(public)/`** — Unauthenticated pages. Layout wraps children in `<main className=\"public\">` (no Navbar). Pages:\n- `/login` — login form\n- `/signup` — signup form\n- `/preview` — scratch pad for previewing new UI components during development\n\n**`app/(dashboard)/`** — Authenticated pages. Layout injects `<Navbar />` above `<main>`. Pages:\n- `/heists` — lists active, assigned, and expired heists\n- `/heists/create` — create heist form\n- `/heists/[id]` — heist detail view\n\n### Component Structure\n\nEvery component lives in its own folder under `components/`:\n\n```\ncomponents/\n  <Name>/\n    index.ts          ← re-exports the default export from <Name>.tsx\n    <Name>.tsx        ← component implementation\n    <Name>.module.css ← scoped styles (optional)\n```\n\nImport components via the folder name: `import Navbar from \"@/components/Navbar\"`. The `index.ts` barrel file is what enables this.\n\n### Styling System\n\nTwo layers of styling work together:\n\n1. **Tailwind CSS v4** — configured via `postcss.config.mjs`. Imported in `app/globals.css` with `@import \"tailwindcss\"`. Theme tokens are defined using the `@theme {}` block (not `tailwind.config.js`).\n\n2. **CSS Modules** — used for component-scoped styles (e.g., `Navbar.module.css`). Must include `@reference \"../../app/globals.css\"` at the top to access Tailwind's `@apply` and theme tokens within module files.\n\n**Theme tokens** (defined in `app/globals.css`):\n- Colors: `primary` (#C27AFF purple), `secondary` (#FB64B6 pink), `dark` (#030712), `light` (#0A101D), `lighter` (#101828), `success` (#05DF72), `error` (#FF6467), `heading` (white), `body` (#99A1AF)\n- Font: `--font-sans` set to Inter (loaded from Google Fonts)\n\n**Shared layout utility classes** (defined in `app/globals.css`, usable anywhere):\n- `.page-content` — centered, max-width container (`my-4 mx-auto w-6xl min-w-2xl max-w-full`)\n- `.center-content` — vertically centered full-height column (`flex flex-col justify-center min-h-lvh`)\n- `.form-title` — centered bold heading for form pages\n\n### Path Aliases\n\n`@/*` maps to the project root. Always use `@/` for imports rather than relative paths.\n\n### TypeScript\n\nStrict mode enabled. `vitest/globals` types are included so `describe`, `it`, `expect` etc. are available in tests without importing them.\n\n## Testing\n\n- **Framework:** Vitest with jsdom environment\n- **Libraries:** `@testing-library/react`, `@testing-library/user-event`, `@testing-library/jest-dom`\n- **Setup file:** `vitest.setup.ts` imports `@testing-library/jest-dom/vitest` to extend Vitest matchers with DOM assertions (`toBeInTheDocument`, `toHaveAttribute`, etc.)\n- **Test location:** `tests/` directory, mirroring source structure (e.g., `tests/components/Navbar.test.tsx`)\n- **Globals:** Vitest globals (`describe`, `it`, `expect`) are available without imports — configured in both `vitest.config.mts` and `tsconfig.json`\n\n## Next.js Version Note\n\nThis project uses **Next.js 16**, which has breaking changes from prior versions. Before writing any Next.js-specific code (middleware, route handlers, metadata API, image optimization, etc.), check `node_modules/next/dist/docs/` for current API conventions. Do not assume patterns from Next.js 13/14/15 are valid.\n",
+    "structuredPatch": [
+      {
+        "oldStart": 33,
+        "oldLines": 8,
+        "newStart": 33,
+        "newLines": 8,
+        "lines": [
+          " ",
+          " **`app/(dashboard)/`** — Authenticated pages. Layout injects `<Navbar />` above `<main>`. Pages:",
+          " - `/heists` — lists active, assigned, and expired heists",
+          "-- `/heists/create` — create heist form",
+          "-- `/heists/[id]` — heist detail view",
+          "+- `/heists/create` — create heist form (skeleton, not yet implemented)",
+          "+- `/heists/[id]` — heist detail view (skeleton, not yet implemented)",
+          " ",
+          " ### Component Structure",
+          " "
+        ]
+      }
+    ],
+    "userModified": false,
+    "replaceAll": false
+  },
+  "tool_use_id": "toolu_014JYkVB2FiuUcUvajCwkbKv",
+  "duration_ms": 28
+}
+{
+  "session_id": "80726b01-c5d9-4a60-b63b-4f365956a38f",
+  "transcript_path": "C:\\Users\\Ahmed.Elhawary\\.claude\\projects\\D--Learn-AgenticAI-pocket-heist\\80726b01-c5d9-4a60-b63b-4f365956a38f.jsonl",
+  "cwd": "D:\\Learn\\AgenticAI\\pocket-heist",
+  "permission_mode": "acceptEdits",
+  "effort": {
+    "level": "low"
+  },
+  "hook_event_name": "PostToolUse",
+  "tool_name": "Edit",
+  "tool_input": {
+    "file_path": "D:\\Learn\\AgenticAI\\pocket-heist\\CLAUDE.md",
+    "old_string": "Import components via the folder name: `import Navbar from \"@/components/Navbar\"`. The `index.ts` barrel file is what enables this.",
+    "new_string": "Import components via the folder name: `import Navbar from \"@/components/Navbar\"`. The `index.ts` barrel file is what enables this.\n\n**Existing components:** `AuthForm`, `Avatar`, `Navbar`, `Skeleton` (loading placeholder), `Footer` (not currently injected in any layout).",
+    "replace_all": false
+  },
+  "tool_response": {
+    "filePath": "D:\\Learn\\AgenticAI\\pocket-heist\\CLAUDE.md",
+    "oldString": "Import components via the folder name: `import Navbar from \"@/components/Navbar\"`. The `index.ts` barrel file is what enables this.",
+    "newString": "Import components via the folder name: `import Navbar from \"@/components/Navbar\"`. The `index.ts` barrel file is what enables this.\n\n**Existing components:** `AuthForm`, `Avatar`, `Navbar`, `Skeleton` (loading placeholder), `Footer` (not currently injected in any layout).",
+    "originalFile": "# CLAUDE.md\n\nThis file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.\n\n## Project Overview\n\nPocket Heist is a Next.js 16 app (App Router) built with TypeScript, Tailwind CSS v4, and Vitest. It is a starter project for the Claude Code Masterclass — a small task/mission management app with a heist theme.\n\n## Development Commands\n\nAll commands run from the project root (`pocket-heist/`):\n\n```bash\nnpm run dev    # Start dev server at localhost:3000\nnpm run build  # Production build\nnpm start      # Start production server\nnpm run lint   # Run ESLint (next core-web-vitals + typescript rules)\nnpm test       # Run all Vitest tests in watch mode\nnpx vitest run # Run all tests once (CI mode)\nnpx vitest run tests/components/Navbar.test.tsx  # Run a single test file\n```\n\n## Architecture\n\n### Route Groups\n\nThe app uses two Next.js route groups that enforce separate layouts:\n\n**`app/(public)/`** — Unauthenticated pages. Layout wraps children in `<main className=\"public\">` (no Navbar). Pages:\n- `/login` — login form\n- `/signup` — signup form\n- `/preview` — scratch pad for previewing new UI components during development\n\n**`app/(dashboard)/`** — Authenticated pages. Layout injects `<Navbar />` above `<main>`. Pages:\n- `/heists` — lists active, assigned, and expired heists\n- `/heists/create` — create heist form (skeleton, not yet implemented)\n- `/heists/[id]` — heist detail view (skeleton, not yet implemented)\n\n### Component Structure\n\nEvery component lives in its own folder under `components/`:\n\n```\ncomponents/\n  <Name>/\n    index.ts          ← re-exports the default export from <Name>.tsx\n    <Name>.tsx        ← component implementation\n    <Name>.module.css ← scoped styles (optional)\n```\n\nImport components via the folder name: `import Navbar from \"@/components/Navbar\"`. The `index.ts` barrel file is what enables this.\n\n### Styling System\n\nTwo layers of styling work together:\n\n1. **Tailwind CSS v4** — configured via `postcss.config.mjs`. Imported in `app/globals.css` with `@import \"tailwindcss\"`. Theme tokens are defined using the `@theme {}` block (not `tailwind.config.js`).\n\n2. **CSS Modules** — used for component-scoped styles (e.g., `Navbar.module.css`). Must include `@reference \"../../app/globals.css\"` at the top to access Tailwind's `@apply` and theme tokens within module files.\n\n**Theme tokens** (defined in `app/globals.css`):\n- Colors: `primary` (#C27AFF purple), `secondary` (#FB64B6 pink), `dark` (#030712), `light` (#0A101D), `lighter` (#101828), `success` (#05DF72), `error` (#FF6467), `heading` (white), `body` (#99A1AF)\n- Font: `--font-sans` set to Inter (loaded from Google Fonts)\n\n**Shared layout utility classes** (defined in `app/globals.css`, usable anywhere):\n- `.page-content` — centered, max-width container (`my-4 mx-auto w-6xl min-w-2xl max-w-full`)\n- `.center-content` — vertically centered full-height column (`flex flex-col justify-center min-h-lvh`)\n- `.form-title` — centered bold heading for form pages\n\n### Path Aliases\n\n`@/*` maps to the project root. Always use `@/` for imports rather than relative paths.\n\n### TypeScript\n\nStrict mode enabled. `vitest/globals` types are included so `describe`, `it`, `expect` etc. are available in tests without importing them.\n\n## Testing\n\n- **Framework:** Vitest with jsdom environment\n- **Libraries:** `@testing-library/react`, `@testing-library/user-event`, `@testing-library/jest-dom`\n- **Setup file:** `vitest.setup.ts` imports `@testing-library/jest-dom/vitest` to extend Vitest matchers with DOM assertions (`toBeInTheDocument`, `toHaveAttribute`, etc.)\n- **Test location:** `tests/` directory, mirroring source structure (e.g., `tests/components/Navbar.test.tsx`)\n- **Globals:** Vitest globals (`describe`, `it`, `expect`) are available without imports — configured in both `vitest.config.mts` and `tsconfig.json`\n\n## Next.js Version Note\n\nThis project uses **Next.js 16**, which has breaking changes from prior versions. Before writing any Next.js-specific code (middleware, route handlers, metadata API, image optimization, etc.), check `node_modules/next/dist/docs/` for current API conventions. Do not assume patterns from Next.js 13/14/15 are valid.\n",
+    "structuredPatch": [
+      {
+        "oldStart": 50,
+        "oldLines": 6,
+        "newStart": 50,
+        "newLines": 8,
+        "lines": [
+          " ",
+          " Import components via the folder name: `import Navbar from \"@/components/Navbar\"`. The `index.ts` barrel file is what enables this.",
+          " ",
+          "+**Existing components:** `AuthForm`, `Avatar`, `Navbar`, `Skeleton` (loading placeholder), `Footer` (not currently injected in any layout).",
+          "+",
+          " ### Styling System",
+          " ",
+          " Two layers of styling work together:"
+        ]
+      }
+    ],
+    "userModified": false,
+    "replaceAll": false
+  },
+  "tool_use_id": "toolu_019Zvpb5YaUUuKiUhQ3SBBnz",
+  "duration_ms": 12
+}
+{
+  "session_id": "80726b01-c5d9-4a60-b63b-4f365956a38f",
+  "transcript_path": "C:\\Users\\Ahmed.Elhawary\\.claude\\projects\\D--Learn-AgenticAI-pocket-heist\\80726b01-c5d9-4a60-b63b-4f365956a38f.jsonl",
+  "cwd": "D:\\Learn\\AgenticAI\\pocket-heist",
+  "permission_mode": "acceptEdits",
+  "effort": {
+    "level": "low"
+  },
+  "hook_event_name": "PostToolUse",
+  "tool_name": "Edit",
+  "tool_input": {
+    "file_path": "D:\\Learn\\AgenticAI\\pocket-heist\\CLAUDE.md",
+    "old_string": "**Shared layout utility classes** (defined in `app/globals.css`, usable anywhere):\n- `.page-content` — centered, max-width container (`my-4 mx-auto w-6xl min-w-2xl max-w-full`)\n- `.center-content` — vertically centered full-height column (`flex flex-col justify-center min-h-lvh`)\n- `.form-title` — centered bold heading for form pages",
+    "new_string": "**Shared layout utility classes** (defined in `app/globals.css`, usable anywhere):\n- `.page-content` — centered, max-width container (`my-4 mx-auto w-6xl min-w-2xl max-w-full`)\n- `.center-content` — vertically centered full-height column (`flex flex-col justify-center min-h-lvh`)\n- `.form-title` — centered bold heading for form pages\n- `.btn` — primary button (`bg-primary text-dark`, hover switches to `bg-secondary`)",
+    "replace_all": false
+  },
+  "tool_response": {
+    "filePath": "D:\\Learn\\AgenticAI\\pocket-heist\\CLAUDE.md",
+    "oldString": "**Shared layout utility classes** (defined in `app/globals.css`, usable anywhere):\n- `.page-content` — centered, max-width container (`my-4 mx-auto w-6xl min-w-2xl max-w-full`)\n- `.center-content` — vertically centered full-height column (`flex flex-col justify-center min-h-lvh`)\n- `.form-title` — centered bold heading for form pages",
+    "newString": "**Shared layout utility classes** (defined in `app/globals.css`, usable anywhere):\n- `.page-content` — centered, max-width container (`my-4 mx-auto w-6xl min-w-2xl max-w-full`)\n- `.center-content` — vertically centered full-height column (`flex flex-col justify-center min-h-lvh`)\n- `.form-title` — centered bold heading for form pages\n- `.btn` — primary button (`bg-primary text-dark`, hover switches to `bg-secondary`)",
+    "originalFile": "# CLAUDE.md\n\nThis file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.\n\n## Project Overview\n\nPocket Heist is a Next.js 16 app (App Router) built with TypeScript, Tailwind CSS v4, and Vitest. It is a starter project for the Claude Code Masterclass — a small task/mission management app with a heist theme.\n\n## Development Commands\n\nAll commands run from the project root (`pocket-heist/`):\n\n```bash\nnpm run dev    # Start dev server at localhost:3000\nnpm run build  # Production build\nnpm start      # Start production server\nnpm run lint   # Run ESLint (next core-web-vitals + typescript rules)\nnpm test       # Run all Vitest tests in watch mode\nnpx vitest run # Run all tests once (CI mode)\nnpx vitest run tests/components/Navbar.test.tsx  # Run a single test file\n```\n\n## Architecture\n\n### Route Groups\n\nThe app uses two Next.js route groups that enforce separate layouts:\n\n**`app/(public)/`** — Unauthenticated pages. Layout wraps children in `<main className=\"public\">` (no Navbar). Pages:\n- `/login` — login form\n- `/signup` — signup form\n- `/preview` — scratch pad for previewing new UI components during development\n\n**`app/(dashboard)/`** — Authenticated pages. Layout injects `<Navbar />` above `<main>`. Pages:\n- `/heists` — lists active, assigned, and expired heists\n- `/heists/create` — create heist form (skeleton, not yet implemented)\n- `/heists/[id]` — heist detail view (skeleton, not yet implemented)\n\n### Component Structure\n\nEvery component lives in its own folder under `components/`:\n\n```\ncomponents/\n  <Name>/\n    index.ts          ← re-exports the default export from <Name>.tsx\n    <Name>.tsx        ← component implementation\n    <Name>.module.css ← scoped styles (optional)\n```\n\nImport components via the folder name: `import Navbar from \"@/components/Navbar\"`. The `index.ts` barrel file is what enables this.\n\n**Existing components:** `AuthForm`, `Avatar`, `Navbar`, `Skeleton` (loading placeholder), `Footer` (not currently injected in any layout).\n\n### Styling System\n\nTwo layers of styling work together:\n\n1. **Tailwind CSS v4** — configured via `postcss.config.mjs`. Imported in `app/globals.css` with `@import \"tailwindcss\"`. Theme tokens are defined using the `@theme {}` block (not `tailwind.config.js`).\n\n2. **CSS Modules** — used for component-scoped styles (e.g., `Navbar.module.css`). Must include `@reference \"../../app/globals.css\"` at the top to access Tailwind's `@apply` and theme tokens within module files.\n\n**Theme tokens** (defined in `app/globals.css`):\n- Colors: `primary` (#C27AFF purple), `secondary` (#FB64B6 pink), `dark` (#030712), `light` (#0A101D), `lighter` (#101828), `success` (#05DF72), `error` (#FF6467), `heading` (white), `body` (#99A1AF)\n- Font: `--font-sans` set to Inter (loaded from Google Fonts)\n\n**Shared layout utility classes** (defined in `app/globals.css`, usable anywhere):\n- `.page-content` — centered, max-width container (`my-4 mx-auto w-6xl min-w-2xl max-w-full`)\n- `.center-content` — vertically centered full-height column (`flex flex-col justify-center min-h-lvh`)\n- `.form-title` — centered bold heading for form pages\n\n### Path Aliases\n\n`@/*` maps to the project root. Always use `@/` for imports rather than relative paths.\n\n### TypeScript\n\nStrict mode enabled. `vitest/globals` types are included so `describe`, `it`, `expect` etc. are available in tests without importing them.\n\n## Testing\n\n- **Framework:** Vitest with jsdom environment\n- **Libraries:** `@testing-library/react`, `@testing-library/user-event`, `@testing-library/jest-dom`\n- **Setup file:** `vitest.setup.ts` imports `@testing-library/jest-dom/vitest` to extend Vitest matchers with DOM assertions (`toBeInTheDocument`, `toHaveAttribute`, etc.)\n- **Test location:** `tests/` directory, mirroring source structure (e.g., `tests/components/Navbar.test.tsx`)\n- **Globals:** Vitest globals (`describe`, `it`, `expect`) are available without imports — configured in both `vitest.config.mts` and `tsconfig.json`\n\n## Next.js Version Note\n\nThis project uses **Next.js 16**, which has breaking changes from prior versions. Before writing any Next.js-specific code (middleware, route handlers, metadata API, image optimization, etc.), check `node_modules/next/dist/docs/` for current API conventions. Do not assume patterns from Next.js 13/14/15 are valid.\n",
+    "structuredPatch": [
+      {
+        "oldStart": 68,
+        "oldLines": 6,
+        "newStart": 68,
+        "newLines": 7,
+        "lines": [
+          " - `.page-content` — centered, max-width container (`my-4 mx-auto w-6xl min-w-2xl max-w-full`)",
+          " - `.center-content` — vertically centered full-height column (`flex flex-col justify-center min-h-lvh`)",
+          " - `.form-title` — centered bold heading for form pages",
+          "+- `.btn` — primary button (`bg-primary text-dark`, hover switches to `bg-secondary`)",
+          " ",
+          " ### Path Aliases",
+          " "
+        ]
+      }
+    ],
+    "userModified": false,
+    "replaceAll": false
+  },
+  "tool_use_id": "toolu_01EPj8kRUexd4kr9xrzfsYT7",
+  "duration_ms": 18
+}
+{
+  "session_id": "80726b01-c5d9-4a60-b63b-4f365956a38f",
+  "transcript_path": "C:\\Users\\Ahmed.Elhawary\\.claude\\projects\\D--Learn-AgenticAI-pocket-heist\\80726b01-c5d9-4a60-b63b-4f365956a38f.jsonl",
+  "cwd": "D:\\Learn\\AgenticAI\\pocket-heist",
+  "permission_mode": "acceptEdits",
+  "effort": {
+    "level": "low"
+  },
+  "hook_event_name": "PostToolUse",
+  "tool_name": "Edit",
+  "tool_input": {
+    "file_path": "D:\\Learn\\AgenticAI\\pocket-heist\\CLAUDE.md",
+    "old_string": "## Next.js Version Note",
+    "new_string": "## Claude Code Skills\n\nThree slash commands live in `.claude/commands/`:\n\n- `/component` — TDD workflow: write failing test → create component → implement until tests pass → add to `/preview` page\n- `/spec` — Parses a feature idea into a markdown spec saved to `_specs/<slug>.md` and creates a matching git branch\n- `/commit-message` — Analyzes staged diff and generates a conventional commit message with emoji type prefix\n\nFeature specs land in `_specs/`. Check there for context on in-progress or planned features.\n\n## Next.js Version Note",
+    "replace_all": false
+  },
+  "tool_response": {
+    "filePath": "D:\\Learn\\AgenticAI\\pocket-heist\\CLAUDE.md",
+    "oldString": "## Next.js Version Note",
+    "newString": "## Claude Code Skills\n\nThree slash commands live in `.claude/commands/`:\n\n- `/component` — TDD workflow: write failing test → create component → implement until tests pass → add to `/preview` page\n- `/spec` — Parses a feature idea into a markdown spec saved to `_specs/<slug>.md` and creates a matching git branch\n- `/commit-message` — Analyzes staged diff and generates a conventional commit message with emoji type prefix\n\nFeature specs land in `_specs/`. Check there for context on in-progress or planned features.\n\n## Next.js Version Note",
+    "originalFile": "# CLAUDE.md\n\nThis file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.\n\n## Project Overview\n\nPocket Heist is a Next.js 16 app (App Router) built with TypeScript, Tailwind CSS v4, and Vitest. It is a starter project for the Claude Code Masterclass — a small task/mission management app with a heist theme.\n\n## Development Commands\n\nAll commands run from the project root (`pocket-heist/`):\n\n```bash\nnpm run dev    # Start dev server at localhost:3000\nnpm run build  # Production build\nnpm start      # Start production server\nnpm run lint   # Run ESLint (next core-web-vitals + typescript rules)\nnpm test       # Run all Vitest tests in watch mode\nnpx vitest run # Run all tests once (CI mode)\nnpx vitest run tests/components/Navbar.test.tsx  # Run a single test file\n```\n\n## Architecture\n\n### Route Groups\n\nThe app uses two Next.js route groups that enforce separate layouts:\n\n**`app/(public)/`** — Unauthenticated pages. Layout wraps children in `<main className=\"public\">` (no Navbar). Pages:\n- `/login` — login form\n- `/signup` — signup form\n- `/preview` — scratch pad for previewing new UI components during development\n\n**`app/(dashboard)/`** — Authenticated pages. Layout injects `<Navbar />` above `<main>`. Pages:\n- `/heists` — lists active, assigned, and expired heists\n- `/heists/create` — create heist form (skeleton, not yet implemented)\n- `/heists/[id]` — heist detail view (skeleton, not yet implemented)\n\n### Component Structure\n\nEvery component lives in its own folder under `components/`:\n\n```\ncomponents/\n  <Name>/\n    index.ts          ← re-exports the default export from <Name>.tsx\n    <Name>.tsx        ← component implementation\n    <Name>.module.css ← scoped styles (optional)\n```\n\nImport components via the folder name: `import Navbar from \"@/components/Navbar\"`. The `index.ts` barrel file is what enables this.\n\n**Existing components:** `AuthForm`, `Avatar`, `Navbar`, `Skeleton` (loading placeholder), `Footer` (not currently injected in any layout).\n\n### Styling System\n\nTwo layers of styling work together:\n\n1. **Tailwind CSS v4** — configured via `postcss.config.mjs`. Imported in `app/globals.css` with `@import \"tailwindcss\"`. Theme tokens are defined using the `@theme {}` block (not `tailwind.config.js`).\n\n2. **CSS Modules** — used for component-scoped styles (e.g., `Navbar.module.css`). Must include `@reference \"../../app/globals.css\"` at the top to access Tailwind's `@apply` and theme tokens within module files.\n\n**Theme tokens** (defined in `app/globals.css`):\n- Colors: `primary` (#C27AFF purple), `secondary` (#FB64B6 pink), `dark` (#030712), `light` (#0A101D), `lighter` (#101828), `success` (#05DF72), `error` (#FF6467), `heading` (white), `body` (#99A1AF)\n- Font: `--font-sans` set to Inter (loaded from Google Fonts)\n\n**Shared layout utility classes** (defined in `app/globals.css`, usable anywhere):\n- `.page-content` — centered, max-width container (`my-4 mx-auto w-6xl min-w-2xl max-w-full`)\n- `.center-content` — vertically centered full-height column (`flex flex-col justify-center min-h-lvh`)\n- `.form-title` — centered bold heading for form pages\n- `.btn` — primary button (`bg-primary text-dark`, hover switches to `bg-secondary`)\n\n### Path Aliases\n\n`@/*` maps to the project root. Always use `@/` for imports rather than relative paths.\n\n### TypeScript\n\nStrict mode enabled. `vitest/globals` types are included so `describe`, `it`, `expect` etc. are available in tests without importing them.\n\n## Testing\n\n- **Framework:** Vitest with jsdom environment\n- **Libraries:** `@testing-library/react`, `@testing-library/user-event`, `@testing-library/jest-dom`\n- **Setup file:** `vitest.setup.ts` imports `@testing-library/jest-dom/vitest` to extend Vitest matchers with DOM assertions (`toBeInTheDocument`, `toHaveAttribute`, etc.)\n- **Test location:** `tests/` directory, mirroring source structure (e.g., `tests/components/Navbar.test.tsx`)\n- **Globals:** Vitest globals (`describe`, `it`, `expect`) are available without imports — configured in both `vitest.config.mts` and `tsconfig.json`\n\n## Next.js Version Note\n\nThis project uses **Next.js 16**, which has breaking changes from prior versions. Before writing any Next.js-specific code (middleware, route handlers, metadata API, image optimization, etc.), check `node_modules/next/dist/docs/` for current API conventions. Do not assume patterns from Next.js 13/14/15 are valid.\n",
+    "structuredPatch": [
+      {
+        "oldStart": 86,
+        "oldLines": 6,
+        "newStart": 86,
+        "newLines": 16,
+        "lines": [
+          " - **Test location:** `tests/` directory, mirroring source structure (e.g., `tests/components/Navbar.test.tsx`)",
+          " - **Globals:** Vitest globals (`describe`, `it`, `expect`) are available without imports — configured in both `vitest.config.mts` and `tsconfig.json`",
+          " ",
+          "+## Claude Code Skills",
+          "+",
+          "+Three slash commands live in `.claude/commands/`:",
+          "+",
+          "+- `/component` — TDD workflow: write failing test → create component → implement until tests pass → add to `/preview` page",
+          "+- `/spec` — Parses a feature idea into a markdown spec saved to `_specs/<slug>.md` and creates a matching git branch",
+          "+- `/commit-message` — Analyzes staged diff and generates a conventional commit message with emoji type prefix",
+          "+",
+          "+Feature specs land in `_specs/`. Check there for context on in-progress or planned features.",
+          "+",
+          " ## Next.js Version Note",
+          " ",
+          " This project uses **Next.js 16**, which has breaking changes from prior versions. Before writing any Next.js-specific code (middleware, route handlers, metadata API, image optimization, etc.), check `node_modules/next/dist/docs/` for current API conventions. Do not assume patterns from Next.js 13/14/15 are valid."
+        ]
+      }
+    ],
+    "userModified": false,
+    "replaceAll": false
+  },
+  "tool_use_id": "toolu_01NMWZUj3Tba591BWwVshFNz",
+  "duration_ms": 19
+}
