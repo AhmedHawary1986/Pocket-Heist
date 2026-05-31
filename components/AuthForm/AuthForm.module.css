@@ -39,3 +39,7 @@
 .errorMsg {
   @apply text-error text-sm;
 }
+
+.successMsg {
+  @apply text-success text-sm font-medium;
+}

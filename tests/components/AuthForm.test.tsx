@@ -6,6 +6,9 @@ import AuthForm from "@/components/AuthForm"
 const { mockSignup } = vi.hoisted(() => ({ mockSignup: vi.fn() }))
 vi.mock("@/lib/auth/signup", () => ({ signup: mockSignup }))
 
+const { mockLogin } = vi.hoisted(() => ({ mockLogin: vi.fn() }))
+vi.mock("@/lib/auth/login", () => ({ login: mockLogin }))
+
 const { mockPush } = vi.hoisted(() => ({ mockPush: vi.fn() }))
 vi.mock("next/navigation", () => ({ useRouter: () => ({ push: mockPush }) }))
 
@@ -51,16 +54,16 @@ describe("AuthForm", () => {
     expect(input).toHaveAttribute("type", "password")
   })
 
-  it("logs email and password to console on submit", async () => {
+  it("calls login with email and password on submit", async () => {
+    mockLogin.mockResolvedValue("SilentFox")
     const user = userEvent.setup()
-    const spy = vi.spyOn(console, "log")
     render(<AuthForm mode="login" />)
 
-    await user.type(screen.getByLabelText(/email/i), "test@example.com")
+    await user.type(screen.getByLabelText("Email"), "test@example.com")
     await user.type(screen.getByLabelText("Password"), "secret123")
     await user.click(screen.getByRole("button", { name: /log in/i }))
 
-    expect(spy).toHaveBeenCalledWith({ email: "test@example.com", password: "secret123" })
+    await waitFor(() => expect(mockLogin).toHaveBeenCalledWith("test@example.com", "secret123"))
   })
 
   it("renders a link to /signup when mode is login", () => {

@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation"
 import { Eye, EyeOff } from "lucide-react"
 import styles from "./AuthForm.module.css"
 import { signup } from "@/lib/auth/signup"
+import { login } from "@/lib/auth/login"
 
 interface AuthFormProps {
   mode: "login" | "signup"
@@ -16,6 +17,10 @@ function humanReadableError(err: unknown): string {
   if (code === "auth/email-already-in-use") return "An account with this email already exists."
   if (code === "auth/weak-password") return "Password must be at least 6 characters."
   if (code === "auth/invalid-email") return "Please enter a valid email address."
+  if (code === "auth/invalid-login-credentials") return "Incorrect email or password."
+  if (code === "auth/wrong-password") return "Incorrect email or password."
+  if (code === "auth/user-not-found") return "No account found with that email."
+  if (code === "auth/too-many-requests") return "Too many attempts. Please try again later."
   return "Something went wrong. Please try again."
 }
 
@@ -26,6 +31,8 @@ export default function AuthForm({ mode }: AuthFormProps) {
   const [showPassword, setShowPassword] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
+  const [success, setSuccess] = useState(false)
+  const [successName, setSuccessName] = useState("")
 
   const isLogin = mode === "login"
   const heading = isLogin ? "Log in to Your Account" : "Signup for an Account"
@@ -47,7 +54,17 @@ export default function AuthForm({ mode }: AuthFormProps) {
         setLoading(false)
       }
     } else {
-      console.log({ email, password })
+      setLoading(true)
+      setError(null)
+      try {
+        const displayName = await login(email, password)
+        setSuccessName(displayName)
+        setSuccess(true)
+      } catch (err) {
+        setError(humanReadableError(err))
+      } finally {
+        setLoading(false)
+      }
     }
   }
 
@@ -89,9 +106,13 @@ export default function AuthForm({ mode }: AuthFormProps) {
           </div>
         </div>
         {error && <p role="alert" className={styles.errorMsg}>{error}</p>}
-        <button type="submit" className={`btn ${styles.submitBtn}`} disabled={loading}>
-          {loading && mode === "signup" ? "Signing up…" : submitLabel}
-        </button>
+        {success ? (
+          <p role="status" className={styles.successMsg}>Welcome, {successName}.</p>
+        ) : (
+          <button type="submit" className={`btn ${styles.submitBtn}`} disabled={loading}>
+            {loading ? (mode === "signup" ? "Signing up…" : "Logging in…") : submitLabel}
+          </button>
+        )}
       </form>
       <Link href={switchHref} className={styles.switchLink}>
         {switchText}
