@@ -35,3 +35,7 @@
 .switchLink {
   @apply block text-center text-sm text-body hover:text-primary mt-2;
 }
+
+.errorMsg {
+  @apply text-error text-sm;
+}

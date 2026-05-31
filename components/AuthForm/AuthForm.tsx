@@ -2,17 +2,30 @@
 
 import { useState } from "react"
 import Link from "next/link"
+import { useRouter } from "next/navigation"
 import { Eye, EyeOff } from "lucide-react"
 import styles from "./AuthForm.module.css"
+import { signup } from "@/lib/auth/signup"
 
 interface AuthFormProps {
   mode: "login" | "signup"
 }
 
+function humanReadableError(err: unknown): string {
+  const code = (err as { code?: string }).code
+  if (code === "auth/email-already-in-use") return "An account with this email already exists."
+  if (code === "auth/weak-password") return "Password must be at least 6 characters."
+  if (code === "auth/invalid-email") return "Please enter a valid email address."
+  return "Something went wrong. Please try again."
+}
+
 export default function AuthForm({ mode }: AuthFormProps) {
+  const router = useRouter()
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
   const [showPassword, setShowPassword] = useState(false)
+  const [error, setError] = useState<string | null>(null)
+  const [loading, setLoading] = useState(false)
 
   const isLogin = mode === "login"
   const heading = isLogin ? "Log in to Your Account" : "Signup for an Account"
@@ -20,9 +33,22 @@ export default function AuthForm({ mode }: AuthFormProps) {
   const switchText = isLogin ? "Don't have an account? Sign up" : "Already have an account? Log in"
   const switchHref = isLogin ? "/signup" : "/login"
 
-  function handleSubmit(e: React.FormEvent) {
+  async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
-    console.log({ email, password })
+    if (mode === "signup") {
+      setLoading(true)
+      setError(null)
+      try {
+        await signup(email, password)
+        router.push("/heists")
+      } catch (err) {
+        setError(humanReadableError(err))
+      } finally {
+        setLoading(false)
+      }
+    } else {
+      console.log({ email, password })
+    }
   }
 
   return (
@@ -62,8 +88,9 @@ export default function AuthForm({ mode }: AuthFormProps) {
             </button>
           </div>
         </div>
-        <button type="submit" className={`btn ${styles.submitBtn}`}>
-          {submitLabel}
+        {error && <p role="alert" className={styles.errorMsg}>{error}</p>}
+        <button type="submit" className={`btn ${styles.submitBtn}`} disabled={loading}>
+          {loading && mode === "signup" ? "Signing up…" : submitLabel}
         </button>
       </form>
       <Link href={switchHref} className={styles.switchLink}>
