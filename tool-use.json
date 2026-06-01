@@ -3407,3 +3407,413 @@
   "tool_use_id": "toolu_01YTsPuZBWnouibR1YUXjjuR",
   "duration_ms": 47
 }
+{
+  "session_id": "38619526-0844-490c-ab48-d5900d2a78c5",
+  "transcript_path": "C:\\Users\\Ahmed.Elhawary\\.claude\\projects\\D--Learn-AgenticAI-pocket-heist\\38619526-0844-490c-ab48-d5900d2a78c5.jsonl",
+  "cwd": "D:\\Learn\\AgenticAI\\pocket-heist",
+  "permission_mode": "auto",
+  "effort": {
+    "level": "medium"
+  },
+  "hook_event_name": "PostToolUse",
+  "tool_name": "Write",
+  "tool_input": {
+    "file_path": "D:\\Learn\\AgenticAI\\pocket-heist\\_specs\\route-protection.md",
+    "content": "# Spec for Route Protection\n\nbranch: claude/feature/route-protection\n\n## Summary\n- Pages in the `(dashboard)` route group should only be accessible to authenticated users.\n- Pages in the `(public)` route group should only be accessible to unauthenticated users.\n- Auth state is read from the existing `useUser` hook (backed by Firebase Auth).\n- While the auth status is being determined, a simple loading indicator is shown in place of the page content to prevent flash of wrong content or premature redirects.\n\n## Functional Requirements\n- The `(dashboard)` layout reads auth state via `useUser`. If the user is not authenticated and auth has finished loading, redirect to `/login`.\n- The `(public)` layout reads auth state via `useUser`. If the user is authenticated and auth has finished loading, redirect to `/heists`.\n- While `useUser` is still resolving (loading state), both layouts display a minimal full-screen loader instead of rendering children.\n- Redirects use the Next.js `router.replace()` (or `redirect()` if server-compatible) so the protected page is not added to browser history.\n- No route is accessible in the wrong auth state — there is no brief flash of protected content.\n\n## Possible Edge Cases\n- Firebase takes a moment to restore session on page load — loader must stay visible until the auth state is definitively known (not just \"user is null yet\").\n- User navigates directly to a dashboard URL while logged out — should land on `/login`.\n- Logged-in user navigates directly to `/login` or `/signup` — should be redirected away to `/heists`.\n- User logs out from a dashboard page — the logout action already redirects; ensure the dashboard layout's own guard does not cause a double-redirect loop.\n- Token expiry mid-session — if `useUser` transitions to unauthenticated, the dashboard layout should trigger the redirect.\n\n## Acceptance Criteria\n- Visiting any `/heists*` route while logged out redirects to `/login`.\n- Visiting `/login` or `/signup` while logged in redirects to `/heists`.\n- During the brief Firebase auth resolution window, a loader is shown and no redirect fires prematurely.\n- After a successful login the user lands on the intended dashboard page (no extra redirect round-trips).\n- After logout the user lands on `/login` and cannot navigate back to dashboard pages without re-authenticating.\n\n## Open Questions\n- Should the loader be a spinner, skeleton, or a plain branded screen? (Currently leaning toward a centered spinner using existing theme tokens.)\n- Should unauthenticated access to a specific dashboard URL preserve that URL as a `?redirect=` param so the user is sent there after login?\n\n## Testing Guidelines\nCreate a test file(s) in the ./tests folder for the new feature, and create meaningful tests for the following cases, without going too heavy:\n- Dashboard layout redirects to `/login` when `useUser` returns no user and loading is false.\n- Dashboard layout renders children when `useUser` returns an authenticated user.\n- Dashboard layout renders the loader when `useUser` is in a loading state.\n- Public layout redirects to `/heists` when `useUser` returns an authenticated user and loading is false.\n- Public layout renders children when `useUser` returns no user and loading is false.\n- Public layout renders the loader when `useUser` is in a loading state.\n"
+  },
+  "tool_response": {
+    "type": "create",
+    "filePath": "D:\\Learn\\AgenticAI\\pocket-heist\\_specs\\route-protection.md",
+    "content": "# Spec for Route Protection\n\nbranch: claude/feature/route-protection\n\n## Summary\n- Pages in the `(dashboard)` route group should only be accessible to authenticated users.\n- Pages in the `(public)` route group should only be accessible to unauthenticated users.\n- Auth state is read from the existing `useUser` hook (backed by Firebase Auth).\n- While the auth status is being determined, a simple loading indicator is shown in place of the page content to prevent flash of wrong content or premature redirects.\n\n## Functional Requirements\n- The `(dashboard)` layout reads auth state via `useUser`. If the user is not authenticated and auth has finished loading, redirect to `/login`.\n- The `(public)` layout reads auth state via `useUser`. If the user is authenticated and auth has finished loading, redirect to `/heists`.\n- While `useUser` is still resolving (loading state), both layouts display a minimal full-screen loader instead of rendering children.\n- Redirects use the Next.js `router.replace()` (or `redirect()` if server-compatible) so the protected page is not added to browser history.\n- No route is accessible in the wrong auth state — there is no brief flash of protected content.\n\n## Possible Edge Cases\n- Firebase takes a moment to restore session on page load — loader must stay visible until the auth state is definitively known (not just \"user is null yet\").\n- User navigates directly to a dashboard URL while logged out — should land on `/login`.\n- Logged-in user navigates directly to `/login` or `/signup` — should be redirected away to `/heists`.\n- User logs out from a dashboard page — the logout action already redirects; ensure the dashboard layout's own guard does not cause a double-redirect loop.\n- Token expiry mid-session — if `useUser` transitions to unauthenticated, the dashboard layout should trigger the redirect.\n\n## Acceptance Criteria\n- Visiting any `/heists*` route while logged out redirects to `/login`.\n- Visiting `/login` or `/signup` while logged in redirects to `/heists`.\n- During the brief Firebase auth resolution window, a loader is shown and no redirect fires prematurely.\n- After a successful login the user lands on the intended dashboard page (no extra redirect round-trips).\n- After logout the user lands on `/login` and cannot navigate back to dashboard pages without re-authenticating.\n\n## Open Questions\n- Should the loader be a spinner, skeleton, or a plain branded screen? (Currently leaning toward a centered spinner using existing theme tokens.)\n- Should unauthenticated access to a specific dashboard URL preserve that URL as a `?redirect=` param so the user is sent there after login?\n\n## Testing Guidelines\nCreate a test file(s) in the ./tests folder for the new feature, and create meaningful tests for the following cases, without going too heavy:\n- Dashboard layout redirects to `/login` when `useUser` returns no user and loading is false.\n- Dashboard layout renders children when `useUser` returns an authenticated user.\n- Dashboard layout renders the loader when `useUser` is in a loading state.\n- Public layout redirects to `/heists` when `useUser` returns an authenticated user and loading is false.\n- Public layout renders children when `useUser` returns no user and loading is false.\n- Public layout renders the loader when `useUser` is in a loading state.\n",
+    "structuredPatch": [],
+    "originalFile": null,
+    "userModified": false
+  },
+  "tool_use_id": "toolu_01M5f7it71E7dAWzcN6cTTnW",
+  "duration_ms": 78
+}
+{
+  "session_id": "38619526-0844-490c-ab48-d5900d2a78c5",
+  "transcript_path": "C:\\Users\\Ahmed.Elhawary\\.claude\\projects\\D--Learn-AgenticAI-pocket-heist\\38619526-0844-490c-ab48-d5900d2a78c5.jsonl",
+  "cwd": "D:\\Learn\\AgenticAI\\pocket-heist",
+  "permission_mode": "plan",
+  "effort": {
+    "level": "medium"
+  },
+  "hook_event_name": "PostToolUse",
+  "tool_name": "Write",
+  "tool_input": {
+    "file_path": "C:\\Users\\Ahmed.Elhawary\\.claude\\plans\\please-make-plan-cuddly-badger.md",
+    "content": "# Plan: Route Protection\n\n## Context\nThe app has no route guards. Authenticated dashboard pages (`/heists*`) are publicly accessible, and public auth pages (`/login`, `/signup`) are accessible even when logged in. This causes incorrect UX and potential security issues. We need to wire both route-group layouts to the existing `useUser` hook so auth state gates access and shows a spinner while Firebase resolves.\n\nThe spec also requires a `?redirect=` param: when an unauthenticated user hits a dashboard URL, they land on `/login?redirect=/that/path` and after login are sent back there.\n\n---\n\n## What to Build\n\n### 1. Spinner component (new)\n**Files to create:**\n- `components/Spinner/index.ts`\n- `components/Spinner/Spinner.tsx`\n\nA full-page centered spinner using existing theme tokens (`primary` color). Matches the project's component folder convention. Used by both layouts while auth is resolving.\n\n### 2. Dashboard layout — add auth guard\n**File:** `app/(dashboard)/layout.tsx`\n\n- Add `\"use client\"` directive (required to use hooks).\n- Import `useUser`, `useRouter`, `usePathname` from `next/navigation`.\n- In a `useEffect`, when `!loading && !user`: call `router.replace(\"/login?redirect=\" + encodeURIComponent(pathname))`.\n- While `loading` is true **or** the user is null (redirect about to fire): return `<Spinner />` instead of children — prevents any flash of protected content.\n- When `!loading && user`: render the existing `<Navbar /> + <main>{children}</main>` structure unchanged.\n\n### 3. Public layout — add auth guard + redirect param\n**File:** `app/(public)/layout.tsx`\n\n- Add `\"use client\"` directive.\n- Import `useUser` and `useRouter`.\n- In a `useEffect`, when `!loading && user`: read `window.location.search` for a `?redirect=` param, validate it starts with `/`, and call `router.replace(redirect || \"/heists\")`. Using `window.location.search` inside `useEffect` avoids the Next.js `useSearchParams()` Suspense requirement.\n- While `loading` or while user is authenticated (redirect about to fire): return `<Spinner />`.\n- When `!loading && !user`: render the existing `<main className=\"public\">{children}</main> + <Footer />` structure unchanged.\n\n---\n\n## Files to Modify / Create\n\n| File | Action |\n|------|--------|\n| `components/Spinner/Spinner.tsx` | Create — full-page spinner |\n| `components/Spinner/index.ts` | Create — barrel export |\n| `app/(dashboard)/layout.tsx` | Modify — add `\"use client\"` + auth guard |\n| `app/(public)/layout.tsx` | Modify — add `\"use client\"` + auth guard |\n| `tests/layouts/DashboardLayout.test.tsx` | Create — layout tests |\n| `tests/layouts/PublicLayout.test.tsx` | Create — layout tests |\n\n---\n\n## Key Reuse\n\n- `useUser` hook from `components/UserProvider/UserProvider.tsx` — returns `{ user, loading }`.\n- `useRouter`, `usePathname` from `next/navigation` — same pattern as AuthForm (`components/AuthForm/AuthForm.tsx`).\n- Theme token `primary` for spinner color — consistent with `.btn` styling in `app/globals.css`.\n\n---\n\n## Testing\n\n**Mock strategy** (mirrors `tests/components/Navbar.test.tsx` pattern):\n```\nvi.mock(\"@/components/UserProvider/UserProvider\", () => ({ useUser: vi.fn() }))\nvi.mock(\"next/navigation\", () => ({ useRouter: () => ({ replace: mockReplace }), usePathname: () => \"/heists\" }))\n```\n\n**Test cases per layout (from spec):**\n- Dashboard: redirects to `/login` when `{ user: null, loading: false }`\n- Dashboard: renders children when `{ user: mockUser, loading: false }`\n- Dashboard: renders spinner when `{ user: null, loading: true }`\n- Public: redirects to `/heists` when `{ user: mockUser, loading: false }`\n- Public: renders children when `{ user: null, loading: false }`\n- Public: renders spinner when `{ user: null, loading: true }`\n\n**Run tests:** `npx vitest run tests/layouts/`\n\n**Manual verification:**\n1. `npm run dev`\n2. While logged out, visit `localhost:3000/heists` → should redirect to `/login`\n3. While logged in, visit `localhost:3000/login` → should redirect to `/heists`\n4. Visit `localhost:3000/heists/create` while logged out → should redirect to `/login?redirect=/heists/create`, then after login land on `/heists/create`\n5. On a slow connection, the spinner should be visible before redirect fires\n"
+  },
+  "tool_response": {
+    "type": "create",
+    "filePath": "C:\\Users\\Ahmed.Elhawary\\.claude\\plans\\please-make-plan-cuddly-badger.md",
+    "content": "# Plan: Route Protection\n\n## Context\nThe app has no route guards. Authenticated dashboard pages (`/heists*`) are publicly accessible, and public auth pages (`/login`, `/signup`) are accessible even when logged in. This causes incorrect UX and potential security issues. We need to wire both route-group layouts to the existing `useUser` hook so auth state gates access and shows a spinner while Firebase resolves.\n\nThe spec also requires a `?redirect=` param: when an unauthenticated user hits a dashboard URL, they land on `/login?redirect=/that/path` and after login are sent back there.\n\n---\n\n## What to Build\n\n### 1. Spinner component (new)\n**Files to create:**\n- `components/Spinner/index.ts`\n- `components/Spinner/Spinner.tsx`\n\nA full-page centered spinner using existing theme tokens (`primary` color). Matches the project's component folder convention. Used by both layouts while auth is resolving.\n\n### 2. Dashboard layout — add auth guard\n**File:** `app/(dashboard)/layout.tsx`\n\n- Add `\"use client\"` directive (required to use hooks).\n- Import `useUser`, `useRouter`, `usePathname` from `next/navigation`.\n- In a `useEffect`, when `!loading && !user`: call `router.replace(\"/login?redirect=\" + encodeURIComponent(pathname))`.\n- While `loading` is true **or** the user is null (redirect about to fire): return `<Spinner />` instead of children — prevents any flash of protected content.\n- When `!loading && user`: render the existing `<Navbar /> + <main>{children}</main>` structure unchanged.\n\n### 3. Public layout — add auth guard + redirect param\n**File:** `app/(public)/layout.tsx`\n\n- Add `\"use client\"` directive.\n- Import `useUser` and `useRouter`.\n- In a `useEffect`, when `!loading && user`: read `window.location.search` for a `?redirect=` param, validate it starts with `/`, and call `router.replace(redirect || \"/heists\")`. Using `window.location.search` inside `useEffect` avoids the Next.js `useSearchParams()` Suspense requirement.\n- While `loading` or while user is authenticated (redirect about to fire): return `<Spinner />`.\n- When `!loading && !user`: render the existing `<main className=\"public\">{children}</main> + <Footer />` structure unchanged.\n\n---\n\n## Files to Modify / Create\n\n| File | Action |\n|------|--------|\n| `components/Spinner/Spinner.tsx` | Create — full-page spinner |\n| `components/Spinner/index.ts` | Create — barrel export |\n| `app/(dashboard)/layout.tsx` | Modify — add `\"use client\"` + auth guard |\n| `app/(public)/layout.tsx` | Modify — add `\"use client\"` + auth guard |\n| `tests/layouts/DashboardLayout.test.tsx` | Create — layout tests |\n| `tests/layouts/PublicLayout.test.tsx` | Create — layout tests |\n\n---\n\n## Key Reuse\n\n- `useUser` hook from `components/UserProvider/UserProvider.tsx` — returns `{ user, loading }`.\n- `useRouter`, `usePathname` from `next/navigation` — same pattern as AuthForm (`components/AuthForm/AuthForm.tsx`).\n- Theme token `primary` for spinner color — consistent with `.btn` styling in `app/globals.css`.\n\n---\n\n## Testing\n\n**Mock strategy** (mirrors `tests/components/Navbar.test.tsx` pattern):\n```\nvi.mock(\"@/components/UserProvider/UserProvider\", () => ({ useUser: vi.fn() }))\nvi.mock(\"next/navigation\", () => ({ useRouter: () => ({ replace: mockReplace }), usePathname: () => \"/heists\" }))\n```\n\n**Test cases per layout (from spec):**\n- Dashboard: redirects to `/login` when `{ user: null, loading: false }`\n- Dashboard: renders children when `{ user: mockUser, loading: false }`\n- Dashboard: renders spinner when `{ user: null, loading: true }`\n- Public: redirects to `/heists` when `{ user: mockUser, loading: false }`\n- Public: renders children when `{ user: null, loading: false }`\n- Public: renders spinner when `{ user: null, loading: true }`\n\n**Run tests:** `npx vitest run tests/layouts/`\n\n**Manual verification:**\n1. `npm run dev`\n2. While logged out, visit `localhost:3000/heists` → should redirect to `/login`\n3. While logged in, visit `localhost:3000/login` → should redirect to `/heists`\n4. Visit `localhost:3000/heists/create` while logged out → should redirect to `/login?redirect=/heists/create`, then after login land on `/heists/create`\n5. On a slow connection, the spinner should be visible before redirect fires\n",
+    "structuredPatch": [],
+    "originalFile": null,
+    "userModified": false
+  },
+  "tool_use_id": "toolu_01Pj4r4mnmysMswnRTTEQXsS",
+  "duration_ms": 50
+}
+{
+  "session_id": "38619526-0844-490c-ab48-d5900d2a78c5",
+  "transcript_path": "C:\\Users\\Ahmed.Elhawary\\.claude\\projects\\D--Learn-AgenticAI-pocket-heist\\38619526-0844-490c-ab48-d5900d2a78c5.jsonl",
+  "cwd": "D:\\Learn\\AgenticAI\\pocket-heist",
+  "permission_mode": "auto",
+  "effort": {
+    "level": "medium"
+  },
+  "hook_event_name": "PostToolUse",
+  "tool_name": "Write",
+  "tool_input": {
+    "file_path": "D:\\Learn\\AgenticAI\\pocket-heist\\components\\Spinner\\Spinner.tsx",
+    "content": "\"use client\"\n\nexport default function Spinner() {\n  return (\n    <div className=\"center-content\">\n      <div\n        className=\"w-10 h-10 rounded-full border-4 border-transparent animate-spin\"\n        style={{ borderTopColor: \"var(--color-primary)\" }}\n        role=\"status\"\n        aria-label=\"Loading\"\n      />\n    </div>\n  )\n}\n"
+  },
+  "tool_response": {
+    "type": "create",
+    "filePath": "D:\\Learn\\AgenticAI\\pocket-heist\\components\\Spinner\\Spinner.tsx",
+    "content": "\"use client\"\n\nexport default function Spinner() {\n  return (\n    <div className=\"center-content\">\n      <div\n        className=\"w-10 h-10 rounded-full border-4 border-transparent animate-spin\"\n        style={{ borderTopColor: \"var(--color-primary)\" }}\n        role=\"status\"\n        aria-label=\"Loading\"\n      />\n    </div>\n  )\n}\n",
+    "structuredPatch": [],
+    "originalFile": null,
+    "userModified": false
+  },
+  "tool_use_id": "toolu_01N967zqibNUtamL5Xfi5pz6",
+  "duration_ms": 42
+}
+{
+  "session_id": "38619526-0844-490c-ab48-d5900d2a78c5",
+  "transcript_path": "C:\\Users\\Ahmed.Elhawary\\.claude\\projects\\D--Learn-AgenticAI-pocket-heist\\38619526-0844-490c-ab48-d5900d2a78c5.jsonl",
+  "cwd": "D:\\Learn\\AgenticAI\\pocket-heist",
+  "permission_mode": "auto",
+  "effort": {
+    "level": "medium"
+  },
+  "hook_event_name": "PostToolUse",
+  "tool_name": "Write",
+  "tool_input": {
+    "file_path": "D:\\Learn\\AgenticAI\\pocket-heist\\components\\Spinner\\index.ts",
+    "content": "export { default } from \"./Spinner\"\n"
+  },
+  "tool_response": {
+    "type": "create",
+    "filePath": "D:\\Learn\\AgenticAI\\pocket-heist\\components\\Spinner\\index.ts",
+    "content": "export { default } from \"./Spinner\"\n",
+    "structuredPatch": [],
+    "originalFile": null,
+    "userModified": false
+  },
+  "tool_use_id": "toolu_01SiQwvL6hHQVfjkAWGjZgJB",
+  "duration_ms": 40
+}
+{
+  "session_id": "38619526-0844-490c-ab48-d5900d2a78c5",
+  "transcript_path": "C:\\Users\\Ahmed.Elhawary\\.claude\\projects\\D--Learn-AgenticAI-pocket-heist\\38619526-0844-490c-ab48-d5900d2a78c5.jsonl",
+  "cwd": "D:\\Learn\\AgenticAI\\pocket-heist",
+  "permission_mode": "auto",
+  "effort": {
+    "level": "medium"
+  },
+  "hook_event_name": "PostToolUse",
+  "tool_name": "Write",
+  "tool_input": {
+    "file_path": "D:\\Learn\\AgenticAI\\pocket-heist\\app\\(dashboard)\\layout.tsx",
+    "content": "\"use client\"\n\nimport { useEffect } from \"react\"\nimport { useRouter, usePathname } from \"next/navigation\"\nimport Navbar from \"@/components/Navbar\"\nimport Spinner from \"@/components/Spinner\"\nimport { useUser } from \"@/components/UserProvider/UserProvider\"\n\nexport default function HeistsLayout({\n  children,\n}: Readonly<{\n  children: React.ReactNode\n}>) {\n  const { user, loading } = useUser()\n  const router = useRouter()\n  const pathname = usePathname()\n\n  useEffect(() => {\n    if (!loading && !user) {\n      router.replace(\"/login?redirect=\" + encodeURIComponent(pathname))\n    }\n  }, [loading, user, pathname, router])\n\n  if (loading || !user) {\n    return <Spinner />\n  }\n\n  return (\n    <>\n      <Navbar />\n      <main>{children}</main>\n    </>\n  )\n}\n"
+  },
+  "tool_response": {
+    "type": "update",
+    "filePath": "D:\\Learn\\AgenticAI\\pocket-heist\\app\\(dashboard)\\layout.tsx",
+    "content": "\"use client\"\n\nimport { useEffect } from \"react\"\nimport { useRouter, usePathname } from \"next/navigation\"\nimport Navbar from \"@/components/Navbar\"\nimport Spinner from \"@/components/Spinner\"\nimport { useUser } from \"@/components/UserProvider/UserProvider\"\n\nexport default function HeistsLayout({\n  children,\n}: Readonly<{\n  children: React.ReactNode\n}>) {\n  const { user, loading } = useUser()\n  const router = useRouter()\n  const pathname = usePathname()\n\n  useEffect(() => {\n    if (!loading && !user) {\n      router.replace(\"/login?redirect=\" + encodeURIComponent(pathname))\n    }\n  }, [loading, user, pathname, router])\n\n  if (loading || !user) {\n    return <Spinner />\n  }\n\n  return (\n    <>\n      <Navbar />\n      <main>{children}</main>\n    </>\n  )\n}\n",
+    "structuredPatch": [
+      {
+        "oldStart": 1,
+        "oldLines": 11,
+        "newStart": 1,
+        "newLines": 30,
+        "lines": [
+          "-// components",
+          "+\"use client\"",
+          "+",
+          "+import { useEffect } from \"react\"",
+          "+import { useRouter, usePathname } from \"next/navigation\"",
+          " import Navbar from \"@/components/Navbar\"",
+          "+import Spinner from \"@/components/Spinner\"",
+          "+import { useUser } from \"@/components/UserProvider/UserProvider\"",
+          " ",
+          " export default function HeistsLayout({",
+          "   children,",
+          " }: Readonly<{",
+          "   children: React.ReactNode",
+          " }>) {",
+          "+  const { user, loading } = useUser()",
+          "+  const router = useRouter()",
+          "+  const pathname = usePathname()",
+          "+",
+          "+  useEffect(() => {",
+          "+    if (!loading && !user) {",
+          "+      router.replace(\"/login?redirect=\" + encodeURIComponent(pathname))",
+          "+    }",
+          "+  }, [loading, user, pathname, router])",
+          "+",
+          "+  if (loading || !user) {",
+          "+    return <Spinner />",
+          "+  }",
+          "+",
+          "   return (",
+          "     <>",
+          "       <Navbar />"
+        ]
+      }
+    ],
+    "originalFile": "// components\nimport Navbar from \"@/components/Navbar\"\n\nexport default function HeistsLayout({\n  children,\n}: Readonly<{\n  children: React.ReactNode\n}>) {\n  return (\n    <>\n      <Navbar />\n      <main>{children}</main>\n    </>\n  )\n}\n",
+    "userModified": false
+  },
+  "tool_use_id": "toolu_017nj1jMvRyuC3kCemLd7ji1",
+  "duration_ms": 128
+}
+{
+  "session_id": "38619526-0844-490c-ab48-d5900d2a78c5",
+  "transcript_path": "C:\\Users\\Ahmed.Elhawary\\.claude\\projects\\D--Learn-AgenticAI-pocket-heist\\38619526-0844-490c-ab48-d5900d2a78c5.jsonl",
+  "cwd": "D:\\Learn\\AgenticAI\\pocket-heist",
+  "permission_mode": "auto",
+  "effort": {
+    "level": "medium"
+  },
+  "hook_event_name": "PostToolUse",
+  "tool_name": "Write",
+  "tool_input": {
+    "file_path": "D:\\Learn\\AgenticAI\\pocket-heist\\app\\(public)\\layout.tsx",
+    "content": "\"use client\"\n\nimport { useEffect } from \"react\"\nimport { useRouter } from \"next/navigation\"\nimport Footer from \"@/components/Footer\"\nimport Spinner from \"@/components/Spinner\"\nimport { useUser } from \"@/components/UserProvider/UserProvider\"\n\nexport default function RootLayout({\n  children,\n}: Readonly<{\n  children: React.ReactNode\n}>) {\n  const { user, loading } = useUser()\n  const router = useRouter()\n\n  useEffect(() => {\n    if (!loading && user) {\n      const params = new URLSearchParams(window.location.search)\n      const redirect = params.get(\"redirect\")\n      const target = redirect && redirect.startsWith(\"/\") ? redirect : \"/heists\"\n      router.replace(target)\n    }\n  }, [loading, user, router])\n\n  if (loading || user) {\n    return <Spinner />\n  }\n\n  return (\n    <>\n      <main className=\"public\">\n        {children}\n      </main>\n      <Footer />\n    </>\n  )\n}\n"
+  },
+  "tool_response": {
+    "type": "update",
+    "filePath": "D:\\Learn\\AgenticAI\\pocket-heist\\app\\(public)\\layout.tsx",
+    "content": "\"use client\"\n\nimport { useEffect } from \"react\"\nimport { useRouter } from \"next/navigation\"\nimport Footer from \"@/components/Footer\"\nimport Spinner from \"@/components/Spinner\"\nimport { useUser } from \"@/components/UserProvider/UserProvider\"\n\nexport default function RootLayout({\n  children,\n}: Readonly<{\n  children: React.ReactNode\n}>) {\n  const { user, loading } = useUser()\n  const router = useRouter()\n\n  useEffect(() => {\n    if (!loading && user) {\n      const params = new URLSearchParams(window.location.search)\n      const redirect = params.get(\"redirect\")\n      const target = redirect && redirect.startsWith(\"/\") ? redirect : \"/heists\"\n      router.replace(target)\n    }\n  }, [loading, user, router])\n\n  if (loading || user) {\n    return <Spinner />\n  }\n\n  return (\n    <>\n      <main className=\"public\">\n        {children}\n      </main>\n      <Footer />\n    </>\n  )\n}\n",
+    "structuredPatch": [
+      {
+        "oldStart": 1,
+        "oldLines": 10,
+        "newStart": 1,
+        "newLines": 32,
+        "lines": [
+          "+\"use client\"",
+          "+",
+          "+import { useEffect } from \"react\"",
+          "+import { useRouter } from \"next/navigation\"",
+          " import Footer from \"@/components/Footer\"",
+          "+import Spinner from \"@/components/Spinner\"",
+          "+import { useUser } from \"@/components/UserProvider/UserProvider\"",
+          " ",
+          " export default function RootLayout({",
+          "   children,",
+          " }: Readonly<{",
+          "   children: React.ReactNode",
+          " }>) {",
+          "+  const { user, loading } = useUser()",
+          "+  const router = useRouter()",
+          "+",
+          "+  useEffect(() => {",
+          "+    if (!loading && user) {",
+          "+      const params = new URLSearchParams(window.location.search)",
+          "+      const redirect = params.get(\"redirect\")",
+          "+      const target = redirect && redirect.startsWith(\"/\") ? redirect : \"/heists\"",
+          "+      router.replace(target)",
+          "+    }",
+          "+  }, [loading, user, router])",
+          "+",
+          "+  if (loading || user) {",
+          "+    return <Spinner />",
+          "+  }",
+          "+",
+          "   return (",
+          "     <>",
+          "       <main className=\"public\">"
+        ]
+      }
+    ],
+    "originalFile": "import Footer from \"@/components/Footer\"\n\nexport default function RootLayout({\n  children,\n}: Readonly<{\n  children: React.ReactNode\n}>) {\n  return (\n    <>\n      <main className=\"public\">\n        {children}\n      </main>\n      <Footer />\n    </>\n  )\n}\n",
+    "userModified": false
+  },
+  "tool_use_id": "toolu_01DhRYXorBR3VohFmSrQRhQS",
+  "duration_ms": 71
+}
+{
+  "session_id": "38619526-0844-490c-ab48-d5900d2a78c5",
+  "transcript_path": "C:\\Users\\Ahmed.Elhawary\\.claude\\projects\\D--Learn-AgenticAI-pocket-heist\\38619526-0844-490c-ab48-d5900d2a78c5.jsonl",
+  "cwd": "D:\\Learn\\AgenticAI\\pocket-heist",
+  "permission_mode": "auto",
+  "effort": {
+    "level": "medium"
+  },
+  "hook_event_name": "PostToolUse",
+  "tool_name": "Write",
+  "tool_input": {
+    "file_path": "D:\\Learn\\AgenticAI\\pocket-heist\\tests\\layouts\\DashboardLayout.test.tsx",
+    "content": "import { render, screen, act } from \"@testing-library/react\"\nimport DashboardLayout from \"@/app/(dashboard)/layout\"\n\nconst { mockReplace } = vi.hoisted(() => ({ mockReplace: vi.fn() }))\n\nvi.mock(\"next/navigation\", () => ({\n  useRouter: () => ({ replace: mockReplace }),\n  usePathname: () => \"/heists\",\n}))\n\nvi.mock(\"@/components/UserProvider/UserProvider\", () => ({\n  useUser: vi.fn(),\n}))\n\nvi.mock(\"@/components/Navbar\", () => ({\n  default: () => <nav data-testid=\"navbar\" />,\n}))\n\nimport { useUser } from \"@/components/UserProvider/UserProvider\"\n\nconst mockUser = { uid: \"u1\", email: \"agent@test.com\" }\n\nbeforeEach(() => {\n  vi.clearAllMocks()\n})\n\nit(\"shows spinner and redirects to /login when not authenticated\", async () => {\n  vi.mocked(useUser).mockReturnValue({ user: null, loading: false })\n  render(<DashboardLayout>secret</DashboardLayout>)\n  expect(screen.getByRole(\"status\")).toBeInTheDocument()\n  expect(screen.queryByText(\"secret\")).not.toBeInTheDocument()\n  expect(mockReplace).toHaveBeenCalledWith(\"/login?redirect=%2Fheists\")\n})\n\nit(\"renders children when authenticated\", () => {\n  vi.mocked(useUser).mockReturnValue({ user: mockUser, loading: false })\n  render(<DashboardLayout>mission content</DashboardLayout>)\n  expect(screen.getByText(\"mission content\")).toBeInTheDocument()\n  expect(screen.queryByRole(\"status\")).not.toBeInTheDocument()\n  expect(mockReplace).not.toHaveBeenCalled()\n})\n\nit(\"shows spinner while auth is loading\", () => {\n  vi.mocked(useUser).mockReturnValue({ user: null, loading: true })\n  render(<DashboardLayout>secret</DashboardLayout>)\n  expect(screen.getByRole(\"status\")).toBeInTheDocument()\n  expect(screen.queryByText(\"secret\")).not.toBeInTheDocument()\n  expect(mockReplace).not.toHaveBeenCalled()\n})\n"
+  },
+  "tool_response": {
+    "type": "create",
+    "filePath": "D:\\Learn\\AgenticAI\\pocket-heist\\tests\\layouts\\DashboardLayout.test.tsx",
+    "content": "import { render, screen, act } from \"@testing-library/react\"\nimport DashboardLayout from \"@/app/(dashboard)/layout\"\n\nconst { mockReplace } = vi.hoisted(() => ({ mockReplace: vi.fn() }))\n\nvi.mock(\"next/navigation\", () => ({\n  useRouter: () => ({ replace: mockReplace }),\n  usePathname: () => \"/heists\",\n}))\n\nvi.mock(\"@/components/UserProvider/UserProvider\", () => ({\n  useUser: vi.fn(),\n}))\n\nvi.mock(\"@/components/Navbar\", () => ({\n  default: () => <nav data-testid=\"navbar\" />,\n}))\n\nimport { useUser } from \"@/components/UserProvider/UserProvider\"\n\nconst mockUser = { uid: \"u1\", email: \"agent@test.com\" }\n\nbeforeEach(() => {\n  vi.clearAllMocks()\n})\n\nit(\"shows spinner and redirects to /login when not authenticated\", async () => {\n  vi.mocked(useUser).mockReturnValue({ user: null, loading: false })\n  render(<DashboardLayout>secret</DashboardLayout>)\n  expect(screen.getByRole(\"status\")).toBeInTheDocument()\n  expect(screen.queryByText(\"secret\")).not.toBeInTheDocument()\n  expect(mockReplace).toHaveBeenCalledWith(\"/login?redirect=%2Fheists\")\n})\n\nit(\"renders children when authenticated\", () => {\n  vi.mocked(useUser).mockReturnValue({ user: mockUser, loading: false })\n  render(<DashboardLayout>mission content</DashboardLayout>)\n  expect(screen.getByText(\"mission content\")).toBeInTheDocument()\n  expect(screen.queryByRole(\"status\")).not.toBeInTheDocument()\n  expect(mockReplace).not.toHaveBeenCalled()\n})\n\nit(\"shows spinner while auth is loading\", () => {\n  vi.mocked(useUser).mockReturnValue({ user: null, loading: true })\n  render(<DashboardLayout>secret</DashboardLayout>)\n  expect(screen.getByRole(\"status\")).toBeInTheDocument()\n  expect(screen.queryByText(\"secret\")).not.toBeInTheDocument()\n  expect(mockReplace).not.toHaveBeenCalled()\n})\n",
+    "structuredPatch": [],
+    "originalFile": null,
+    "userModified": false
+  },
+  "tool_use_id": "toolu_014a4K4fjTk9c5p3J6bpiAjj",
+  "duration_ms": 105
+}
+{
+  "session_id": "38619526-0844-490c-ab48-d5900d2a78c5",
+  "transcript_path": "C:\\Users\\Ahmed.Elhawary\\.claude\\projects\\D--Learn-AgenticAI-pocket-heist\\38619526-0844-490c-ab48-d5900d2a78c5.jsonl",
+  "cwd": "D:\\Learn\\AgenticAI\\pocket-heist",
+  "permission_mode": "auto",
+  "effort": {
+    "level": "medium"
+  },
+  "hook_event_name": "PostToolUse",
+  "tool_name": "Write",
+  "tool_input": {
+    "file_path": "D:\\Learn\\AgenticAI\\pocket-heist\\tests\\layouts\\PublicLayout.test.tsx",
+    "content": "import { render, screen } from \"@testing-library/react\"\nimport PublicLayout from \"@/app/(public)/layout\"\n\nconst { mockReplace } = vi.hoisted(() => ({ mockReplace: vi.fn() }))\n\nvi.mock(\"next/navigation\", () => ({\n  useRouter: () => ({ replace: mockReplace }),\n}))\n\nvi.mock(\"@/components/UserProvider/UserProvider\", () => ({\n  useUser: vi.fn(),\n}))\n\nvi.mock(\"@/components/Footer\", () => ({\n  default: () => <footer data-testid=\"footer\" />,\n}))\n\nimport { useUser } from \"@/components/UserProvider/UserProvider\"\n\nconst mockUser = { uid: \"u1\", email: \"agent@test.com\" }\n\nbeforeEach(() => {\n  vi.clearAllMocks()\n  Object.defineProperty(window, \"location\", {\n    value: { search: \"\" },\n    writable: true,\n  })\n})\n\nit(\"shows spinner and redirects to /heists when authenticated\", () => {\n  vi.mocked(useUser).mockReturnValue({ user: mockUser, loading: false })\n  render(<PublicLayout>login form</PublicLayout>)\n  expect(screen.getByRole(\"status\")).toBeInTheDocument()\n  expect(screen.queryByText(\"login form\")).not.toBeInTheDocument()\n  expect(mockReplace).toHaveBeenCalledWith(\"/heists\")\n})\n\nit(\"redirects to ?redirect= param when authenticated and param is present\", () => {\n  vi.mocked(useUser).mockReturnValue({ user: mockUser, loading: false })\n  Object.defineProperty(window, \"location\", {\n    value: { search: \"?redirect=%2Fheists%2Fcreate\" },\n    writable: true,\n  })\n  render(<PublicLayout>login form</PublicLayout>)\n  expect(mockReplace).toHaveBeenCalledWith(\"/heists/create\")\n})\n\nit(\"renders children when not authenticated\", () => {\n  vi.mocked(useUser).mockReturnValue({ user: null, loading: false })\n  render(<PublicLayout>login form</PublicLayout>)\n  expect(screen.getByText(\"login form\")).toBeInTheDocument()\n  expect(screen.queryByRole(\"status\")).not.toBeInTheDocument()\n  expect(mockReplace).not.toHaveBeenCalled()\n})\n\nit(\"shows spinner while auth is loading\", () => {\n  vi.mocked(useUser).mockReturnValue({ user: null, loading: true })\n  render(<PublicLayout>login form</PublicLayout>)\n  expect(screen.getByRole(\"status\")).toBeInTheDocument()\n  expect(screen.queryByText(\"login form\")).not.toBeInTheDocument()\n  expect(mockReplace).not.toHaveBeenCalled()\n})\n"
+  },
+  "tool_response": {
+    "type": "create",
+    "filePath": "D:\\Learn\\AgenticAI\\pocket-heist\\tests\\layouts\\PublicLayout.test.tsx",
+    "content": "import { render, screen } from \"@testing-library/react\"\nimport PublicLayout from \"@/app/(public)/layout\"\n\nconst { mockReplace } = vi.hoisted(() => ({ mockReplace: vi.fn() }))\n\nvi.mock(\"next/navigation\", () => ({\n  useRouter: () => ({ replace: mockReplace }),\n}))\n\nvi.mock(\"@/components/UserProvider/UserProvider\", () => ({\n  useUser: vi.fn(),\n}))\n\nvi.mock(\"@/components/Footer\", () => ({\n  default: () => <footer data-testid=\"footer\" />,\n}))\n\nimport { useUser } from \"@/components/UserProvider/UserProvider\"\n\nconst mockUser = { uid: \"u1\", email: \"agent@test.com\" }\n\nbeforeEach(() => {\n  vi.clearAllMocks()\n  Object.defineProperty(window, \"location\", {\n    value: { search: \"\" },\n    writable: true,\n  })\n})\n\nit(\"shows spinner and redirects to /heists when authenticated\", () => {\n  vi.mocked(useUser).mockReturnValue({ user: mockUser, loading: false })\n  render(<PublicLayout>login form</PublicLayout>)\n  expect(screen.getByRole(\"status\")).toBeInTheDocument()\n  expect(screen.queryByText(\"login form\")).not.toBeInTheDocument()\n  expect(mockReplace).toHaveBeenCalledWith(\"/heists\")\n})\n\nit(\"redirects to ?redirect= param when authenticated and param is present\", () => {\n  vi.mocked(useUser).mockReturnValue({ user: mockUser, loading: false })\n  Object.defineProperty(window, \"location\", {\n    value: { search: \"?redirect=%2Fheists%2Fcreate\" },\n    writable: true,\n  })\n  render(<PublicLayout>login form</PublicLayout>)\n  expect(mockReplace).toHaveBeenCalledWith(\"/heists/create\")\n})\n\nit(\"renders children when not authenticated\", () => {\n  vi.mocked(useUser).mockReturnValue({ user: null, loading: false })\n  render(<PublicLayout>login form</PublicLayout>)\n  expect(screen.getByText(\"login form\")).toBeInTheDocument()\n  expect(screen.queryByRole(\"status\")).not.toBeInTheDocument()\n  expect(mockReplace).not.toHaveBeenCalled()\n})\n\nit(\"shows spinner while auth is loading\", () => {\n  vi.mocked(useUser).mockReturnValue({ user: null, loading: true })\n  render(<PublicLayout>login form</PublicLayout>)\n  expect(screen.getByRole(\"status\")).toBeInTheDocument()\n  expect(screen.queryByText(\"login form\")).not.toBeInTheDocument()\n  expect(mockReplace).not.toHaveBeenCalled()\n})\n",
+    "structuredPatch": [],
+    "originalFile": null,
+    "userModified": false
+  },
+  "tool_use_id": "toolu_01HYDcg7hBm3gZoJfT74pr7k",
+  "duration_ms": 104
+}
+{
+  "session_id": "38619526-0844-490c-ab48-d5900d2a78c5",
+  "transcript_path": "C:\\Users\\Ahmed.Elhawary\\.claude\\projects\\D--Learn-AgenticAI-pocket-heist\\38619526-0844-490c-ab48-d5900d2a78c5.jsonl",
+  "cwd": "D:\\Learn\\AgenticAI\\pocket-heist",
+  "permission_mode": "plan",
+  "effort": {
+    "level": "medium"
+  },
+  "hook_event_name": "PostToolUse",
+  "tool_name": "Edit",
+  "tool_input": {
+    "file_path": "C:\\Users\\Ahmed.Elhawary\\.claude\\plans\\please-make-plan-cuddly-badger.md",
+    "old_string": "# Plan: Route Protection",
+    "new_string": "# Plan: Save Route Protection Plan to _plans/\n\n## Context\nThe route-protection feature has already been implemented (Spinner component, both layout guards, and tests all passing). The plan was only saved to the harness plan file — it was not persisted to the project's `_plans/` folder as required by project convention (memory: \"save final plans to `_plans/<slug>.md`\").\n\n## What to Do\nWrite the completed plan content to `_plans/route-protection.md` in the project root.\n\n---\n\n# Route Protection — Implementation Plan",
+    "replace_all": false
+  },
+  "tool_response": {
+    "filePath": "C:\\Users\\Ahmed.Elhawary\\.claude\\plans\\please-make-plan-cuddly-badger.md",
+    "oldString": "# Plan: Route Protection",
+    "newString": "# Plan: Save Route Protection Plan to _plans/\n\n## Context\nThe route-protection feature has already been implemented (Spinner component, both layout guards, and tests all passing). The plan was only saved to the harness plan file — it was not persisted to the project's `_plans/` folder as required by project convention (memory: \"save final plans to `_plans/<slug>.md`\").\n\n## What to Do\nWrite the completed plan content to `_plans/route-protection.md` in the project root.\n\n---\n\n# Route Protection — Implementation Plan",
+    "originalFile": "# Plan: Route Protection\n\n## Context\nThe app has no route guards. Authenticated dashboard pages (`/heists*`) are publicly accessible, and public auth pages (`/login`, `/signup`) are accessible even when logged in. This causes incorrect UX and potential security issues. We need to wire both route-group layouts to the existing `useUser` hook so auth state gates access and shows a spinner while Firebase resolves.\n\nThe spec also requires a `?redirect=` param: when an unauthenticated user hits a dashboard URL, they land on `/login?redirect=/that/path` and after login are sent back there.\n\n---\n\n## What to Build\n\n### 1. Spinner component (new)\n**Files to create:**\n- `components/Spinner/index.ts`\n- `components/Spinner/Spinner.tsx`\n\nA full-page centered spinner using existing theme tokens (`primary` color). Matches the project's component folder convention. Used by both layouts while auth is resolving.\n\n### 2. Dashboard layout — add auth guard\n**File:** `app/(dashboard)/layout.tsx`\n\n- Add `\"use client\"` directive (required to use hooks).\n- Import `useUser`, `useRouter`, `usePathname` from `next/navigation`.\n- In a `useEffect`, when `!loading && !user`: call `router.replace(\"/login?redirect=\" + encodeURIComponent(pathname))`.\n- While `loading` is true **or** the user is null (redirect about to fire): return `<Spinner />` instead of children — prevents any flash of protected content.\n- When `!loading && user`: render the existing `<Navbar /> + <main>{children}</main>` structure unchanged.\n\n### 3. Public layout — add auth guard + redirect param\n**File:** `app/(public)/layout.tsx`\n\n- Add `\"use client\"` directive.\n- Import `useUser` and `useRouter`.\n- In a `useEffect`, when `!loading && user`: read `window.location.search` for a `?redirect=` param, validate it starts with `/`, and call `router.replace(redirect || \"/heists\")`. Using `window.location.search` inside `useEffect` avoids the Next.js `useSearchParams()` Suspense requirement.\n- While `loading` or while user is authenticated (redirect about to fire): return `<Spinner />`.\n- When `!loading && !user`: render the existing `<main className=\"public\">{children}</main> + <Footer />` structure unchanged.\n\n---\n\n## Files to Modify / Create\n\n| File | Action |\n|------|--------|\n| `components/Spinner/Spinner.tsx` | Create — full-page spinner |\n| `components/Spinner/index.ts` | Create — barrel export |\n| `app/(dashboard)/layout.tsx` | Modify — add `\"use client\"` + auth guard |\n| `app/(public)/layout.tsx` | Modify — add `\"use client\"` + auth guard |\n| `tests/layouts/DashboardLayout.test.tsx` | Create — layout tests |\n| `tests/layouts/PublicLayout.test.tsx` | Create — layout tests |\n\n---\n\n## Key Reuse\n\n- `useUser` hook from `components/UserProvider/UserProvider.tsx` — returns `{ user, loading }`.\n- `useRouter`, `usePathname` from `next/navigation` — same pattern as AuthForm (`components/AuthForm/AuthForm.tsx`).\n- Theme token `primary` for spinner color — consistent with `.btn` styling in `app/globals.css`.\n\n---\n\n## Testing\n\n**Mock strategy** (mirrors `tests/components/Navbar.test.tsx` pattern):\n```\nvi.mock(\"@/components/UserProvider/UserProvider\", () => ({ useUser: vi.fn() }))\nvi.mock(\"next/navigation\", () => ({ useRouter: () => ({ replace: mockReplace }), usePathname: () => \"/heists\" }))\n```\n\n**Test cases per layout (from spec):**\n- Dashboard: redirects to `/login` when `{ user: null, loading: false }`\n- Dashboard: renders children when `{ user: mockUser, loading: false }`\n- Dashboard: renders spinner when `{ user: null, loading: true }`\n- Public: redirects to `/heists` when `{ user: mockUser, loading: false }`\n- Public: renders children when `{ user: null, loading: false }`\n- Public: renders spinner when `{ user: null, loading: true }`\n\n**Run tests:** `npx vitest run tests/layouts/`\n\n**Manual verification:**\n1. `npm run dev`\n2. While logged out, visit `localhost:3000/heists` → should redirect to `/login`\n3. While logged in, visit `localhost:3000/login` → should redirect to `/heists`\n4. Visit `localhost:3000/heists/create` while logged out → should redirect to `/login?redirect=/heists/create`, then after login land on `/heists/create`\n5. On a slow connection, the spinner should be visible before redirect fires\n",
+    "structuredPatch": [
+      {
+        "oldStart": 1,
+        "oldLines": 6,
+        "newStart": 1,
+        "newLines": 16,
+        "lines": [
+          "-# Plan: Route Protection",
+          "+# Plan: Save Route Protection Plan to _plans/",
+          " ",
+          " ## Context",
+          "+The route-protection feature has already been implemented (Spinner component, both layout guards, and tests all passing). The plan was only saved to the harness plan file — it was not persisted to the project's `_plans/` folder as required by project convention (memory: \"save final plans to `_plans/<slug>.md`\").",
+          "+",
+          "+## What to Do",
+          "+Write the completed plan content to `_plans/route-protection.md` in the project root.",
+          "+",
+          "+---",
+          "+",
+          "+# Route Protection — Implementation Plan",
+          "+",
+          "+## Context",
+          " The app has no route guards. Authenticated dashboard pages (`/heists*`) are publicly accessible, and public auth pages (`/login`, `/signup`) are accessible even when logged in. This causes incorrect UX and potential security issues. We need to wire both route-group layouts to the existing `useUser` hook so auth state gates access and shows a spinner while Firebase resolves.",
+          " ",
+          " The spec also requires a `?redirect=` param: when an unauthenticated user hits a dashboard URL, they land on `/login?redirect=/that/path` and after login are sent back there."
+        ]
+      }
+    ],
+    "userModified": false,
+    "replaceAll": false
+  },
+  "tool_use_id": "toolu_015u6f97GCD4Qou9WU3pHePn",
+  "duration_ms": 30
+}
+{
+  "session_id": "38619526-0844-490c-ab48-d5900d2a78c5",
+  "transcript_path": "C:\\Users\\Ahmed.Elhawary\\.claude\\projects\\D--Learn-AgenticAI-pocket-heist\\38619526-0844-490c-ab48-d5900d2a78c5.jsonl",
+  "cwd": "D:\\Learn\\AgenticAI\\pocket-heist",
+  "permission_mode": "auto",
+  "effort": {
+    "level": "medium"
+  },
+  "hook_event_name": "PostToolUse",
+  "tool_name": "Write",
+  "tool_input": {
+    "file_path": "D:\\Learn\\AgenticAI\\pocket-heist\\_plans\\route-protection.md",
+    "content": "# Route Protection — Implementation Plan\n\n## Context\nThe app has no route guards. Authenticated dashboard pages (`/heists*`) are publicly accessible, and public auth pages (`/login`, `/signup`) are accessible even when logged in. This causes incorrect UX and potential security issues. We need to wire both route-group layouts to the existing `useUser` hook so auth state gates access and shows a spinner while Firebase resolves.\n\nThe spec also requires a `?redirect=` param: when an unauthenticated user hits a dashboard URL, they land on `/login?redirect=/that/path` and after login are sent back there.\n\n---\n\n## What to Build\n\n### 1. Spinner component (new)\n**Files to create:**\n- `components/Spinner/index.ts`\n- `components/Spinner/Spinner.tsx`\n\nA full-page centered spinner using existing theme tokens (`primary` color). Matches the project's component folder convention. Used by both layouts while auth is resolving.\n\n### 2. Dashboard layout — add auth guard\n**File:** `app/(dashboard)/layout.tsx`\n\n- Add `\"use client\"` directive (required to use hooks).\n- Import `useUser`, `useRouter`, `usePathname` from `next/navigation`.\n- In a `useEffect`, when `!loading && !user`: call `router.replace(\"/login?redirect=\" + encodeURIComponent(pathname))`.\n- While `loading` is true **or** the user is null (redirect about to fire): return `<Spinner />` instead of children — prevents any flash of protected content.\n- When `!loading && user`: render the existing `<Navbar /> + <main>{children}</main>` structure unchanged.\n\n### 3. Public layout — add auth guard + redirect param\n**File:** `app/(public)/layout.tsx`\n\n- Add `\"use client\"` directive.\n- Import `useUser` and `useRouter`.\n- In a `useEffect`, when `!loading && user`: read `window.location.search` for a `?redirect=` param, validate it starts with `/`, and call `router.replace(redirect || \"/heists\")`. Using `window.location.search` inside `useEffect` avoids the Next.js `useSearchParams()` Suspense requirement.\n- While `loading` or while user is authenticated (redirect about to fire): return `<Spinner />`.\n- When `!loading && !user`: render the existing `<main className=\"public\">{children}</main> + <Footer />` structure unchanged.\n\n---\n\n## Files Modified / Created\n\n| File | Action |\n|------|--------|\n| `components/Spinner/Spinner.tsx` | Create — full-page spinner |\n| `components/Spinner/index.ts` | Create — barrel export |\n| `app/(dashboard)/layout.tsx` | Modify — add `\"use client\"` + auth guard |\n| `app/(public)/layout.tsx` | Modify — add `\"use client\"` + auth guard |\n| `tests/layouts/DashboardLayout.test.tsx` | Create — layout tests |\n| `tests/layouts/PublicLayout.test.tsx` | Create — layout tests |\n\n---\n\n## Key Reuse\n\n- `useUser` hook from `components/UserProvider/UserProvider.tsx` — returns `{ user, loading }`.\n- `useRouter`, `usePathname` from `next/navigation` — same pattern as AuthForm (`components/AuthForm/AuthForm.tsx`).\n- Theme token `primary` for spinner color — consistent with `.btn` styling in `app/globals.css`.\n\n---\n\n## Testing\n\n**Mock strategy** (mirrors `tests/components/Navbar.test.tsx` pattern):\n```\nvi.mock(\"@/components/UserProvider/UserProvider\", () => ({ useUser: vi.fn() }))\nvi.mock(\"next/navigation\", () => ({ useRouter: () => ({ replace: mockReplace }), usePathname: () => \"/heists\" }))\n```\n\n**Test cases per layout:**\n- Dashboard: redirects to `/login` when `{ user: null, loading: false }`\n- Dashboard: renders children when `{ user: mockUser, loading: false }`\n- Dashboard: renders spinner when `{ user: null, loading: true }`\n- Public: redirects to `/heists` when `{ user: mockUser, loading: false }`\n- Public: renders children when `{ user: null, loading: false }`\n- Public: renders spinner when `{ user: null, loading: true }`\n\n**Run tests:** `npx vitest run tests/layouts/`\n\n**Manual verification:**\n1. `npm run dev`\n2. While logged out, visit `localhost:3000/heists` → should redirect to `/login`\n3. While logged in, visit `localhost:3000/login` → should redirect to `/heists`\n4. Visit `localhost:3000/heists/create` while logged out → should redirect to `/login?redirect=/heists/create`, then after login land on `/heists/create`\n5. On a slow connection, the spinner should be visible before redirect fires\n"
+  },
+  "tool_response": {
+    "type": "create",
+    "filePath": "D:\\Learn\\AgenticAI\\pocket-heist\\_plans\\route-protection.md",
+    "content": "# Route Protection — Implementation Plan\n\n## Context\nThe app has no route guards. Authenticated dashboard pages (`/heists*`) are publicly accessible, and public auth pages (`/login`, `/signup`) are accessible even when logged in. This causes incorrect UX and potential security issues. We need to wire both route-group layouts to the existing `useUser` hook so auth state gates access and shows a spinner while Firebase resolves.\n\nThe spec also requires a `?redirect=` param: when an unauthenticated user hits a dashboard URL, they land on `/login?redirect=/that/path` and after login are sent back there.\n\n---\n\n## What to Build\n\n### 1. Spinner component (new)\n**Files to create:**\n- `components/Spinner/index.ts`\n- `components/Spinner/Spinner.tsx`\n\nA full-page centered spinner using existing theme tokens (`primary` color). Matches the project's component folder convention. Used by both layouts while auth is resolving.\n\n### 2. Dashboard layout — add auth guard\n**File:** `app/(dashboard)/layout.tsx`\n\n- Add `\"use client\"` directive (required to use hooks).\n- Import `useUser`, `useRouter`, `usePathname` from `next/navigation`.\n- In a `useEffect`, when `!loading && !user`: call `router.replace(\"/login?redirect=\" + encodeURIComponent(pathname))`.\n- While `loading` is true **or** the user is null (redirect about to fire): return `<Spinner />` instead of children — prevents any flash of protected content.\n- When `!loading && user`: render the existing `<Navbar /> + <main>{children}</main>` structure unchanged.\n\n### 3. Public layout — add auth guard + redirect param\n**File:** `app/(public)/layout.tsx`\n\n- Add `\"use client\"` directive.\n- Import `useUser` and `useRouter`.\n- In a `useEffect`, when `!loading && user`: read `window.location.search` for a `?redirect=` param, validate it starts with `/`, and call `router.replace(redirect || \"/heists\")`. Using `window.location.search` inside `useEffect` avoids the Next.js `useSearchParams()` Suspense requirement.\n- While `loading` or while user is authenticated (redirect about to fire): return `<Spinner />`.\n- When `!loading && !user`: render the existing `<main className=\"public\">{children}</main> + <Footer />` structure unchanged.\n\n---\n\n## Files Modified / Created\n\n| File | Action |\n|------|--------|\n| `components/Spinner/Spinner.tsx` | Create — full-page spinner |\n| `components/Spinner/index.ts` | Create — barrel export |\n| `app/(dashboard)/layout.tsx` | Modify — add `\"use client\"` + auth guard |\n| `app/(public)/layout.tsx` | Modify — add `\"use client\"` + auth guard |\n| `tests/layouts/DashboardLayout.test.tsx` | Create — layout tests |\n| `tests/layouts/PublicLayout.test.tsx` | Create — layout tests |\n\n---\n\n## Key Reuse\n\n- `useUser` hook from `components/UserProvider/UserProvider.tsx` — returns `{ user, loading }`.\n- `useRouter`, `usePathname` from `next/navigation` — same pattern as AuthForm (`components/AuthForm/AuthForm.tsx`).\n- Theme token `primary` for spinner color — consistent with `.btn` styling in `app/globals.css`.\n\n---\n\n## Testing\n\n**Mock strategy** (mirrors `tests/components/Navbar.test.tsx` pattern):\n```\nvi.mock(\"@/components/UserProvider/UserProvider\", () => ({ useUser: vi.fn() }))\nvi.mock(\"next/navigation\", () => ({ useRouter: () => ({ replace: mockReplace }), usePathname: () => \"/heists\" }))\n```\n\n**Test cases per layout:**\n- Dashboard: redirects to `/login` when `{ user: null, loading: false }`\n- Dashboard: renders children when `{ user: mockUser, loading: false }`\n- Dashboard: renders spinner when `{ user: null, loading: true }`\n- Public: redirects to `/heists` when `{ user: mockUser, loading: false }`\n- Public: renders children when `{ user: null, loading: false }`\n- Public: renders spinner when `{ user: null, loading: true }`\n\n**Run tests:** `npx vitest run tests/layouts/`\n\n**Manual verification:**\n1. `npm run dev`\n2. While logged out, visit `localhost:3000/heists` → should redirect to `/login`\n3. While logged in, visit `localhost:3000/login` → should redirect to `/heists`\n4. Visit `localhost:3000/heists/create` while logged out → should redirect to `/login?redirect=/heists/create`, then after login land on `/heists/create`\n5. On a slow connection, the spinner should be visible before redirect fires\n",
+    "structuredPatch": [],
+    "originalFile": null,
+    "userModified": false
+  },
+  "tool_use_id": "toolu_01G2DekCRT6a139WJ1g86P3h",
+  "duration_ms": 35
+}
+{
+  "session_id": "20155271-64d8-4f0a-a628-52894cd7d7ba",
+  "transcript_path": "C:\\Users\\Ahmed.Elhawary\\.claude\\projects\\D--Learn-AgenticAI-pocket-heist\\20155271-64d8-4f0a-a628-52894cd7d7ba.jsonl",
+  "cwd": "D:\\Learn\\AgenticAI\\pocket-heist",
+  "permission_mode": "default",
+  "effort": {
+    "level": "medium"
+  },
+  "hook_event_name": "PostToolUse",
+  "tool_name": "Write",
+  "tool_input": {
+    "file_path": "D:\\Learn\\AgenticAI\\pocket-heist\\types\\firestore\\heist.ts",
+    "content": "import { DocumentData, FieldValue, QueryDocumentSnapshot } from 'firebase/firestore'\n\nexport type HeistFinalStatus = 'success' | 'failure'\n\nexport interface Heist {\n  id: string\n  title: string\n  description: string\n  createdBy: string\n  createdByCodeName: string\n  assignedTo: string\n  assignedToCodeName: string\n  deadline: Date\n  finalStatus: HeistFinalStatus | null\n  createdAt: Date\n}\n\nexport interface CreateHeistInput {\n  title: string\n  description: string\n  createdBy: string\n  createdByCodeName: string\n  assignedTo: string\n  assignedToCodeName: string\n  deadline: Date\n  finalStatus: null\n  createdAt: FieldValue\n}\n\nexport interface UpdateHeistInput {\n  title?: string\n  description?: string\n  assignedTo?: string\n  assignedToCodeName?: string\n  deadline?: Date\n  finalStatus?: HeistFinalStatus | null\n}\n\nexport const heistConverter = {\n  toFirestore: (data: Partial<Heist>): DocumentData => data,\n\n  fromFirestore: (snapshot: QueryDocumentSnapshot): Heist => ({\n    id: snapshot.id,\n    ...snapshot.data(),\n    createdAt: snapshot.data().createdAt?.toDate(),\n    deadline: snapshot.data().deadline?.toDate(),\n  } as Heist),\n}\n"
+  },
+  "tool_response": {
+    "type": "create",
+    "filePath": "D:\\Learn\\AgenticAI\\pocket-heist\\types\\firestore\\heist.ts",
+    "content": "import { DocumentData, FieldValue, QueryDocumentSnapshot } from 'firebase/firestore'\n\nexport type HeistFinalStatus = 'success' | 'failure'\n\nexport interface Heist {\n  id: string\n  title: string\n  description: string\n  createdBy: string\n  createdByCodeName: string\n  assignedTo: string\n  assignedToCodeName: string\n  deadline: Date\n  finalStatus: HeistFinalStatus | null\n  createdAt: Date\n}\n\nexport interface CreateHeistInput {\n  title: string\n  description: string\n  createdBy: string\n  createdByCodeName: string\n  assignedTo: string\n  assignedToCodeName: string\n  deadline: Date\n  finalStatus: null\n  createdAt: FieldValue\n}\n\nexport interface UpdateHeistInput {\n  title?: string\n  description?: string\n  assignedTo?: string\n  assignedToCodeName?: string\n  deadline?: Date\n  finalStatus?: HeistFinalStatus | null\n}\n\nexport const heistConverter = {\n  toFirestore: (data: Partial<Heist>): DocumentData => data,\n\n  fromFirestore: (snapshot: QueryDocumentSnapshot): Heist => ({\n    id: snapshot.id,\n    ...snapshot.data(),\n    createdAt: snapshot.data().createdAt?.toDate(),\n    deadline: snapshot.data().deadline?.toDate(),\n  } as Heist),\n}\n",
+    "structuredPatch": [],
+    "originalFile": null,
+    "userModified": false
+  },
+  "tool_use_id": "toolu_017BGPDt4mJhFutscURpVe9r",
+  "duration_ms": 203
+}
+{
+  "session_id": "20155271-64d8-4f0a-a628-52894cd7d7ba",
+  "transcript_path": "C:\\Users\\Ahmed.Elhawary\\.claude\\projects\\D--Learn-AgenticAI-pocket-heist\\20155271-64d8-4f0a-a628-52894cd7d7ba.jsonl",
+  "cwd": "D:\\Learn\\AgenticAI\\pocket-heist",
+  "permission_mode": "acceptEdits",
+  "effort": {
+    "level": "medium"
+  },
+  "hook_event_name": "PostToolUse",
+  "tool_name": "Write",
+  "tool_input": {
+    "file_path": "D:\\Learn\\AgenticAI\\pocket-heist\\types\\firestore\\index.ts",
+    "content": "export * from './heist'\n\nexport const COLLECTIONS = {\n  HEISTS: 'heists',\n} as const\n"
+  },
+  "tool_response": {
+    "type": "create",
+    "filePath": "D:\\Learn\\AgenticAI\\pocket-heist\\types\\firestore\\index.ts",
+    "content": "export * from './heist'\n\nexport const COLLECTIONS = {\n  HEISTS: 'heists',\n} as const\n",
+    "structuredPatch": [],
+    "originalFile": null,
+    "userModified": false
+  },
+  "tool_use_id": "toolu_01BZZ6CX8JNj8rBdbKiwYi3S",
+  "duration_ms": 102
+}
