@@ -4334,3 +4334,567 @@
   "tool_use_id": "toolu_01EwMDdXex9pmYF933wefCX6",
   "duration_ms": 62
 }
+{
+  "session_id": "8ae9b854-36b4-4b50-90e9-b937b99a46a4",
+  "transcript_path": "C:\\Users\\Ahmed.Elhawary\\.claude\\projects\\D--Learn-AgenticAI-pocket-heist\\8ae9b854-36b4-4b50-90e9-b937b99a46a4.jsonl",
+  "cwd": "D:\\Learn\\AgenticAI\\pocket-heist",
+  "permission_mode": "default",
+  "effort": {
+    "level": "medium"
+  },
+  "hook_event_name": "PostToolUse",
+  "tool_name": "Write",
+  "tool_input": {
+    "file_path": "D:\\Learn\\AgenticAI\\pocket-heist\\_specs\\use-heists.md",
+    "content": "# Spec for use-heists\n\nbranch: claude/feature/use-heists\nfigma_component (if used): n/a\n\n## Summary\n- Add a `useHeists` React hook that subscribes to the Firestore `heists` collection in **real time** and returns a typed array of `Heist` objects.\n- The hook accepts a single filter argument: `'active'`, `'assigned'`, or `'expired'`. The argument determines which Firestore query is run.\n- Use the hook on the `/heists` dashboard page to render only the **titles** of each of the three result sets under their existing section headings.\n\n## Functional Requirements\n- Create a hook `useHeists(filter)` (e.g. `hooks/useHeists.ts`) where `filter` is the union type `'active' | 'assigned' | 'expired'`.\n- The hook subscribes with Firestore's real-time listener (`onSnapshot`) so the UI updates automatically when heist documents change. The listener must be cleaned up on unmount or when the filter / current user changes.\n- The hook reads the current user via the existing `useUser()` context to obtain the current user's `uid`.\n- The hook applies the `heistConverter` (from `types/firestore/heist.ts`) so returned items are fully typed `Heist[]` with `deadline` and `createdAt` as `Date`s.\n- Query behavior per filter value:\n  - **`active`** — heists where `assignedTo == currentUser.uid` AND `deadline` is in the future (deadline has not passed).\n  - **`assigned`** — heists where `createdBy == currentUser.uid` AND `deadline` is in the future (deadline has not passed). (Heists the current user assigned BY themselves to others.)\n  - **`expired`** — heists where `deadline` is in the past (deadline has passed) AND `finalStatus != null`, regardless of which user created or was assigned the heist.\n- The hook returns the array of matching heists. It should also expose enough state for callers to handle loading and error conditions sensibly.\n- Update `app/(dashboard)/heists/page.tsx` to call the hook three times (one per filter) and render only the `title` of each heist within the existing `active-heists`, `assigned-heists`, and `expired-heists` sections.\n\n## Figma Design Reference (only if referenced)\n- File: n/a\n- Component name: n/a\n- Key visual constraints: n/a — this feature is data/logic focused; titles render as a simple list under the existing headings.\n\n## Possible Edge Cases\n- No current user yet (auth still loading or signed out): hook should not crash and should return an empty result until a `uid` is available.\n- A filter returns zero matching heists: the page should show the heading with an empty list (no error).\n- Firestore comparing `finalStatus != null`: account for the fact that `!=` queries in Firestore exclude documents where the field is missing entirely; documents are expected to always carry `finalStatus` (set to `null` on creation).\n- `deadline` comparisons must use a `Date`/Timestamp boundary captured at query time; consider that \"now\" is evaluated when the query is built, not continuously.\n- Composite queries (equality + range/inequality on a different field) may require a Firestore composite index — note any index that must be created.\n- Switching the `filter` argument between renders must tear down the previous snapshot listener to avoid leaks or stale data.\n\n## Acceptance Criteria\n- `useHeists('active')` returns only heists assigned to the current user whose deadline is in the future.\n- `useHeists('assigned')` returns only heists created by the current user whose deadline is in the future.\n- `useHeists('expired')` returns only heists whose deadline has passed and whose `finalStatus` is not null, for any user.\n- Results update live when underlying Firestore documents change, without a manual refresh.\n- The `/heists` page displays the titles of the three result sets under the correct existing headings.\n- No unhandled errors when there is no signed-in user or when a result set is empty.\n\n## Open Questions\n- For the `expired` filter, should results be ordered (e.g. most recently passed deadline first)? Default assumption: order by `deadline` descending unless specified.\n- Should `active` / `assigned` also exclude heists that already have a non-null `finalStatus`, or strictly use the deadline rule as written? Default assumption: follow the spec exactly (deadline-only for active/assigned).\n- Is a shared loading/error UI expected on the page, or is rendering titles only (empty when none) sufficient for this iteration? Default assumption: titles only.\n\n## Testing Guidelines\nCreate a test file(s) in the ./tests folder for the new feature, and create meaningful tests for the following cases, without going too heavy:\n- The hook builds the correct query (filter field + deadline comparison) for each of `active`, `assigned`, and `expired`, given a mocked current user.\n- The hook returns the mapped `Heist[]` from a mocked `onSnapshot` callback and updates when the snapshot emits again.\n- The hook returns an empty array (and does not subscribe) when there is no current user.\n- The `/heists` page renders the titles returned by each filter under the correct section heading, and renders headings cleanly when a result set is empty.\n"
+  },
+  "tool_response": {
+    "type": "create",
+    "filePath": "D:\\Learn\\AgenticAI\\pocket-heist\\_specs\\use-heists.md",
+    "content": "# Spec for use-heists\n\nbranch: claude/feature/use-heists\nfigma_component (if used): n/a\n\n## Summary\n- Add a `useHeists` React hook that subscribes to the Firestore `heists` collection in **real time** and returns a typed array of `Heist` objects.\n- The hook accepts a single filter argument: `'active'`, `'assigned'`, or `'expired'`. The argument determines which Firestore query is run.\n- Use the hook on the `/heists` dashboard page to render only the **titles** of each of the three result sets under their existing section headings.\n\n## Functional Requirements\n- Create a hook `useHeists(filter)` (e.g. `hooks/useHeists.ts`) where `filter` is the union type `'active' | 'assigned' | 'expired'`.\n- The hook subscribes with Firestore's real-time listener (`onSnapshot`) so the UI updates automatically when heist documents change. The listener must be cleaned up on unmount or when the filter / current user changes.\n- The hook reads the current user via the existing `useUser()` context to obtain the current user's `uid`.\n- The hook applies the `heistConverter` (from `types/firestore/heist.ts`) so returned items are fully typed `Heist[]` with `deadline` and `createdAt` as `Date`s.\n- Query behavior per filter value:\n  - **`active`** — heists where `assignedTo == currentUser.uid` AND `deadline` is in the future (deadline has not passed).\n  - **`assigned`** — heists where `createdBy == currentUser.uid` AND `deadline` is in the future (deadline has not passed). (Heists the current user assigned BY themselves to others.)\n  - **`expired`** — heists where `deadline` is in the past (deadline has passed) AND `finalStatus != null`, regardless of which user created or was assigned the heist.\n- The hook returns the array of matching heists. It should also expose enough state for callers to handle loading and error conditions sensibly.\n- Update `app/(dashboard)/heists/page.tsx` to call the hook three times (one per filter) and render only the `title` of each heist within the existing `active-heists`, `assigned-heists`, and `expired-heists` sections.\n\n## Figma Design Reference (only if referenced)\n- File: n/a\n- Component name: n/a\n- Key visual constraints: n/a — this feature is data/logic focused; titles render as a simple list under the existing headings.\n\n## Possible Edge Cases\n- No current user yet (auth still loading or signed out): hook should not crash and should return an empty result until a `uid` is available.\n- A filter returns zero matching heists: the page should show the heading with an empty list (no error).\n- Firestore comparing `finalStatus != null`: account for the fact that `!=` queries in Firestore exclude documents where the field is missing entirely; documents are expected to always carry `finalStatus` (set to `null` on creation).\n- `deadline` comparisons must use a `Date`/Timestamp boundary captured at query time; consider that \"now\" is evaluated when the query is built, not continuously.\n- Composite queries (equality + range/inequality on a different field) may require a Firestore composite index — note any index that must be created.\n- Switching the `filter` argument between renders must tear down the previous snapshot listener to avoid leaks or stale data.\n\n## Acceptance Criteria\n- `useHeists('active')` returns only heists assigned to the current user whose deadline is in the future.\n- `useHeists('assigned')` returns only heists created by the current user whose deadline is in the future.\n- `useHeists('expired')` returns only heists whose deadline has passed and whose `finalStatus` is not null, for any user.\n- Results update live when underlying Firestore documents change, without a manual refresh.\n- The `/heists` page displays the titles of the three result sets under the correct existing headings.\n- No unhandled errors when there is no signed-in user or when a result set is empty.\n\n## Open Questions\n- For the `expired` filter, should results be ordered (e.g. most recently passed deadline first)? Default assumption: order by `deadline` descending unless specified.\n- Should `active` / `assigned` also exclude heists that already have a non-null `finalStatus`, or strictly use the deadline rule as written? Default assumption: follow the spec exactly (deadline-only for active/assigned).\n- Is a shared loading/error UI expected on the page, or is rendering titles only (empty when none) sufficient for this iteration? Default assumption: titles only.\n\n## Testing Guidelines\nCreate a test file(s) in the ./tests folder for the new feature, and create meaningful tests for the following cases, without going too heavy:\n- The hook builds the correct query (filter field + deadline comparison) for each of `active`, `assigned`, and `expired`, given a mocked current user.\n- The hook returns the mapped `Heist[]` from a mocked `onSnapshot` callback and updates when the snapshot emits again.\n- The hook returns an empty array (and does not subscribe) when there is no current user.\n- The `/heists` page renders the titles returned by each filter under the correct section heading, and renders headings cleanly when a result set is empty.\n",
+    "structuredPatch": [],
+    "originalFile": null,
+    "userModified": false
+  },
+  "tool_use_id": "toolu_01K4JEYuNzGdFH5mXmFNivVw",
+  "duration_ms": 39
+}
+{
+  "session_id": "8ae9b854-36b4-4b50-90e9-b937b99a46a4",
+  "transcript_path": "C:\\Users\\Ahmed.Elhawary\\.claude\\projects\\D--Learn-AgenticAI-pocket-heist\\8ae9b854-36b4-4b50-90e9-b937b99a46a4.jsonl",
+  "cwd": "D:\\Learn\\AgenticAI\\pocket-heist",
+  "permission_mode": "plan",
+  "effort": {
+    "level": "medium"
+  },
+  "hook_event_name": "PostToolUse",
+  "tool_name": "Write",
+  "tool_input": {
+    "file_path": "C:\\Users\\Ahmed.Elhawary\\.claude\\plans\\let-s-make-a-plan-floating-spark.md",
+    "content": "# Plan: useHeists Data Hook\n\n**Spec:** `_specs/use-heists.md`\n**Branch:** `claude/feature/use-heists`\n\n## Context\n\nThe `/heists` dashboard page (`app/(dashboard)/heists/page.tsx`) is a static skeleton with three empty sections: active, assigned, and expired heists. There is no way yet to read heist documents from Firestore. This plan adds a real-time `useHeists` hook that subscribes to the `heists` collection and returns a typed `Heist[]` filtered by one of three modes, then wires it into the page to render the titles of each result set.\n\nPer the clarifications:\n- **active / assigned** use the deadline rule only (no `finalStatus` filter).\n- **expired** uses `finalStatus != null` (literal, two-inequality query).\n\nAll the building blocks already exist: the `Heist` type and `heistConverter` (`types/firestore/heist.ts`), the Firestore `db` (`lib/firebase.ts`), and the `useUser()` auth context (`components/UserProvider/UserProvider.tsx`). Test mocking conventions are established in `tests/components/CreateHeistForm.test.tsx` (`vi.hoisted` + `vi.mock`).\n\n---\n\n## Step 1 — Create the `useHeists` hook\n\nNew file: `hooks/useHeists.ts` (new `hooks/` folder; `@/hooks/...` already resolves via the `@/*` alias).\n\n### Signature & return\n\n```ts\nexport type HeistFilter = 'active' | 'assigned' | 'expired'\n\nexport function useHeists(filter: HeistFilter): {\n  heists: Heist[]\n  loading: boolean\n  error: Error | null\n}\n```\n\n### Behavior\n\n- Read `const { user } = useUser()` to obtain `user.uid`.\n- In a `useEffect` keyed on `[filter, user?.uid]`:\n  - If there is no `user`, set `heists` to `[]`, `loading` to `false`, and do **not** subscribe.\n  - Otherwise build the filtered query (below), call `onSnapshot(q, onNext, onError)`, and store results via the `heistConverter`.\n  - Return the `onSnapshot` unsubscribe function from the effect for cleanup (tears down on unmount and when `filter`/`uid` change).\n- Capture `now = new Date()` when building the query (evaluated at subscribe time, per spec edge case).\n- Apply the converter so `deadline`/`createdAt` come back as `Date`s: build the collection ref with `collection(db, 'heists').withConverter(heistConverter)`, then `query(ref, ...constraints)`. `onSnapshot` `snapshot.docs.map(d => d.data())` then yields `Heist[]`.\n  - Note: the converter's `toFirestore` is only exercised on writes; reads use `fromFirestore`, so `withConverter` is safe here (unlike the create-form write path).\n\n### Queries per filter\n\nUsing `where`, `query`, `orderBy` from `firebase/firestore`:\n\n| filter | constraints |\n|---|---|\n| `active` | `where('assignedTo','==',uid)`, `where('deadline','>', now)` |\n| `assigned` | `where('createdBy','==',uid)`, `where('deadline','>', now)` |\n| `expired` | `where('finalStatus','!=', null)`, `where('deadline','<', now)` |\n\n- For `expired`, the SDK requires the first `orderBy` to be on the inequality field used by `!=`; add `orderBy('finalStatus')` then `orderBy('deadline','desc')`. For `active`/`assigned`, `deadline` is the range field, so `orderBy('deadline','asc')` is implied/required.\n- `null` is a valid sentinel here because every heist is created with `finalStatus: null` (see `CreateHeistInput`), so `!= null` correctly returns only completed (`success`/`failure`) heists.\n\n### Firestore composite indexes\n\nThese compound queries require composite indexes. First run in dev will surface a console error with a click-to-create link; capture the definitions in `firestore.indexes.json` if present, otherwise create via the console link. Expected indexes:\n- `heists`: `assignedTo` ASC + `deadline` ASC\n- `heists`: `createdBy` ASC + `deadline` ASC\n- `heists`: `finalStatus` ASC + `deadline` DESC\n\n---\n\n## Step 2 — Wire the hook into the page\n\nUpdate `app/(dashboard)/heists/page.tsx`:\n\n- Add `\"use client\"` at the top (the hook depends on `useUser` context and `onSnapshot`).\n- Call the hook three times:\n  ```ts\n  const { heists: active } = useHeists('active')\n  const { heists: assigned } = useHeists('assigned')\n  const { heists: expired } = useHeists('expired')\n  ```\n- Under each existing heading, render `<ul>` of `heist.title` (keyed by `heist.id`). Keep the existing `active-heists` / `assigned-heists` / `expired-heists` wrapper divs and `<h2>` headings.\n- Empty result set renders the heading with an empty list (no error) — no special-casing required for this iteration.\n\n---\n\n## Step 3 — Tests\n\nNew file: `tests/hooks/useHeists.test.tsx`. Follow the `vi.hoisted` + `vi.mock` pattern from `CreateHeistForm.test.tsx`.\n\nMocks:\n- `vi.mock('firebase/firestore')` → mock `collection`, `query`, `where`, `orderBy`, `onSnapshot`. Have `where`/`orderBy`/`query` return descriptor objects so calls can be asserted; have `onSnapshot` capture the `onNext` callback and return an `unsubscribe` spy.\n- `vi.mock('@/lib/firebase')` → `db: {}`.\n- `vi.mock('@/components/UserProvider')` → controllable `useUser` returning a fake `uid`.\n- A `withConverter` stub on the collection ref (return the ref) so the converter path doesn't break under mocks.\n\nRender the hook with `@testing-library/react`'s `renderHook`.\n\nCases:\n1. `active` builds `where('assignedTo','==',uid)` + a `deadline` `>` constraint.\n2. `assigned` builds `where('createdBy','==',uid)` + a `deadline` `>` constraint.\n3. `expired` builds `where('finalStatus','!=', null)` + `deadline` `<` constraint.\n4. Returns mapped `Heist[]` when the captured `onSnapshot` callback emits, and re-renders with new data on a second emit.\n5. No current user → returns `[]` and `onSnapshot` is never called.\n6. Unmount calls the `unsubscribe` function returned by `onSnapshot`.\n\n(Optional) A light page test under `tests/` asserting titles render under the right heading, mocking `useHeists` to return fixed arrays.\n\n---\n\n## Verification\n\n1. `npm run dev` → sign in, navigate to `/heists`.\n2. Confirm titles appear under the correct headings. If a console error links to create a Firestore index, follow it (Step 1 indexes), then confirm results populate.\n3. Create a heist via `/heists/create` assigned to yourself → it appears live under \"Your Active Heists\" without refresh (real-time check).\n4. `npx vitest run tests/hooks/useHeists.test.tsx` — all tests pass.\n5. `npm run lint` — no TypeScript/lint errors.\n"
+  },
+  "tool_response": {
+    "type": "create",
+    "filePath": "C:\\Users\\Ahmed.Elhawary\\.claude\\plans\\let-s-make-a-plan-floating-spark.md",
+    "content": "# Plan: useHeists Data Hook\n\n**Spec:** `_specs/use-heists.md`\n**Branch:** `claude/feature/use-heists`\n\n## Context\n\nThe `/heists` dashboard page (`app/(dashboard)/heists/page.tsx`) is a static skeleton with three empty sections: active, assigned, and expired heists. There is no way yet to read heist documents from Firestore. This plan adds a real-time `useHeists` hook that subscribes to the `heists` collection and returns a typed `Heist[]` filtered by one of three modes, then wires it into the page to render the titles of each result set.\n\nPer the clarifications:\n- **active / assigned** use the deadline rule only (no `finalStatus` filter).\n- **expired** uses `finalStatus != null` (literal, two-inequality query).\n\nAll the building blocks already exist: the `Heist` type and `heistConverter` (`types/firestore/heist.ts`), the Firestore `db` (`lib/firebase.ts`), and the `useUser()` auth context (`components/UserProvider/UserProvider.tsx`). Test mocking conventions are established in `tests/components/CreateHeistForm.test.tsx` (`vi.hoisted` + `vi.mock`).\n\n---\n\n## Step 1 — Create the `useHeists` hook\n\nNew file: `hooks/useHeists.ts` (new `hooks/` folder; `@/hooks/...` already resolves via the `@/*` alias).\n\n### Signature & return\n\n```ts\nexport type HeistFilter = 'active' | 'assigned' | 'expired'\n\nexport function useHeists(filter: HeistFilter): {\n  heists: Heist[]\n  loading: boolean\n  error: Error | null\n}\n```\n\n### Behavior\n\n- Read `const { user } = useUser()` to obtain `user.uid`.\n- In a `useEffect` keyed on `[filter, user?.uid]`:\n  - If there is no `user`, set `heists` to `[]`, `loading` to `false`, and do **not** subscribe.\n  - Otherwise build the filtered query (below), call `onSnapshot(q, onNext, onError)`, and store results via the `heistConverter`.\n  - Return the `onSnapshot` unsubscribe function from the effect for cleanup (tears down on unmount and when `filter`/`uid` change).\n- Capture `now = new Date()` when building the query (evaluated at subscribe time, per spec edge case).\n- Apply the converter so `deadline`/`createdAt` come back as `Date`s: build the collection ref with `collection(db, 'heists').withConverter(heistConverter)`, then `query(ref, ...constraints)`. `onSnapshot` `snapshot.docs.map(d => d.data())` then yields `Heist[]`.\n  - Note: the converter's `toFirestore` is only exercised on writes; reads use `fromFirestore`, so `withConverter` is safe here (unlike the create-form write path).\n\n### Queries per filter\n\nUsing `where`, `query`, `orderBy` from `firebase/firestore`:\n\n| filter | constraints |\n|---|---|\n| `active` | `where('assignedTo','==',uid)`, `where('deadline','>', now)` |\n| `assigned` | `where('createdBy','==',uid)`, `where('deadline','>', now)` |\n| `expired` | `where('finalStatus','!=', null)`, `where('deadline','<', now)` |\n\n- For `expired`, the SDK requires the first `orderBy` to be on the inequality field used by `!=`; add `orderBy('finalStatus')` then `orderBy('deadline','desc')`. For `active`/`assigned`, `deadline` is the range field, so `orderBy('deadline','asc')` is implied/required.\n- `null` is a valid sentinel here because every heist is created with `finalStatus: null` (see `CreateHeistInput`), so `!= null` correctly returns only completed (`success`/`failure`) heists.\n\n### Firestore composite indexes\n\nThese compound queries require composite indexes. First run in dev will surface a console error with a click-to-create link; capture the definitions in `firestore.indexes.json` if present, otherwise create via the console link. Expected indexes:\n- `heists`: `assignedTo` ASC + `deadline` ASC\n- `heists`: `createdBy` ASC + `deadline` ASC\n- `heists`: `finalStatus` ASC + `deadline` DESC\n\n---\n\n## Step 2 — Wire the hook into the page\n\nUpdate `app/(dashboard)/heists/page.tsx`:\n\n- Add `\"use client\"` at the top (the hook depends on `useUser` context and `onSnapshot`).\n- Call the hook three times:\n  ```ts\n  const { heists: active } = useHeists('active')\n  const { heists: assigned } = useHeists('assigned')\n  const { heists: expired } = useHeists('expired')\n  ```\n- Under each existing heading, render `<ul>` of `heist.title` (keyed by `heist.id`). Keep the existing `active-heists` / `assigned-heists` / `expired-heists` wrapper divs and `<h2>` headings.\n- Empty result set renders the heading with an empty list (no error) — no special-casing required for this iteration.\n\n---\n\n## Step 3 — Tests\n\nNew file: `tests/hooks/useHeists.test.tsx`. Follow the `vi.hoisted` + `vi.mock` pattern from `CreateHeistForm.test.tsx`.\n\nMocks:\n- `vi.mock('firebase/firestore')` → mock `collection`, `query`, `where`, `orderBy`, `onSnapshot`. Have `where`/`orderBy`/`query` return descriptor objects so calls can be asserted; have `onSnapshot` capture the `onNext` callback and return an `unsubscribe` spy.\n- `vi.mock('@/lib/firebase')` → `db: {}`.\n- `vi.mock('@/components/UserProvider')` → controllable `useUser` returning a fake `uid`.\n- A `withConverter` stub on the collection ref (return the ref) so the converter path doesn't break under mocks.\n\nRender the hook with `@testing-library/react`'s `renderHook`.\n\nCases:\n1. `active` builds `where('assignedTo','==',uid)` + a `deadline` `>` constraint.\n2. `assigned` builds `where('createdBy','==',uid)` + a `deadline` `>` constraint.\n3. `expired` builds `where('finalStatus','!=', null)` + `deadline` `<` constraint.\n4. Returns mapped `Heist[]` when the captured `onSnapshot` callback emits, and re-renders with new data on a second emit.\n5. No current user → returns `[]` and `onSnapshot` is never called.\n6. Unmount calls the `unsubscribe` function returned by `onSnapshot`.\n\n(Optional) A light page test under `tests/` asserting titles render under the right heading, mocking `useHeists` to return fixed arrays.\n\n---\n\n## Verification\n\n1. `npm run dev` → sign in, navigate to `/heists`.\n2. Confirm titles appear under the correct headings. If a console error links to create a Firestore index, follow it (Step 1 indexes), then confirm results populate.\n3. Create a heist via `/heists/create` assigned to yourself → it appears live under \"Your Active Heists\" without refresh (real-time check).\n4. `npx vitest run tests/hooks/useHeists.test.tsx` — all tests pass.\n5. `npm run lint` — no TypeScript/lint errors.\n",
+    "structuredPatch": [],
+    "originalFile": null,
+    "userModified": false
+  },
+  "tool_use_id": "toolu_012PJgvnv6wqVMFdZQiyCPnr",
+  "duration_ms": 46
+}
+{
+  "session_id": "8ae9b854-36b4-4b50-90e9-b937b99a46a4",
+  "transcript_path": "C:\\Users\\Ahmed.Elhawary\\.claude\\projects\\D--Learn-AgenticAI-pocket-heist\\8ae9b854-36b4-4b50-90e9-b937b99a46a4.jsonl",
+  "cwd": "D:\\Learn\\AgenticAI\\pocket-heist",
+  "permission_mode": "plan",
+  "effort": {
+    "level": "medium"
+  },
+  "hook_event_name": "PostToolUse",
+  "tool_name": "Write",
+  "tool_input": {
+    "file_path": "D:\\Learn\\AgenticAI\\pocket-heist\\_plans\\use-heists.md",
+    "content": "# Plan: useHeists Data Hook\n\n**Spec:** `_specs/use-heists.md`\n**Branch:** `claude/feature/use-heists`\n\n## Context\n\nThe `/heists` dashboard page (`app/(dashboard)/heists/page.tsx`) is a static skeleton with three empty sections: active, assigned, and expired heists. There is no way yet to read heist documents from Firestore. This plan adds a real-time `useHeists` hook that subscribes to the `heists` collection and returns a typed `Heist[]` filtered by one of three modes, then wires it into the page to render the titles of each result set.\n\nPer the clarifications:\n- **active / assigned** use the deadline rule only (no `finalStatus` filter).\n- **expired** uses `finalStatus != null` (literal, two-inequality query).\n\nAll the building blocks already exist: the `Heist` type and `heistConverter` (`types/firestore/heist.ts`), the Firestore `db` (`lib/firebase.ts`), and the `useUser()` auth context (`components/UserProvider/UserProvider.tsx`). Test mocking conventions are established in `tests/components/CreateHeistForm.test.tsx` (`vi.hoisted` + `vi.mock`).\n\n---\n\n## Step 1 — Create the `useHeists` hook\n\nNew file: `hooks/useHeists.ts` (new `hooks/` folder; `@/hooks/...` already resolves via the `@/*` alias).\n\n### Signature & return\n\n```ts\nexport type HeistFilter = 'active' | 'assigned' | 'expired'\n\nexport function useHeists(filter: HeistFilter): {\n  heists: Heist[]\n  loading: boolean\n  error: Error | null\n}\n```\n\n### Behavior\n\n- Read `const { user } = useUser()` to obtain `user.uid`.\n- In a `useEffect` keyed on `[filter, user?.uid]`:\n  - If there is no `user`, set `heists` to `[]`, `loading` to `false`, and do **not** subscribe.\n  - Otherwise build the filtered query (below), call `onSnapshot(q, onNext, onError)`, and store results via the `heistConverter`.\n  - Return the `onSnapshot` unsubscribe function from the effect for cleanup (tears down on unmount and when `filter`/`uid` change).\n- Capture `now = new Date()` when building the query (evaluated at subscribe time, per spec edge case).\n- Apply the converter so `deadline`/`createdAt` come back as `Date`s: build the collection ref with `collection(db, 'heists').withConverter(heistConverter)`, then `query(ref, ...constraints)`. `onSnapshot` `snapshot.docs.map(d => d.data())` then yields `Heist[]`.\n  - Note: the converter's `toFirestore` is only exercised on writes; reads use `fromFirestore`, so `withConverter` is safe here (unlike the create-form write path).\n\n### Queries per filter\n\nUsing `where`, `query`, `orderBy` from `firebase/firestore`:\n\n| filter | constraints |\n|---|---|\n| `active` | `where('assignedTo','==',uid)`, `where('deadline','>', now)` |\n| `assigned` | `where('createdBy','==',uid)`, `where('deadline','>', now)` |\n| `expired` | `where('finalStatus','!=', null)`, `where('deadline','<', now)` |\n\n- For `expired`, the SDK requires the first `orderBy` to be on the inequality field used by `!=`; add `orderBy('finalStatus')` then `orderBy('deadline','desc')`. For `active`/`assigned`, `deadline` is the range field, so `orderBy('deadline','asc')` is implied/required.\n- `null` is a valid sentinel here because every heist is created with `finalStatus: null` (see `CreateHeistInput`), so `!= null` correctly returns only completed (`success`/`failure`) heists.\n\n### Firestore composite indexes\n\nThese compound queries require composite indexes. First run in dev will surface a console error with a click-to-create link; capture the definitions in `firestore.indexes.json` if present, otherwise create via the console link. Expected indexes:\n- `heists`: `assignedTo` ASC + `deadline` ASC\n- `heists`: `createdBy` ASC + `deadline` ASC\n- `heists`: `finalStatus` ASC + `deadline` DESC\n\n---\n\n## Step 2 — Wire the hook into the page\n\nUpdate `app/(dashboard)/heists/page.tsx`:\n\n- Add `\"use client\"` at the top (the hook depends on `useUser` context and `onSnapshot`).\n- Call the hook three times:\n  ```ts\n  const { heists: active } = useHeists('active')\n  const { heists: assigned } = useHeists('assigned')\n  const { heists: expired } = useHeists('expired')\n  ```\n- Under each existing heading, render `<ul>` of `heist.title` (keyed by `heist.id`). Keep the existing `active-heists` / `assigned-heists` / `expired-heists` wrapper divs and `<h2>` headings.\n- Empty result set renders the heading with an empty list (no error) — no special-casing required for this iteration.\n\n---\n\n## Step 3 — Tests\n\nNew file: `tests/hooks/useHeists.test.tsx`. Follow the `vi.hoisted` + `vi.mock` pattern from `CreateHeistForm.test.tsx`.\n\nMocks:\n- `vi.mock('firebase/firestore')` → mock `collection`, `query`, `where`, `orderBy`, `onSnapshot`. Have `where`/`orderBy`/`query` return descriptor objects so calls can be asserted; have `onSnapshot` capture the `onNext` callback and return an `unsubscribe` spy.\n- `vi.mock('@/lib/firebase')` → `db: {}`.\n- `vi.mock('@/components/UserProvider')` → controllable `useUser` returning a fake `uid`.\n- A `withConverter` stub on the collection ref (return the ref) so the converter path doesn't break under mocks.\n\nRender the hook with `@testing-library/react`'s `renderHook`.\n\nCases:\n1. `active` builds `where('assignedTo','==',uid)` + a `deadline` `>` constraint.\n2. `assigned` builds `where('createdBy','==',uid)` + a `deadline` `>` constraint.\n3. `expired` builds `where('finalStatus','!=', null)` + `deadline` `<` constraint.\n4. Returns mapped `Heist[]` when the captured `onSnapshot` callback emits, and re-renders with new data on a second emit.\n5. No current user → returns `[]` and `onSnapshot` is never called.\n6. Unmount calls the `unsubscribe` function returned by `onSnapshot`.\n\n(Optional) A light page test under `tests/` asserting titles render under the right heading, mocking `useHeists` to return fixed arrays.\n\n---\n\n## Verification\n\n1. `npm run dev` → sign in, navigate to `/heists`.\n2. Confirm titles appear under the correct headings. If a console error links to create a Firestore index, follow it (Step 1 indexes), then confirm results populate.\n3. Create a heist via `/heists/create` assigned to yourself → it appears live under \"Your Active Heists\" without refresh (real-time check).\n4. `npx vitest run tests/hooks/useHeists.test.tsx` — all tests pass.\n5. `npm run lint` — no TypeScript/lint errors.\n"
+  },
+  "tool_response": {
+    "type": "create",
+    "filePath": "D:\\Learn\\AgenticAI\\pocket-heist\\_plans\\use-heists.md",
+    "content": "# Plan: useHeists Data Hook\n\n**Spec:** `_specs/use-heists.md`\n**Branch:** `claude/feature/use-heists`\n\n## Context\n\nThe `/heists` dashboard page (`app/(dashboard)/heists/page.tsx`) is a static skeleton with three empty sections: active, assigned, and expired heists. There is no way yet to read heist documents from Firestore. This plan adds a real-time `useHeists` hook that subscribes to the `heists` collection and returns a typed `Heist[]` filtered by one of three modes, then wires it into the page to render the titles of each result set.\n\nPer the clarifications:\n- **active / assigned** use the deadline rule only (no `finalStatus` filter).\n- **expired** uses `finalStatus != null` (literal, two-inequality query).\n\nAll the building blocks already exist: the `Heist` type and `heistConverter` (`types/firestore/heist.ts`), the Firestore `db` (`lib/firebase.ts`), and the `useUser()` auth context (`components/UserProvider/UserProvider.tsx`). Test mocking conventions are established in `tests/components/CreateHeistForm.test.tsx` (`vi.hoisted` + `vi.mock`).\n\n---\n\n## Step 1 — Create the `useHeists` hook\n\nNew file: `hooks/useHeists.ts` (new `hooks/` folder; `@/hooks/...` already resolves via the `@/*` alias).\n\n### Signature & return\n\n```ts\nexport type HeistFilter = 'active' | 'assigned' | 'expired'\n\nexport function useHeists(filter: HeistFilter): {\n  heists: Heist[]\n  loading: boolean\n  error: Error | null\n}\n```\n\n### Behavior\n\n- Read `const { user } = useUser()` to obtain `user.uid`.\n- In a `useEffect` keyed on `[filter, user?.uid]`:\n  - If there is no `user`, set `heists` to `[]`, `loading` to `false`, and do **not** subscribe.\n  - Otherwise build the filtered query (below), call `onSnapshot(q, onNext, onError)`, and store results via the `heistConverter`.\n  - Return the `onSnapshot` unsubscribe function from the effect for cleanup (tears down on unmount and when `filter`/`uid` change).\n- Capture `now = new Date()` when building the query (evaluated at subscribe time, per spec edge case).\n- Apply the converter so `deadline`/`createdAt` come back as `Date`s: build the collection ref with `collection(db, 'heists').withConverter(heistConverter)`, then `query(ref, ...constraints)`. `onSnapshot` `snapshot.docs.map(d => d.data())` then yields `Heist[]`.\n  - Note: the converter's `toFirestore` is only exercised on writes; reads use `fromFirestore`, so `withConverter` is safe here (unlike the create-form write path).\n\n### Queries per filter\n\nUsing `where`, `query`, `orderBy` from `firebase/firestore`:\n\n| filter | constraints |\n|---|---|\n| `active` | `where('assignedTo','==',uid)`, `where('deadline','>', now)` |\n| `assigned` | `where('createdBy','==',uid)`, `where('deadline','>', now)` |\n| `expired` | `where('finalStatus','!=', null)`, `where('deadline','<', now)` |\n\n- For `expired`, the SDK requires the first `orderBy` to be on the inequality field used by `!=`; add `orderBy('finalStatus')` then `orderBy('deadline','desc')`. For `active`/`assigned`, `deadline` is the range field, so `orderBy('deadline','asc')` is implied/required.\n- `null` is a valid sentinel here because every heist is created with `finalStatus: null` (see `CreateHeistInput`), so `!= null` correctly returns only completed (`success`/`failure`) heists.\n\n### Firestore composite indexes\n\nThese compound queries require composite indexes. First run in dev will surface a console error with a click-to-create link; capture the definitions in `firestore.indexes.json` if present, otherwise create via the console link. Expected indexes:\n- `heists`: `assignedTo` ASC + `deadline` ASC\n- `heists`: `createdBy` ASC + `deadline` ASC\n- `heists`: `finalStatus` ASC + `deadline` DESC\n\n---\n\n## Step 2 — Wire the hook into the page\n\nUpdate `app/(dashboard)/heists/page.tsx`:\n\n- Add `\"use client\"` at the top (the hook depends on `useUser` context and `onSnapshot`).\n- Call the hook three times:\n  ```ts\n  const { heists: active } = useHeists('active')\n  const { heists: assigned } = useHeists('assigned')\n  const { heists: expired } = useHeists('expired')\n  ```\n- Under each existing heading, render `<ul>` of `heist.title` (keyed by `heist.id`). Keep the existing `active-heists` / `assigned-heists` / `expired-heists` wrapper divs and `<h2>` headings.\n- Empty result set renders the heading with an empty list (no error) — no special-casing required for this iteration.\n\n---\n\n## Step 3 — Tests\n\nNew file: `tests/hooks/useHeists.test.tsx`. Follow the `vi.hoisted` + `vi.mock` pattern from `CreateHeistForm.test.tsx`.\n\nMocks:\n- `vi.mock('firebase/firestore')` → mock `collection`, `query`, `where`, `orderBy`, `onSnapshot`. Have `where`/`orderBy`/`query` return descriptor objects so calls can be asserted; have `onSnapshot` capture the `onNext` callback and return an `unsubscribe` spy.\n- `vi.mock('@/lib/firebase')` → `db: {}`.\n- `vi.mock('@/components/UserProvider')` → controllable `useUser` returning a fake `uid`.\n- A `withConverter` stub on the collection ref (return the ref) so the converter path doesn't break under mocks.\n\nRender the hook with `@testing-library/react`'s `renderHook`.\n\nCases:\n1. `active` builds `where('assignedTo','==',uid)` + a `deadline` `>` constraint.\n2. `assigned` builds `where('createdBy','==',uid)` + a `deadline` `>` constraint.\n3. `expired` builds `where('finalStatus','!=', null)` + `deadline` `<` constraint.\n4. Returns mapped `Heist[]` when the captured `onSnapshot` callback emits, and re-renders with new data on a second emit.\n5. No current user → returns `[]` and `onSnapshot` is never called.\n6. Unmount calls the `unsubscribe` function returned by `onSnapshot`.\n\n(Optional) A light page test under `tests/` asserting titles render under the right heading, mocking `useHeists` to return fixed arrays.\n\n---\n\n## Verification\n\n1. `npm run dev` → sign in, navigate to `/heists`.\n2. Confirm titles appear under the correct headings. If a console error links to create a Firestore index, follow it (Step 1 indexes), then confirm results populate.\n3. Create a heist via `/heists/create` assigned to yourself → it appears live under \"Your Active Heists\" without refresh (real-time check).\n4. `npx vitest run tests/hooks/useHeists.test.tsx` — all tests pass.\n5. `npm run lint` — no TypeScript/lint errors.\n",
+    "structuredPatch": [],
+    "originalFile": null,
+    "userModified": false
+  },
+  "tool_use_id": "toolu_01GPkkLWwwYDs54NVLvPQrAN",
+  "duration_ms": 73
+}
+{
+  "session_id": "8ae9b854-36b4-4b50-90e9-b937b99a46a4",
+  "transcript_path": "C:\\Users\\Ahmed.Elhawary\\.claude\\projects\\D--Learn-AgenticAI-pocket-heist\\8ae9b854-36b4-4b50-90e9-b937b99a46a4.jsonl",
+  "cwd": "D:\\Learn\\AgenticAI\\pocket-heist",
+  "permission_mode": "auto",
+  "effort": {
+    "level": "medium"
+  },
+  "hook_event_name": "PostToolUse",
+  "tool_name": "Write",
+  "tool_input": {
+    "file_path": "D:\\Learn\\AgenticAI\\pocket-heist\\hooks\\useHeists.ts",
+    "content": "\"use client\"\n\nimport { useEffect, useState } from \"react\"\nimport {\n  collection,\n  query,\n  where,\n  orderBy,\n  onSnapshot,\n  type QueryConstraint,\n} from \"firebase/firestore\"\nimport { db } from \"@/lib/firebase\"\nimport { useUser } from \"@/components/UserProvider\"\nimport { heistConverter, type Heist } from \"@/types/firestore/heist\"\n\nexport type HeistFilter = \"active\" | \"assigned\" | \"expired\"\n\ninterface UseHeistsResult {\n  heists: Heist[]\n  loading: boolean\n  error: Error | null\n}\n\nfunction buildConstraints(filter: HeistFilter, uid: string): QueryConstraint[] {\n  const now = new Date()\n\n  switch (filter) {\n    case \"active\":\n      return [\n        where(\"assignedTo\", \"==\", uid),\n        where(\"deadline\", \">\", now),\n        orderBy(\"deadline\", \"asc\"),\n      ]\n    case \"assigned\":\n      return [\n        where(\"createdBy\", \"==\", uid),\n        where(\"deadline\", \">\", now),\n        orderBy(\"deadline\", \"asc\"),\n      ]\n    case \"expired\":\n      return [\n        where(\"finalStatus\", \"!=\", null),\n        where(\"deadline\", \"<\", now),\n        orderBy(\"finalStatus\"),\n        orderBy(\"deadline\", \"desc\"),\n      ]\n  }\n}\n\nexport function useHeists(filter: HeistFilter): UseHeistsResult {\n  const { user } = useUser()\n  const uid = user?.uid\n\n  const [heists, setHeists] = useState<Heist[]>([])\n  const [loading, setLoading] = useState(true)\n  const [error, setError] = useState<Error | null>(null)\n\n  useEffect(() => {\n    if (!uid) {\n      setHeists([])\n      setLoading(false)\n      return\n    }\n\n    setLoading(true)\n    setError(null)\n\n    const ref = collection(db, \"heists\").withConverter(heistConverter)\n    const q = query(ref, ...buildConstraints(filter, uid))\n\n    const unsubscribe = onSnapshot(\n      q,\n      (snapshot) => {\n        setHeists(snapshot.docs.map((doc) => doc.data()))\n        setLoading(false)\n      },\n      (err) => {\n        setError(err)\n        setLoading(false)\n      }\n    )\n\n    return unsubscribe\n  }, [filter, uid])\n\n  return { heists, loading, error }\n}\n"
+  },
+  "tool_response": {
+    "type": "create",
+    "filePath": "D:\\Learn\\AgenticAI\\pocket-heist\\hooks\\useHeists.ts",
+    "content": "\"use client\"\n\nimport { useEffect, useState } from \"react\"\nimport {\n  collection,\n  query,\n  where,\n  orderBy,\n  onSnapshot,\n  type QueryConstraint,\n} from \"firebase/firestore\"\nimport { db } from \"@/lib/firebase\"\nimport { useUser } from \"@/components/UserProvider\"\nimport { heistConverter, type Heist } from \"@/types/firestore/heist\"\n\nexport type HeistFilter = \"active\" | \"assigned\" | \"expired\"\n\ninterface UseHeistsResult {\n  heists: Heist[]\n  loading: boolean\n  error: Error | null\n}\n\nfunction buildConstraints(filter: HeistFilter, uid: string): QueryConstraint[] {\n  const now = new Date()\n\n  switch (filter) {\n    case \"active\":\n      return [\n        where(\"assignedTo\", \"==\", uid),\n        where(\"deadline\", \">\", now),\n        orderBy(\"deadline\", \"asc\"),\n      ]\n    case \"assigned\":\n      return [\n        where(\"createdBy\", \"==\", uid),\n        where(\"deadline\", \">\", now),\n        orderBy(\"deadline\", \"asc\"),\n      ]\n    case \"expired\":\n      return [\n        where(\"finalStatus\", \"!=\", null),\n        where(\"deadline\", \"<\", now),\n        orderBy(\"finalStatus\"),\n        orderBy(\"deadline\", \"desc\"),\n      ]\n  }\n}\n\nexport function useHeists(filter: HeistFilter): UseHeistsResult {\n  const { user } = useUser()\n  const uid = user?.uid\n\n  const [heists, setHeists] = useState<Heist[]>([])\n  const [loading, setLoading] = useState(true)\n  const [error, setError] = useState<Error | null>(null)\n\n  useEffect(() => {\n    if (!uid) {\n      setHeists([])\n      setLoading(false)\n      return\n    }\n\n    setLoading(true)\n    setError(null)\n\n    const ref = collection(db, \"heists\").withConverter(heistConverter)\n    const q = query(ref, ...buildConstraints(filter, uid))\n\n    const unsubscribe = onSnapshot(\n      q,\n      (snapshot) => {\n        setHeists(snapshot.docs.map((doc) => doc.data()))\n        setLoading(false)\n      },\n      (err) => {\n        setError(err)\n        setLoading(false)\n      }\n    )\n\n    return unsubscribe\n  }, [filter, uid])\n\n  return { heists, loading, error }\n}\n",
+    "structuredPatch": [],
+    "originalFile": null,
+    "userModified": false
+  },
+  "tool_use_id": "toolu_016X1oso81WZRRsSLzNKr8hC",
+  "duration_ms": 165
+}
+{
+  "session_id": "8ae9b854-36b4-4b50-90e9-b937b99a46a4",
+  "transcript_path": "C:\\Users\\Ahmed.Elhawary\\.claude\\projects\\D--Learn-AgenticAI-pocket-heist\\8ae9b854-36b4-4b50-90e9-b937b99a46a4.jsonl",
+  "cwd": "D:\\Learn\\AgenticAI\\pocket-heist",
+  "permission_mode": "auto",
+  "effort": {
+    "level": "medium"
+  },
+  "hook_event_name": "PostToolUse",
+  "tool_name": "Write",
+  "tool_input": {
+    "file_path": "D:\\Learn\\AgenticAI\\pocket-heist\\app\\(dashboard)\\heists\\page.tsx",
+    "content": "\"use client\"\n\nimport { useHeists } from \"@/hooks/useHeists\"\nimport type { Heist } from \"@/types/firestore/heist\"\n\nfunction HeistTitles({ heists }: { heists: Heist[] }) {\n  return (\n    <ul>\n      {heists.map((heist) => (\n        <li key={heist.id}>{heist.title}</li>\n      ))}\n    </ul>\n  )\n}\n\nexport default function HeistsPage() {\n  const { heists: active } = useHeists(\"active\")\n  const { heists: assigned } = useHeists(\"assigned\")\n  const { heists: expired } = useHeists(\"expired\")\n\n  return (\n    <div className=\"page-content\">\n      <div className=\"active-heists\">\n        <h2>Your Active Heists</h2>\n        <HeistTitles heists={active} />\n      </div>\n      <div className=\"assigned-heists\">\n        <h2>Heists You&apos;ve Assigned</h2>\n        <HeistTitles heists={assigned} />\n      </div>\n      <div className=\"expired-heists\">\n        <h2>All Expired Heists</h2>\n        <HeistTitles heists={expired} />\n      </div>\n    </div>\n  )\n}\n"
+  },
+  "tool_response": {
+    "type": "update",
+    "filePath": "D:\\Learn\\AgenticAI\\pocket-heist\\app\\(dashboard)\\heists\\page.tsx",
+    "content": "\"use client\"\n\nimport { useHeists } from \"@/hooks/useHeists\"\nimport type { Heist } from \"@/types/firestore/heist\"\n\nfunction HeistTitles({ heists }: { heists: Heist[] }) {\n  return (\n    <ul>\n      {heists.map((heist) => (\n        <li key={heist.id}>{heist.title}</li>\n      ))}\n    </ul>\n  )\n}\n\nexport default function HeistsPage() {\n  const { heists: active } = useHeists(\"active\")\n  const { heists: assigned } = useHeists(\"assigned\")\n  const { heists: expired } = useHeists(\"expired\")\n\n  return (\n    <div className=\"page-content\">\n      <div className=\"active-heists\">\n        <h2>Your Active Heists</h2>\n        <HeistTitles heists={active} />\n      </div>\n      <div className=\"assigned-heists\">\n        <h2>Heists You&apos;ve Assigned</h2>\n        <HeistTitles heists={assigned} />\n      </div>\n      <div className=\"expired-heists\">\n        <h2>All Expired Heists</h2>\n        <HeistTitles heists={expired} />\n      </div>\n    </div>\n  )\n}\n",
+    "structuredPatch": [
+      {
+        "oldStart": 1,
+        "oldLines": 15,
+        "newStart": 1,
+        "newLines": 37,
+        "lines": [
+          "+\"use client\"",
+          "+",
+          "+import { useHeists } from \"@/hooks/useHeists\"",
+          "+import type { Heist } from \"@/types/firestore/heist\"",
+          "+",
+          "+function HeistTitles({ heists }: { heists: Heist[] }) {",
+          "+  return (",
+          "+    <ul>",
+          "+      {heists.map((heist) => (",
+          "+        <li key={heist.id}>{heist.title}</li>",
+          "+      ))}",
+          "+    </ul>",
+          "+  )",
+          "+}",
+          "+",
+          " export default function HeistsPage() {",
+          "+  const { heists: active } = useHeists(\"active\")",
+          "+  const { heists: assigned } = useHeists(\"assigned\")",
+          "+  const { heists: expired } = useHeists(\"expired\")",
+          "+",
+          "   return (",
+          "     <div className=\"page-content\">",
+          "       <div className=\"active-heists\">",
+          "         <h2>Your Active Heists</h2>",
+          "+        <HeistTitles heists={active} />",
+          "       </div>",
+          "       <div className=\"assigned-heists\">",
+          "         <h2>Heists You&apos;ve Assigned</h2>",
+          "+        <HeistTitles heists={assigned} />",
+          "       </div>",
+          "       <div className=\"expired-heists\">",
+          "         <h2>All Expired Heists</h2>",
+          "+        <HeistTitles heists={expired} />",
+          "       </div>",
+          "     </div>",
+          "   )",
+          "-}",
+          "\\ No newline at end of file",
+          "+}"
+        ]
+      }
+    ],
+    "originalFile": "export default function HeistsPage() {\n  return (\n    <div className=\"page-content\">\n      <div className=\"active-heists\">\n        <h2>Your Active Heists</h2>\n      </div>\n      <div className=\"assigned-heists\">\n        <h2>Heists You&apos;ve Assigned</h2>\n      </div>\n      <div className=\"expired-heists\">\n        <h2>All Expired Heists</h2>\n      </div>\n    </div>\n  )\n}",
+    "userModified": false
+  },
+  "tool_use_id": "toolu_015eCWq1bGrPRLfcJoFGx3et",
+  "duration_ms": 66
+}
+{
+  "session_id": "8ae9b854-36b4-4b50-90e9-b937b99a46a4",
+  "transcript_path": "C:\\Users\\Ahmed.Elhawary\\.claude\\projects\\D--Learn-AgenticAI-pocket-heist\\8ae9b854-36b4-4b50-90e9-b937b99a46a4.jsonl",
+  "cwd": "D:\\Learn\\AgenticAI\\pocket-heist",
+  "permission_mode": "auto",
+  "effort": {
+    "level": "medium"
+  },
+  "hook_event_name": "PostToolUse",
+  "tool_name": "Write",
+  "tool_input": {
+    "file_path": "D:\\Learn\\AgenticAI\\pocket-heist\\tests\\hooks\\useHeists.test.tsx",
+    "content": "import { renderHook, act } from \"@testing-library/react\"\nimport { describe, it, expect, vi, beforeEach } from \"vitest\"\nimport { useHeists } from \"@/hooks/useHeists\"\nimport type { Heist } from \"@/types/firestore/heist\"\n\n// --- Firestore mocks ---\nconst {\n  mockCollection,\n  mockWithConverter,\n  mockQuery,\n  mockWhere,\n  mockOrderBy,\n  mockOnSnapshot,\n  mockUnsubscribe,\n} = vi.hoisted(() => {\n  const mockUnsubscribe = vi.fn()\n  const mockWithConverter = vi.fn(() => ({ __ref: true }))\n  return {\n    mockWithConverter,\n    mockCollection: vi.fn(() => ({ withConverter: mockWithConverter })),\n    mockQuery: vi.fn((...args: unknown[]) => ({ __query: args })),\n    mockWhere: vi.fn((field: string, op: string, value: unknown) => ({ field, op, value })),\n    mockOrderBy: vi.fn((field: string, dir?: string) => ({ orderBy: field, dir })),\n    mockOnSnapshot: vi.fn(() => mockUnsubscribe),\n    mockUnsubscribe,\n  }\n})\n\nvi.mock(\"firebase/firestore\", () => ({\n  collection: mockCollection,\n  query: mockQuery,\n  where: mockWhere,\n  orderBy: mockOrderBy,\n  onSnapshot: mockOnSnapshot,\n}))\nvi.mock(\"@/lib/firebase\", () => ({ db: {} }))\n\n// --- UserProvider mock ---\nconst { mockUseUser } = vi.hoisted(() => ({\n  mockUseUser: vi.fn(() => ({ user: { uid: \"user-1\", email: \"a@b.com\" }, loading: false })),\n}))\nvi.mock(\"@/components/UserProvider\", () => ({ useUser: mockUseUser }))\n\n// --- Helpers ---\ntype WhereCall = { field: string; op: string; value: unknown }\n\nfunction whereCalls(): WhereCall[] {\n  return mockWhere.mock.calls.map(([field, op, value]) => ({ field, op, value }) as WhereCall)\n}\n\n/** Emit a snapshot through the most recent onSnapshot subscription. */\nfunction emit(heists: Partial<Heist>[]) {\n  const onNext = mockOnSnapshot.mock.calls.at(-1)![1] as (snap: unknown) => void\n  act(() => {\n    onNext({ docs: heists.map((h) => ({ data: () => h })) })\n  })\n}\n\ndescribe(\"useHeists\", () => {\n  beforeEach(() => {\n    vi.clearAllMocks()\n    mockUseUser.mockReturnValue({ user: { uid: \"user-1\", email: \"a@b.com\" }, loading: false })\n  })\n\n  it(\"builds the active query: assignedTo == uid and a future deadline\", () => {\n    renderHook(() => useHeists(\"active\"))\n    const calls = whereCalls()\n    expect(calls).toContainEqual({ field: \"assignedTo\", op: \"==\", value: \"user-1\" })\n    expect(calls).toContainEqual(expect.objectContaining({ field: \"deadline\", op: \">\" }))\n  })\n\n  it(\"builds the assigned query: createdBy == uid and a future deadline\", () => {\n    renderHook(() => useHeists(\"assigned\"))\n    const calls = whereCalls()\n    expect(calls).toContainEqual({ field: \"createdBy\", op: \"==\", value: \"user-1\" })\n    expect(calls).toContainEqual(expect.objectContaining({ field: \"deadline\", op: \">\" }))\n  })\n\n  it(\"builds the expired query: finalStatus != null and a passed deadline\", () => {\n    renderHook(() => useHeists(\"expired\"))\n    const calls = whereCalls()\n    expect(calls).toContainEqual({ field: \"finalStatus\", op: \"!=\", value: null })\n    expect(calls).toContainEqual(expect.objectContaining({ field: \"deadline\", op: \"<\" }))\n  })\n\n  it(\"returns mapped heists when the snapshot emits, and updates on re-emit\", () => {\n    const { result } = renderHook(() => useHeists(\"active\"))\n\n    emit([{ id: \"h1\", title: \"First Job\" }])\n    expect(result.current.heists).toEqual([{ id: \"h1\", title: \"First Job\" }])\n    expect(result.current.loading).toBe(false)\n\n    emit([\n      { id: \"h1\", title: \"First Job\" },\n      { id: \"h2\", title: \"Second Job\" },\n    ])\n    expect(result.current.heists.map((h) => h.title)).toEqual([\"First Job\", \"Second Job\"])\n  })\n\n  it(\"returns an empty array and never subscribes when there is no user\", () => {\n    mockUseUser.mockReturnValue({ user: null, loading: false })\n    const { result } = renderHook(() => useHeists(\"active\"))\n\n    expect(result.current.heists).toEqual([])\n    expect(result.current.loading).toBe(false)\n    expect(mockOnSnapshot).not.toHaveBeenCalled()\n  })\n\n  it(\"unsubscribes from the snapshot listener on unmount\", () => {\n    const { unmount } = renderHook(() => useHeists(\"active\"))\n    expect(mockOnSnapshot).toHaveBeenCalledOnce()\n\n    unmount()\n    expect(mockUnsubscribe).toHaveBeenCalledOnce()\n  })\n})\n"
+  },
+  "tool_response": {
+    "type": "create",
+    "filePath": "D:\\Learn\\AgenticAI\\pocket-heist\\tests\\hooks\\useHeists.test.tsx",
+    "content": "import { renderHook, act } from \"@testing-library/react\"\nimport { describe, it, expect, vi, beforeEach } from \"vitest\"\nimport { useHeists } from \"@/hooks/useHeists\"\nimport type { Heist } from \"@/types/firestore/heist\"\n\n// --- Firestore mocks ---\nconst {\n  mockCollection,\n  mockWithConverter,\n  mockQuery,\n  mockWhere,\n  mockOrderBy,\n  mockOnSnapshot,\n  mockUnsubscribe,\n} = vi.hoisted(() => {\n  const mockUnsubscribe = vi.fn()\n  const mockWithConverter = vi.fn(() => ({ __ref: true }))\n  return {\n    mockWithConverter,\n    mockCollection: vi.fn(() => ({ withConverter: mockWithConverter })),\n    mockQuery: vi.fn((...args: unknown[]) => ({ __query: args })),\n    mockWhere: vi.fn((field: string, op: string, value: unknown) => ({ field, op, value })),\n    mockOrderBy: vi.fn((field: string, dir?: string) => ({ orderBy: field, dir })),\n    mockOnSnapshot: vi.fn(() => mockUnsubscribe),\n    mockUnsubscribe,\n  }\n})\n\nvi.mock(\"firebase/firestore\", () => ({\n  collection: mockCollection,\n  query: mockQuery,\n  where: mockWhere,\n  orderBy: mockOrderBy,\n  onSnapshot: mockOnSnapshot,\n}))\nvi.mock(\"@/lib/firebase\", () => ({ db: {} }))\n\n// --- UserProvider mock ---\nconst { mockUseUser } = vi.hoisted(() => ({\n  mockUseUser: vi.fn(() => ({ user: { uid: \"user-1\", email: \"a@b.com\" }, loading: false })),\n}))\nvi.mock(\"@/components/UserProvider\", () => ({ useUser: mockUseUser }))\n\n// --- Helpers ---\ntype WhereCall = { field: string; op: string; value: unknown }\n\nfunction whereCalls(): WhereCall[] {\n  return mockWhere.mock.calls.map(([field, op, value]) => ({ field, op, value }) as WhereCall)\n}\n\n/** Emit a snapshot through the most recent onSnapshot subscription. */\nfunction emit(heists: Partial<Heist>[]) {\n  const onNext = mockOnSnapshot.mock.calls.at(-1)![1] as (snap: unknown) => void\n  act(() => {\n    onNext({ docs: heists.map((h) => ({ data: () => h })) })\n  })\n}\n\ndescribe(\"useHeists\", () => {\n  beforeEach(() => {\n    vi.clearAllMocks()\n    mockUseUser.mockReturnValue({ user: { uid: \"user-1\", email: \"a@b.com\" }, loading: false })\n  })\n\n  it(\"builds the active query: assignedTo == uid and a future deadline\", () => {\n    renderHook(() => useHeists(\"active\"))\n    const calls = whereCalls()\n    expect(calls).toContainEqual({ field: \"assignedTo\", op: \"==\", value: \"user-1\" })\n    expect(calls).toContainEqual(expect.objectContaining({ field: \"deadline\", op: \">\" }))\n  })\n\n  it(\"builds the assigned query: createdBy == uid and a future deadline\", () => {\n    renderHook(() => useHeists(\"assigned\"))\n    const calls = whereCalls()\n    expect(calls).toContainEqual({ field: \"createdBy\", op: \"==\", value: \"user-1\" })\n    expect(calls).toContainEqual(expect.objectContaining({ field: \"deadline\", op: \">\" }))\n  })\n\n  it(\"builds the expired query: finalStatus != null and a passed deadline\", () => {\n    renderHook(() => useHeists(\"expired\"))\n    const calls = whereCalls()\n    expect(calls).toContainEqual({ field: \"finalStatus\", op: \"!=\", value: null })\n    expect(calls).toContainEqual(expect.objectContaining({ field: \"deadline\", op: \"<\" }))\n  })\n\n  it(\"returns mapped heists when the snapshot emits, and updates on re-emit\", () => {\n    const { result } = renderHook(() => useHeists(\"active\"))\n\n    emit([{ id: \"h1\", title: \"First Job\" }])\n    expect(result.current.heists).toEqual([{ id: \"h1\", title: \"First Job\" }])\n    expect(result.current.loading).toBe(false)\n\n    emit([\n      { id: \"h1\", title: \"First Job\" },\n      { id: \"h2\", title: \"Second Job\" },\n    ])\n    expect(result.current.heists.map((h) => h.title)).toEqual([\"First Job\", \"Second Job\"])\n  })\n\n  it(\"returns an empty array and never subscribes when there is no user\", () => {\n    mockUseUser.mockReturnValue({ user: null, loading: false })\n    const { result } = renderHook(() => useHeists(\"active\"))\n\n    expect(result.current.heists).toEqual([])\n    expect(result.current.loading).toBe(false)\n    expect(mockOnSnapshot).not.toHaveBeenCalled()\n  })\n\n  it(\"unsubscribes from the snapshot listener on unmount\", () => {\n    const { unmount } = renderHook(() => useHeists(\"active\"))\n    expect(mockOnSnapshot).toHaveBeenCalledOnce()\n\n    unmount()\n    expect(mockUnsubscribe).toHaveBeenCalledOnce()\n  })\n})\n",
+    "structuredPatch": [],
+    "originalFile": null,
+    "userModified": false
+  },
+  "tool_use_id": "toolu_01SBKvrbrffD95EbfTeGN341",
+  "duration_ms": 62
+}
+{
+  "session_id": "8ae9b854-36b4-4b50-90e9-b937b99a46a4",
+  "transcript_path": "C:\\Users\\Ahmed.Elhawary\\.claude\\projects\\D--Learn-AgenticAI-pocket-heist\\8ae9b854-36b4-4b50-90e9-b937b99a46a4.jsonl",
+  "cwd": "D:\\Learn\\AgenticAI\\pocket-heist",
+  "permission_mode": "auto",
+  "effort": {
+    "level": "medium"
+  },
+  "hook_event_name": "PostToolUse",
+  "tool_name": "Edit",
+  "tool_input": {
+    "file_path": "D:\\Learn\\AgenticAI\\pocket-heist\\hooks\\useHeists.ts",
+    "old_string": "  const [heists, setHeists] = useState<Heist[]>([])\n  const [loading, setLoading] = useState(true)\n  const [error, setError] = useState<Error | null>(null)\n\n  useEffect(() => {\n    if (!uid) {\n      setHeists([])\n      setLoading(false)\n      return\n    }\n\n    setLoading(true)\n    setError(null)\n\n    const ref = collection(db, \"heists\").withConverter(heistConverter)\n    const q = query(ref, ...buildConstraints(filter, uid))\n\n    const unsubscribe = onSnapshot(\n      q,\n      (snapshot) => {\n        setHeists(snapshot.docs.map((doc) => doc.data()))\n        setLoading(false)\n      },\n      (err) => {\n        setError(err)\n        setLoading(false)\n      }\n    )\n\n    return unsubscribe\n  }, [filter, uid])\n\n  return { heists, loading, error }",
+    "new_string": "  const [state, setState] = useState<UseHeistsResult>({\n    heists: [],\n    loading: true,\n    error: null,\n  })\n\n  useEffect(() => {\n    if (!uid) return\n\n    const ref = collection(db, \"heists\").withConverter(heistConverter)\n    const q = query(ref, ...buildConstraints(filter, uid))\n\n    const unsubscribe = onSnapshot(\n      q,\n      (snapshot) => {\n        setState({\n          heists: snapshot.docs.map((doc) => doc.data()),\n          loading: false,\n          error: null,\n        })\n      },\n      (err) => {\n        setState({ heists: [], loading: false, error: err })\n      }\n    )\n\n    return unsubscribe\n  }, [filter, uid])\n\n  // No signed-in user: nothing to subscribe to, return an empty result.\n  if (!uid) {\n    return { heists: [], loading: false, error: null }\n  }\n\n  return state",
+    "replace_all": false
+  },
+  "tool_response": {
+    "filePath": "D:\\Learn\\AgenticAI\\pocket-heist\\hooks\\useHeists.ts",
+    "oldString": "  const [heists, setHeists] = useState<Heist[]>([])\n  const [loading, setLoading] = useState(true)\n  const [error, setError] = useState<Error | null>(null)\n\n  useEffect(() => {\n    if (!uid) {\n      setHeists([])\n      setLoading(false)\n      return\n    }\n\n    setLoading(true)\n    setError(null)\n\n    const ref = collection(db, \"heists\").withConverter(heistConverter)\n    const q = query(ref, ...buildConstraints(filter, uid))\n\n    const unsubscribe = onSnapshot(\n      q,\n      (snapshot) => {\n        setHeists(snapshot.docs.map((doc) => doc.data()))\n        setLoading(false)\n      },\n      (err) => {\n        setError(err)\n        setLoading(false)\n      }\n    )\n\n    return unsubscribe\n  }, [filter, uid])\n\n  return { heists, loading, error }",
+    "newString": "  const [state, setState] = useState<UseHeistsResult>({\n    heists: [],\n    loading: true,\n    error: null,\n  })\n\n  useEffect(() => {\n    if (!uid) return\n\n    const ref = collection(db, \"heists\").withConverter(heistConverter)\n    const q = query(ref, ...buildConstraints(filter, uid))\n\n    const unsubscribe = onSnapshot(\n      q,\n      (snapshot) => {\n        setState({\n          heists: snapshot.docs.map((doc) => doc.data()),\n          loading: false,\n          error: null,\n        })\n      },\n      (err) => {\n        setState({ heists: [], loading: false, error: err })\n      }\n    )\n\n    return unsubscribe\n  }, [filter, uid])\n\n  // No signed-in user: nothing to subscribe to, return an empty result.\n  if (!uid) {\n    return { heists: [], loading: false, error: null }\n  }\n\n  return state",
+    "originalFile": "\"use client\"\n\nimport { useEffect, useState } from \"react\"\nimport {\n  collection,\n  query,\n  where,\n  orderBy,\n  onSnapshot,\n  type QueryConstraint,\n} from \"firebase/firestore\"\nimport { db } from \"@/lib/firebase\"\nimport { useUser } from \"@/components/UserProvider\"\nimport { heistConverter, type Heist } from \"@/types/firestore/heist\"\n\nexport type HeistFilter = \"active\" | \"assigned\" | \"expired\"\n\ninterface UseHeistsResult {\n  heists: Heist[]\n  loading: boolean\n  error: Error | null\n}\n\nfunction buildConstraints(filter: HeistFilter, uid: string): QueryConstraint[] {\n  const now = new Date()\n\n  switch (filter) {\n    case \"active\":\n      return [\n        where(\"assignedTo\", \"==\", uid),\n        where(\"deadline\", \">\", now),\n        orderBy(\"deadline\", \"asc\"),\n      ]\n    case \"assigned\":\n      return [\n        where(\"createdBy\", \"==\", uid),\n        where(\"deadline\", \">\", now),\n        orderBy(\"deadline\", \"asc\"),\n      ]\n    case \"expired\":\n      return [\n        where(\"finalStatus\", \"!=\", null),\n        where(\"deadline\", \"<\", now),\n        orderBy(\"finalStatus\"),\n        orderBy(\"deadline\", \"desc\"),\n      ]\n  }\n}\n\nexport function useHeists(filter: HeistFilter): UseHeistsResult {\n  const { user } = useUser()\n  const uid = user?.uid\n\n  const [heists, setHeists] = useState<Heist[]>([])\n  const [loading, setLoading] = useState(true)\n  const [error, setError] = useState<Error | null>(null)\n\n  useEffect(() => {\n    if (!uid) {\n      setHeists([])\n      setLoading(false)\n      return\n    }\n\n    setLoading(true)\n    setError(null)\n\n    const ref = collection(db, \"heists\").withConverter(heistConverter)\n    const q = query(ref, ...buildConstraints(filter, uid))\n\n    const unsubscribe = onSnapshot(\n      q,\n      (snapshot) => {\n        setHeists(snapshot.docs.map((doc) => doc.data()))\n        setLoading(false)\n      },\n      (err) => {\n        setError(err)\n        setLoading(false)\n      }\n    )\n\n    return unsubscribe\n  }, [filter, uid])\n\n  return { heists, loading, error }\n}\n",
+    "structuredPatch": [
+      {
+        "oldStart": 51,
+        "oldLines": 37,
+        "newStart": 51,
+        "newLines": 39,
+        "lines": [
+          "   const { user } = useUser()",
+          "   const uid = user?.uid",
+          " ",
+          "-  const [heists, setHeists] = useState<Heist[]>([])",
+          "-  const [loading, setLoading] = useState(true)",
+          "-  const [error, setError] = useState<Error | null>(null)",
+          "+  const [state, setState] = useState<UseHeistsResult>({",
+          "+    heists: [],",
+          "+    loading: true,",
+          "+    error: null,",
+          "+  })",
+          " ",
+          "   useEffect(() => {",
+          "-    if (!uid) {",
+          "-      setHeists([])",
+          "-      setLoading(false)",
+          "-      return",
+          "-    }",
+          "+    if (!uid) return",
+          " ",
+          "-    setLoading(true)",
+          "-    setError(null)",
+          "-",
+          "     const ref = collection(db, \"heists\").withConverter(heistConverter)",
+          "     const q = query(ref, ...buildConstraints(filter, uid))",
+          " ",
+          "     const unsubscribe = onSnapshot(",
+          "       q,",
+          "       (snapshot) => {",
+          "-        setHeists(snapshot.docs.map((doc) => doc.data()))",
+          "-        setLoading(false)",
+          "+        setState({",
+          "+          heists: snapshot.docs.map((doc) => doc.data()),",
+          "+          loading: false,",
+          "+          error: null,",
+          "+        })",
+          "       },",
+          "       (err) => {",
+          "-        setError(err)",
+          "-        setLoading(false)",
+          "+        setState({ heists: [], loading: false, error: err })",
+          "       }",
+          "     )",
+          " ",
+          "     return unsubscribe",
+          "   }, [filter, uid])",
+          " ",
+          "-  return { heists, loading, error }",
+          "+  // No signed-in user: nothing to subscribe to, return an empty result.",
+          "+  if (!uid) {",
+          "+    return { heists: [], loading: false, error: null }",
+          "+  }",
+          "+",
+          "+  return state",
+          " }"
+        ]
+      }
+    ],
+    "userModified": false,
+    "replaceAll": false
+  },
+  "tool_use_id": "toolu_01D91TuqVhRj2QK5QWswjZNY",
+  "duration_ms": 34
+}
+{
+  "session_id": "8ae9b854-36b4-4b50-90e9-b937b99a46a4",
+  "transcript_path": "C:\\Users\\Ahmed.Elhawary\\.claude\\projects\\D--Learn-AgenticAI-pocket-heist\\8ae9b854-36b4-4b50-90e9-b937b99a46a4.jsonl",
+  "cwd": "D:\\Learn\\AgenticAI\\pocket-heist",
+  "permission_mode": "auto",
+  "effort": {
+    "level": "medium"
+  },
+  "hook_event_name": "PostToolUse",
+  "tool_name": "Edit",
+  "tool_input": {
+    "file_path": "D:\\Learn\\AgenticAI\\pocket-heist\\tests\\hooks\\useHeists.test.tsx",
+    "old_string": "const {\n  mockCollection,\n  mockWithConverter,\n  mockQuery,\n  mockWhere,\n  mockOrderBy,\n  mockOnSnapshot,\n  mockUnsubscribe,\n} = vi.hoisted(() => {\n  const mockUnsubscribe = vi.fn()\n  const mockWithConverter = vi.fn(() => ({ __ref: true }))\n  return {\n    mockWithConverter,\n    mockCollection: vi.fn(() => ({ withConverter: mockWithConverter })),",
+    "new_string": "const {\n  mockCollection,\n  mockQuery,\n  mockWhere,\n  mockOrderBy,\n  mockOnSnapshot,\n  mockUnsubscribe,\n} = vi.hoisted(() => {\n  const mockUnsubscribe = vi.fn()\n  const mockWithConverter = vi.fn(() => ({ __ref: true }))\n  return {\n    mockCollection: vi.fn(() => ({ withConverter: mockWithConverter })),",
+    "replace_all": false
+  },
+  "tool_response": {
+    "filePath": "D:\\Learn\\AgenticAI\\pocket-heist\\tests\\hooks\\useHeists.test.tsx",
+    "oldString": "const {\n  mockCollection,\n  mockWithConverter,\n  mockQuery,\n  mockWhere,\n  mockOrderBy,\n  mockOnSnapshot,\n  mockUnsubscribe,\n} = vi.hoisted(() => {\n  const mockUnsubscribe = vi.fn()\n  const mockWithConverter = vi.fn(() => ({ __ref: true }))\n  return {\n    mockWithConverter,\n    mockCollection: vi.fn(() => ({ withConverter: mockWithConverter })),",
+    "newString": "const {\n  mockCollection,\n  mockQuery,\n  mockWhere,\n  mockOrderBy,\n  mockOnSnapshot,\n  mockUnsubscribe,\n} = vi.hoisted(() => {\n  const mockUnsubscribe = vi.fn()\n  const mockWithConverter = vi.fn(() => ({ __ref: true }))\n  return {\n    mockCollection: vi.fn(() => ({ withConverter: mockWithConverter })),",
+    "originalFile": "import { renderHook, act } from \"@testing-library/react\"\nimport { describe, it, expect, vi, beforeEach } from \"vitest\"\nimport { useHeists } from \"@/hooks/useHeists\"\nimport type { Heist } from \"@/types/firestore/heist\"\n\n// --- Firestore mocks ---\nconst {\n  mockCollection,\n  mockWithConverter,\n  mockQuery,\n  mockWhere,\n  mockOrderBy,\n  mockOnSnapshot,\n  mockUnsubscribe,\n} = vi.hoisted(() => {\n  const mockUnsubscribe = vi.fn()\n  const mockWithConverter = vi.fn(() => ({ __ref: true }))\n  return {\n    mockWithConverter,\n    mockCollection: vi.fn(() => ({ withConverter: mockWithConverter })),\n    mockQuery: vi.fn((...args: unknown[]) => ({ __query: args })),\n    mockWhere: vi.fn((field: string, op: string, value: unknown) => ({ field, op, value })),\n    mockOrderBy: vi.fn((field: string, dir?: string) => ({ orderBy: field, dir })),\n    mockOnSnapshot: vi.fn(() => mockUnsubscribe),\n    mockUnsubscribe,\n  }\n})\n\nvi.mock(\"firebase/firestore\", () => ({\n  collection: mockCollection,\n  query: mockQuery,\n  where: mockWhere,\n  orderBy: mockOrderBy,\n  onSnapshot: mockOnSnapshot,\n}))\nvi.mock(\"@/lib/firebase\", () => ({ db: {} }))\n\n// --- UserProvider mock ---\nconst { mockUseUser } = vi.hoisted(() => ({\n  mockUseUser: vi.fn(() => ({ user: { uid: \"user-1\", email: \"a@b.com\" }, loading: false })),\n}))\nvi.mock(\"@/components/UserProvider\", () => ({ useUser: mockUseUser }))\n\n// --- Helpers ---\ntype WhereCall = { field: string; op: string; value: unknown }\n\nfunction whereCalls(): WhereCall[] {\n  return mockWhere.mock.calls.map(([field, op, value]) => ({ field, op, value }) as WhereCall)\n}\n\n/** Emit a snapshot through the most recent onSnapshot subscription. */\nfunction emit(heists: Partial<Heist>[]) {\n  const onNext = mockOnSnapshot.mock.calls.at(-1)![1] as (snap: unknown) => void\n  act(() => {\n    onNext({ docs: heists.map((h) => ({ data: () => h })) })\n  })\n}\n\ndescribe(\"useHeists\", () => {\n  beforeEach(() => {\n    vi.clearAllMocks()\n    mockUseUser.mockReturnValue({ user: { uid: \"user-1\", email: \"a@b.com\" }, loading: false })\n  })\n\n  it(\"builds the active query: assignedTo == uid and a future deadline\", () => {\n    renderHook(() => useHeists(\"active\"))\n    const calls = whereCalls()\n    expect(calls).toContainEqual({ field: \"assignedTo\", op: \"==\", value: \"user-1\" })\n    expect(calls).toContainEqual(expect.objectContaining({ field: \"deadline\", op: \">\" }))\n  })\n\n  it(\"builds the assigned query: createdBy == uid and a future deadline\", () => {\n    renderHook(() => useHeists(\"assigned\"))\n    const calls = whereCalls()\n    expect(calls).toContainEqual({ field: \"createdBy\", op: \"==\", value: \"user-1\" })\n    expect(calls).toContainEqual(expect.objectContaining({ field: \"deadline\", op: \">\" }))\n  })\n\n  it(\"builds the expired query: finalStatus != null and a passed deadline\", () => {\n    renderHook(() => useHeists(\"expired\"))\n    const calls = whereCalls()\n    expect(calls).toContainEqual({ field: \"finalStatus\", op: \"!=\", value: null })\n    expect(calls).toContainEqual(expect.objectContaining({ field: \"deadline\", op: \"<\" }))\n  })\n\n  it(\"returns mapped heists when the snapshot emits, and updates on re-emit\", () => {\n    const { result } = renderHook(() => useHeists(\"active\"))\n\n    emit([{ id: \"h1\", title: \"First Job\" }])\n    expect(result.current.heists).toEqual([{ id: \"h1\", title: \"First Job\" }])\n    expect(result.current.loading).toBe(false)\n\n    emit([\n      { id: \"h1\", title: \"First Job\" },\n      { id: \"h2\", title: \"Second Job\" },\n    ])\n    expect(result.current.heists.map((h) => h.title)).toEqual([\"First Job\", \"Second Job\"])\n  })\n\n  it(\"returns an empty array and never subscribes when there is no user\", () => {\n    mockUseUser.mockReturnValue({ user: null, loading: false })\n    const { result } = renderHook(() => useHeists(\"active\"))\n\n    expect(result.current.heists).toEqual([])\n    expect(result.current.loading).toBe(false)\n    expect(mockOnSnapshot).not.toHaveBeenCalled()\n  })\n\n  it(\"unsubscribes from the snapshot listener on unmount\", () => {\n    const { unmount } = renderHook(() => useHeists(\"active\"))\n    expect(mockOnSnapshot).toHaveBeenCalledOnce()\n\n    unmount()\n    expect(mockUnsubscribe).toHaveBeenCalledOnce()\n  })\n})\n",
+    "structuredPatch": [
+      {
+        "oldStart": 6,
+        "oldLines": 7,
+        "newStart": 6,
+        "newLines": 6,
+        "lines": [
+          " // --- Firestore mocks ---",
+          " const {",
+          "   mockCollection,",
+          "-  mockWithConverter,",
+          "   mockQuery,",
+          "   mockWhere,",
+          "   mockOrderBy,"
+        ]
+      },
+      {
+        "oldStart": 16,
+        "oldLines": 7,
+        "newStart": 15,
+        "newLines": 6,
+        "lines": [
+          "   const mockUnsubscribe = vi.fn()",
+          "   const mockWithConverter = vi.fn(() => ({ __ref: true }))",
+          "   return {",
+          "-    mockWithConverter,",
+          "     mockCollection: vi.fn(() => ({ withConverter: mockWithConverter })),",
+          "     mockQuery: vi.fn((...args: unknown[]) => ({ __query: args })),",
+          "     mockWhere: vi.fn((field: string, op: string, value: unknown) => ({ field, op, value })),"
+        ]
+      }
+    ],
+    "userModified": false,
+    "replaceAll": false
+  },
+  "tool_use_id": "toolu_01VQUUwpv4Qs15fKj6oJDGiZ",
+  "duration_ms": 139
+}
+{
+  "session_id": "8ae9b854-36b4-4b50-90e9-b937b99a46a4",
+  "transcript_path": "C:\\Users\\Ahmed.Elhawary\\.claude\\projects\\D--Learn-AgenticAI-pocket-heist\\8ae9b854-36b4-4b50-90e9-b937b99a46a4.jsonl",
+  "cwd": "D:\\Learn\\AgenticAI\\pocket-heist",
+  "permission_mode": "auto",
+  "effort": {
+    "level": "medium"
+  },
+  "hook_event_name": "PostToolUse",
+  "tool_name": "Edit",
+  "tool_input": {
+    "file_path": "D:\\Learn\\AgenticAI\\pocket-heist\\hooks\\useHeists.ts",
+    "old_string": "        setState({\n          heists: snapshot.docs.map((doc) => doc.data()),\n          loading: false,\n          error: null,\n        })",
+    "new_string": "        setState({\n          // The converter's `toFirestore` types its model as `Partial<Heist>`, so\n          // `data()` is widened to that on reads; `fromFirestore` always yields a full Heist.\n          heists: snapshot.docs.map((doc) => doc.data() as Heist),\n          loading: false,\n          error: null,\n        })",
+    "replace_all": false
+  },
+  "tool_response": {
+    "filePath": "D:\\Learn\\AgenticAI\\pocket-heist\\hooks\\useHeists.ts",
+    "oldString": "        setState({\n          heists: snapshot.docs.map((doc) => doc.data()),\n          loading: false,\n          error: null,\n        })",
+    "newString": "        setState({\n          // The converter's `toFirestore` types its model as `Partial<Heist>`, so\n          // `data()` is widened to that on reads; `fromFirestore` always yields a full Heist.\n          heists: snapshot.docs.map((doc) => doc.data() as Heist),\n          loading: false,\n          error: null,\n        })",
+    "originalFile": "\"use client\"\n\nimport { useEffect, useState } from \"react\"\nimport {\n  collection,\n  query,\n  where,\n  orderBy,\n  onSnapshot,\n  type QueryConstraint,\n} from \"firebase/firestore\"\nimport { db } from \"@/lib/firebase\"\nimport { useUser } from \"@/components/UserProvider\"\nimport { heistConverter, type Heist } from \"@/types/firestore/heist\"\n\nexport type HeistFilter = \"active\" | \"assigned\" | \"expired\"\n\ninterface UseHeistsResult {\n  heists: Heist[]\n  loading: boolean\n  error: Error | null\n}\n\nfunction buildConstraints(filter: HeistFilter, uid: string): QueryConstraint[] {\n  const now = new Date()\n\n  switch (filter) {\n    case \"active\":\n      return [\n        where(\"assignedTo\", \"==\", uid),\n        where(\"deadline\", \">\", now),\n        orderBy(\"deadline\", \"asc\"),\n      ]\n    case \"assigned\":\n      return [\n        where(\"createdBy\", \"==\", uid),\n        where(\"deadline\", \">\", now),\n        orderBy(\"deadline\", \"asc\"),\n      ]\n    case \"expired\":\n      return [\n        where(\"finalStatus\", \"!=\", null),\n        where(\"deadline\", \"<\", now),\n        orderBy(\"finalStatus\"),\n        orderBy(\"deadline\", \"desc\"),\n      ]\n  }\n}\n\nexport function useHeists(filter: HeistFilter): UseHeistsResult {\n  const { user } = useUser()\n  const uid = user?.uid\n\n  const [state, setState] = useState<UseHeistsResult>({\n    heists: [],\n    loading: true,\n    error: null,\n  })\n\n  useEffect(() => {\n    if (!uid) return\n\n    const ref = collection(db, \"heists\").withConverter(heistConverter)\n    const q = query(ref, ...buildConstraints(filter, uid))\n\n    const unsubscribe = onSnapshot(\n      q,\n      (snapshot) => {\n        setState({\n          heists: snapshot.docs.map((doc) => doc.data()),\n          loading: false,\n          error: null,\n        })\n      },\n      (err) => {\n        setState({ heists: [], loading: false, error: err })\n      }\n    )\n\n    return unsubscribe\n  }, [filter, uid])\n\n  // No signed-in user: nothing to subscribe to, return an empty result.\n  if (!uid) {\n    return { heists: [], loading: false, error: null }\n  }\n\n  return state\n}\n",
+    "structuredPatch": [
+      {
+        "oldStart": 67,
+        "oldLines": 7,
+        "newStart": 67,
+        "newLines": 9,
+        "lines": [
+          "       q,",
+          "       (snapshot) => {",
+          "         setState({",
+          "-          heists: snapshot.docs.map((doc) => doc.data()),",
+          "+          // The converter's `toFirestore` types its model as `Partial<Heist>`, so",
+          "+          // `data()` is widened to that on reads; `fromFirestore` always yields a full Heist.",
+          "+          heists: snapshot.docs.map((doc) => doc.data() as Heist),",
+          "           loading: false,",
+          "           error: null,",
+          "         })"
+        ]
+      }
+    ],
+    "userModified": false,
+    "replaceAll": false
+  },
+  "tool_use_id": "toolu_011H3aYyy4fu7jkr4SKdjEzd",
+  "duration_ms": 29
+}
+{
+  "session_id": "8ae9b854-36b4-4b50-90e9-b937b99a46a4",
+  "transcript_path": "C:\\Users\\Ahmed.Elhawary\\.claude\\projects\\D--Learn-AgenticAI-pocket-heist\\8ae9b854-36b4-4b50-90e9-b937b99a46a4.jsonl",
+  "cwd": "D:\\Learn\\AgenticAI\\pocket-heist",
+  "permission_mode": "auto",
+  "effort": {
+    "level": "medium"
+  },
+  "hook_event_name": "PostToolUse",
+  "tool_name": "Edit",
+  "tool_input": {
+    "file_path": "D:\\Learn\\AgenticAI\\pocket-heist\\tests\\hooks\\useHeists.test.tsx",
+    "old_string": "    mockOrderBy: vi.fn((field: string, dir?: string) => ({ orderBy: field, dir })),\n    mockOnSnapshot: vi.fn(() => mockUnsubscribe),",
+    "new_string": "    mockOrderBy: vi.fn((field: string, dir?: string) => ({ orderBy: field, dir })),\n    mockOnSnapshot: vi.fn(\n      (_q: unknown, _onNext: (snap: unknown) => void, _onError: (err: Error) => void) =>\n        mockUnsubscribe\n    ),",
+    "replace_all": false
+  },
+  "tool_response": {
+    "filePath": "D:\\Learn\\AgenticAI\\pocket-heist\\tests\\hooks\\useHeists.test.tsx",
+    "oldString": "    mockOrderBy: vi.fn((field: string, dir?: string) => ({ orderBy: field, dir })),\n    mockOnSnapshot: vi.fn(() => mockUnsubscribe),",
+    "newString": "    mockOrderBy: vi.fn((field: string, dir?: string) => ({ orderBy: field, dir })),\n    mockOnSnapshot: vi.fn(\n      (_q: unknown, _onNext: (snap: unknown) => void, _onError: (err: Error) => void) =>\n        mockUnsubscribe\n    ),",
+    "originalFile": "import { renderHook, act } from \"@testing-library/react\"\nimport { describe, it, expect, vi, beforeEach } from \"vitest\"\nimport { useHeists } from \"@/hooks/useHeists\"\nimport type { Heist } from \"@/types/firestore/heist\"\n\n// --- Firestore mocks ---\nconst {\n  mockCollection,\n  mockQuery,\n  mockWhere,\n  mockOrderBy,\n  mockOnSnapshot,\n  mockUnsubscribe,\n} = vi.hoisted(() => {\n  const mockUnsubscribe = vi.fn()\n  const mockWithConverter = vi.fn(() => ({ __ref: true }))\n  return {\n    mockCollection: vi.fn(() => ({ withConverter: mockWithConverter })),\n    mockQuery: vi.fn((...args: unknown[]) => ({ __query: args })),\n    mockWhere: vi.fn((field: string, op: string, value: unknown) => ({ field, op, value })),\n    mockOrderBy: vi.fn((field: string, dir?: string) => ({ orderBy: field, dir })),\n    mockOnSnapshot: vi.fn(() => mockUnsubscribe),\n    mockUnsubscribe,\n  }\n})\n\nvi.mock(\"firebase/firestore\", () => ({\n  collection: mockCollection,\n  query: mockQuery,\n  where: mockWhere,\n  orderBy: mockOrderBy,\n  onSnapshot: mockOnSnapshot,\n}))\nvi.mock(\"@/lib/firebase\", () => ({ db: {} }))\n\n// --- UserProvider mock ---\nconst { mockUseUser } = vi.hoisted(() => ({\n  mockUseUser: vi.fn(() => ({ user: { uid: \"user-1\", email: \"a@b.com\" }, loading: false })),\n}))\nvi.mock(\"@/components/UserProvider\", () => ({ useUser: mockUseUser }))\n\n// --- Helpers ---\ntype WhereCall = { field: string; op: string; value: unknown }\n\nfunction whereCalls(): WhereCall[] {\n  return mockWhere.mock.calls.map(([field, op, value]) => ({ field, op, value }) as WhereCall)\n}\n\n/** Emit a snapshot through the most recent onSnapshot subscription. */\nfunction emit(heists: Partial<Heist>[]) {\n  const onNext = mockOnSnapshot.mock.calls.at(-1)![1] as (snap: unknown) => void\n  act(() => {\n    onNext({ docs: heists.map((h) => ({ data: () => h })) })\n  })\n}\n\ndescribe(\"useHeists\", () => {\n  beforeEach(() => {\n    vi.clearAllMocks()\n    mockUseUser.mockReturnValue({ user: { uid: \"user-1\", email: \"a@b.com\" }, loading: false })\n  })\n\n  it(\"builds the active query: assignedTo == uid and a future deadline\", () => {\n    renderHook(() => useHeists(\"active\"))\n    const calls = whereCalls()\n    expect(calls).toContainEqual({ field: \"assignedTo\", op: \"==\", value: \"user-1\" })\n    expect(calls).toContainEqual(expect.objectContaining({ field: \"deadline\", op: \">\" }))\n  })\n\n  it(\"builds the assigned query: createdBy == uid and a future deadline\", () => {\n    renderHook(() => useHeists(\"assigned\"))\n    const calls = whereCalls()\n    expect(calls).toContainEqual({ field: \"createdBy\", op: \"==\", value: \"user-1\" })\n    expect(calls).toContainEqual(expect.objectContaining({ field: \"deadline\", op: \">\" }))\n  })\n\n  it(\"builds the expired query: finalStatus != null and a passed deadline\", () => {\n    renderHook(() => useHeists(\"expired\"))\n    const calls = whereCalls()\n    expect(calls).toContainEqual({ field: \"finalStatus\", op: \"!=\", value: null })\n    expect(calls).toContainEqual(expect.objectContaining({ field: \"deadline\", op: \"<\" }))\n  })\n\n  it(\"returns mapped heists when the snapshot emits, and updates on re-emit\", () => {\n    const { result } = renderHook(() => useHeists(\"active\"))\n\n    emit([{ id: \"h1\", title: \"First Job\" }])\n    expect(result.current.heists).toEqual([{ id: \"h1\", title: \"First Job\" }])\n    expect(result.current.loading).toBe(false)\n\n    emit([\n      { id: \"h1\", title: \"First Job\" },\n      { id: \"h2\", title: \"Second Job\" },\n    ])\n    expect(result.current.heists.map((h) => h.title)).toEqual([\"First Job\", \"Second Job\"])\n  })\n\n  it(\"returns an empty array and never subscribes when there is no user\", () => {\n    mockUseUser.mockReturnValue({ user: null, loading: false })\n    const { result } = renderHook(() => useHeists(\"active\"))\n\n    expect(result.current.heists).toEqual([])\n    expect(result.current.loading).toBe(false)\n    expect(mockOnSnapshot).not.toHaveBeenCalled()\n  })\n\n  it(\"unsubscribes from the snapshot listener on unmount\", () => {\n    const { unmount } = renderHook(() => useHeists(\"active\"))\n    expect(mockOnSnapshot).toHaveBeenCalledOnce()\n\n    unmount()\n    expect(mockUnsubscribe).toHaveBeenCalledOnce()\n  })\n})\n",
+    "structuredPatch": [
+      {
+        "oldStart": 19,
+        "oldLines": 7,
+        "newStart": 19,
+        "newLines": 10,
+        "lines": [
+          "     mockQuery: vi.fn((...args: unknown[]) => ({ __query: args })),",
+          "     mockWhere: vi.fn((field: string, op: string, value: unknown) => ({ field, op, value })),",
+          "     mockOrderBy: vi.fn((field: string, dir?: string) => ({ orderBy: field, dir })),",
+          "-    mockOnSnapshot: vi.fn(() => mockUnsubscribe),",
+          "+    mockOnSnapshot: vi.fn(",
+          "+      (_q: unknown, _onNext: (snap: unknown) => void, _onError: (err: Error) => void) =>",
+          "+        mockUnsubscribe",
+          "+    ),",
+          "     mockUnsubscribe,",
+          "   }",
+          " })"
+        ]
+      }
+    ],
+    "userModified": false,
+    "replaceAll": false
+  },
+  "tool_use_id": "toolu_01GyH55JZrqZwEST7yRzjhpW",
+  "duration_ms": 10
+}
+{
+  "session_id": "8ae9b854-36b4-4b50-90e9-b937b99a46a4",
+  "transcript_path": "C:\\Users\\Ahmed.Elhawary\\.claude\\projects\\D--Learn-AgenticAI-pocket-heist\\8ae9b854-36b4-4b50-90e9-b937b99a46a4.jsonl",
+  "cwd": "D:\\Learn\\AgenticAI\\pocket-heist",
+  "permission_mode": "auto",
+  "effort": {
+    "level": "medium"
+  },
+  "hook_event_name": "PostToolUse",
+  "tool_name": "Edit",
+  "tool_input": {
+    "file_path": "D:\\Learn\\AgenticAI\\pocket-heist\\tests\\hooks\\useHeists.test.tsx",
+    "old_string": "const { mockUseUser } = vi.hoisted(() => ({\n  mockUseUser: vi.fn(() => ({ user: { uid: \"user-1\", email: \"a@b.com\" }, loading: false })),\n}))",
+    "new_string": "const { mockUseUser } = vi.hoisted(() => ({\n  mockUseUser: vi.fn(\n    (): { user: { uid: string; email: string } | null; loading: boolean } => ({\n      user: { uid: \"user-1\", email: \"a@b.com\" },\n      loading: false,\n    })\n  ),\n}))",
+    "replace_all": false
+  },
+  "tool_response": {
+    "filePath": "D:\\Learn\\AgenticAI\\pocket-heist\\tests\\hooks\\useHeists.test.tsx",
+    "oldString": "const { mockUseUser } = vi.hoisted(() => ({\n  mockUseUser: vi.fn(() => ({ user: { uid: \"user-1\", email: \"a@b.com\" }, loading: false })),\n}))",
+    "newString": "const { mockUseUser } = vi.hoisted(() => ({\n  mockUseUser: vi.fn(\n    (): { user: { uid: string; email: string } | null; loading: boolean } => ({\n      user: { uid: \"user-1\", email: \"a@b.com\" },\n      loading: false,\n    })\n  ),\n}))",
+    "originalFile": "import { renderHook, act } from \"@testing-library/react\"\nimport { describe, it, expect, vi, beforeEach } from \"vitest\"\nimport { useHeists } from \"@/hooks/useHeists\"\nimport type { Heist } from \"@/types/firestore/heist\"\n\n// --- Firestore mocks ---\nconst {\n  mockCollection,\n  mockQuery,\n  mockWhere,\n  mockOrderBy,\n  mockOnSnapshot,\n  mockUnsubscribe,\n} = vi.hoisted(() => {\n  const mockUnsubscribe = vi.fn()\n  const mockWithConverter = vi.fn(() => ({ __ref: true }))\n  return {\n    mockCollection: vi.fn(() => ({ withConverter: mockWithConverter })),\n    mockQuery: vi.fn((...args: unknown[]) => ({ __query: args })),\n    mockWhere: vi.fn((field: string, op: string, value: unknown) => ({ field, op, value })),\n    mockOrderBy: vi.fn((field: string, dir?: string) => ({ orderBy: field, dir })),\n    mockOnSnapshot: vi.fn(\n      (_q: unknown, _onNext: (snap: unknown) => void, _onError: (err: Error) => void) =>\n        mockUnsubscribe\n    ),\n    mockUnsubscribe,\n  }\n})\n\nvi.mock(\"firebase/firestore\", () => ({\n  collection: mockCollection,\n  query: mockQuery,\n  where: mockWhere,\n  orderBy: mockOrderBy,\n  onSnapshot: mockOnSnapshot,\n}))\nvi.mock(\"@/lib/firebase\", () => ({ db: {} }))\n\n// --- UserProvider mock ---\nconst { mockUseUser } = vi.hoisted(() => ({\n  mockUseUser: vi.fn(() => ({ user: { uid: \"user-1\", email: \"a@b.com\" }, loading: false })),\n}))\nvi.mock(\"@/components/UserProvider\", () => ({ useUser: mockUseUser }))\n\n// --- Helpers ---\ntype WhereCall = { field: string; op: string; value: unknown }\n\nfunction whereCalls(): WhereCall[] {\n  return mockWhere.mock.calls.map(([field, op, value]) => ({ field, op, value }) as WhereCall)\n}\n\n/** Emit a snapshot through the most recent onSnapshot subscription. */\nfunction emit(heists: Partial<Heist>[]) {\n  const onNext = mockOnSnapshot.mock.calls.at(-1)![1] as (snap: unknown) => void\n  act(() => {\n    onNext({ docs: heists.map((h) => ({ data: () => h })) })\n  })\n}\n\ndescribe(\"useHeists\", () => {\n  beforeEach(() => {\n    vi.clearAllMocks()\n    mockUseUser.mockReturnValue({ user: { uid: \"user-1\", email: \"a@b.com\" }, loading: false })\n  })\n\n  it(\"builds the active query: assignedTo == uid and a future deadline\", () => {\n    renderHook(() => useHeists(\"active\"))\n    const calls = whereCalls()\n    expect(calls).toContainEqual({ field: \"assignedTo\", op: \"==\", value: \"user-1\" })\n    expect(calls).toContainEqual(expect.objectContaining({ field: \"deadline\", op: \">\" }))\n  })\n\n  it(\"builds the assigned query: createdBy == uid and a future deadline\", () => {\n    renderHook(() => useHeists(\"assigned\"))\n    const calls = whereCalls()\n    expect(calls).toContainEqual({ field: \"createdBy\", op: \"==\", value: \"user-1\" })\n    expect(calls).toContainEqual(expect.objectContaining({ field: \"deadline\", op: \">\" }))\n  })\n\n  it(\"builds the expired query: finalStatus != null and a passed deadline\", () => {\n    renderHook(() => useHeists(\"expired\"))\n    const calls = whereCalls()\n    expect(calls).toContainEqual({ field: \"finalStatus\", op: \"!=\", value: null })\n    expect(calls).toContainEqual(expect.objectContaining({ field: \"deadline\", op: \"<\" }))\n  })\n\n  it(\"returns mapped heists when the snapshot emits, and updates on re-emit\", () => {\n    const { result } = renderHook(() => useHeists(\"active\"))\n\n    emit([{ id: \"h1\", title: \"First Job\" }])\n    expect(result.current.heists).toEqual([{ id: \"h1\", title: \"First Job\" }])\n    expect(result.current.loading).toBe(false)\n\n    emit([\n      { id: \"h1\", title: \"First Job\" },\n      { id: \"h2\", title: \"Second Job\" },\n    ])\n    expect(result.current.heists.map((h) => h.title)).toEqual([\"First Job\", \"Second Job\"])\n  })\n\n  it(\"returns an empty array and never subscribes when there is no user\", () => {\n    mockUseUser.mockReturnValue({ user: null, loading: false })\n    const { result } = renderHook(() => useHeists(\"active\"))\n\n    expect(result.current.heists).toEqual([])\n    expect(result.current.loading).toBe(false)\n    expect(mockOnSnapshot).not.toHaveBeenCalled()\n  })\n\n  it(\"unsubscribes from the snapshot listener on unmount\", () => {\n    const { unmount } = renderHook(() => useHeists(\"active\"))\n    expect(mockOnSnapshot).toHaveBeenCalledOnce()\n\n    unmount()\n    expect(mockUnsubscribe).toHaveBeenCalledOnce()\n  })\n})\n",
+    "structuredPatch": [
+      {
+        "oldStart": 38,
+        "oldLines": 7,
+        "newStart": 38,
+        "newLines": 12,
+        "lines": [
+          " ",
+          " // --- UserProvider mock ---",
+          " const { mockUseUser } = vi.hoisted(() => ({",
+          "-  mockUseUser: vi.fn(() => ({ user: { uid: \"user-1\", email: \"a@b.com\" }, loading: false })),",
+          "+  mockUseUser: vi.fn(",
+          "+    (): { user: { uid: string; email: string } | null; loading: boolean } => ({",
+          "+      user: { uid: \"user-1\", email: \"a@b.com\" },",
+          "+      loading: false,",
+          "+    })",
+          "+  ),",
+          " }))",
+          " vi.mock(\"@/components/UserProvider\", () => ({ useUser: mockUseUser }))",
+          " "
+        ]
+      }
+    ],
+    "userModified": false,
+    "replaceAll": false
+  },
+  "tool_use_id": "toolu_019Qi4qZ7p6cRiSKhgpjijKw",
+  "duration_ms": 28
+}
+{
+  "session_id": "c5bad8e3-2d83-4b2e-a264-1731e2fcd7a7",
+  "transcript_path": "C:\\Users\\Ahmed.Elhawary\\.claude\\projects\\D--Learn-AgenticAI-pocket-heist\\c5bad8e3-2d83-4b2e-a264-1731e2fcd7a7.jsonl",
+  "cwd": "D:\\Learn\\AgenticAI\\pocket-heist",
+  "permission_mode": "default",
+  "effort": {
+    "level": "medium"
+  },
+  "hook_event_name": "PostToolUse",
+  "tool_name": "Write",
+  "tool_input": {
+    "file_path": "D:\\Learn\\AgenticAI\\pocket-heist\\firestore.indexes.json",
+    "content": "{\n  \"indexes\": [\n    {\n      \"collectionGroup\": \"heists\",\n      \"queryScope\": \"COLLECTION\",\n      \"fields\": [\n        { \"fieldPath\": \"assignedTo\", \"order\": \"ASCENDING\" },\n        { \"fieldPath\": \"deadline\", \"order\": \"ASCENDING\" }\n      ]\n    },\n    {\n      \"collectionGroup\": \"heists\",\n      \"queryScope\": \"COLLECTION\",\n      \"fields\": [\n        { \"fieldPath\": \"createdBy\", \"order\": \"ASCENDING\" },\n        { \"fieldPath\": \"deadline\", \"order\": \"ASCENDING\" }\n      ]\n    },\n    {\n      \"collectionGroup\": \"heists\",\n      \"queryScope\": \"COLLECTION\",\n      \"fields\": [\n        { \"fieldPath\": \"finalStatus\", \"order\": \"ASCENDING\" },\n        { \"fieldPath\": \"deadline\", \"order\": \"DESCENDING\" }\n      ]\n    }\n  ],\n  \"fieldOverrides\": []\n}\n"
+  },
+  "tool_response": {
+    "type": "create",
+    "filePath": "D:\\Learn\\AgenticAI\\pocket-heist\\firestore.indexes.json",
+    "content": "{\n  \"indexes\": [\n    {\n      \"collectionGroup\": \"heists\",\n      \"queryScope\": \"COLLECTION\",\n      \"fields\": [\n        { \"fieldPath\": \"assignedTo\", \"order\": \"ASCENDING\" },\n        { \"fieldPath\": \"deadline\", \"order\": \"ASCENDING\" }\n      ]\n    },\n    {\n      \"collectionGroup\": \"heists\",\n      \"queryScope\": \"COLLECTION\",\n      \"fields\": [\n        { \"fieldPath\": \"createdBy\", \"order\": \"ASCENDING\" },\n        { \"fieldPath\": \"deadline\", \"order\": \"ASCENDING\" }\n      ]\n    },\n    {\n      \"collectionGroup\": \"heists\",\n      \"queryScope\": \"COLLECTION\",\n      \"fields\": [\n        { \"fieldPath\": \"finalStatus\", \"order\": \"ASCENDING\" },\n        { \"fieldPath\": \"deadline\", \"order\": \"DESCENDING\" }\n      ]\n    }\n  ],\n  \"fieldOverrides\": []\n}\n",
+    "structuredPatch": [],
+    "originalFile": null,
+    "userModified": false
+  },
+  "tool_use_id": "toolu_01X41WqLeG7xjLpp5uGpAfxo",
+  "duration_ms": 99
+}
+{
+  "session_id": "c5bad8e3-2d83-4b2e-a264-1731e2fcd7a7",
+  "transcript_path": "C:\\Users\\Ahmed.Elhawary\\.claude\\projects\\D--Learn-AgenticAI-pocket-heist\\c5bad8e3-2d83-4b2e-a264-1731e2fcd7a7.jsonl",
+  "cwd": "D:\\Learn\\AgenticAI\\pocket-heist",
+  "permission_mode": "default",
+  "effort": {
+    "level": "medium"
+  },
+  "hook_event_name": "PostToolUse",
+  "tool_name": "Edit",
+  "tool_input": {
+    "file_path": "D:\\Learn\\AgenticAI\\pocket-heist\\firebase.json",
+    "old_string": "  \"firestore\": {\n    \"rules\": \"firestore.rules\"\n  },",
+    "new_string": "  \"firestore\": {\n    \"rules\": \"firestore.rules\",\n    \"indexes\": \"firestore.indexes.json\"\n  },",
+    "replace_all": false
+  },
+  "tool_response": {
+    "filePath": "D:\\Learn\\AgenticAI\\pocket-heist\\firebase.json",
+    "oldString": "  \"firestore\": {\n    \"rules\": \"firestore.rules\"\n  },",
+    "newString": "  \"firestore\": {\n    \"rules\": \"firestore.rules\",\n    \"indexes\": \"firestore.indexes.json\"\n  },",
+    "originalFile": "{\n  \"firestore\": {\n    \"rules\": \"firestore.rules\"\n  },\n  \"auth\": {\n    \"providers\": {\n      \"emailPassword\": true\n    }\n  }\n}\n",
+    "structuredPatch": [
+      {
+        "oldStart": 1,
+        "oldLines": 6,
+        "newStart": 1,
+        "newLines": 7,
+        "lines": [
+          " {",
+          "   \"firestore\": {",
+          "-    \"rules\": \"firestore.rules\"",
+          "+    \"rules\": \"firestore.rules\",",
+          "+    \"indexes\": \"firestore.indexes.json\"",
+          "   },",
+          "   \"auth\": {",
+          "     \"providers\": {"
+        ]
+      }
+    ],
+    "userModified": false,
+    "replaceAll": false
+  },
+  "tool_use_id": "toolu_01NsKdeEpzxzYPH6uKB94quf",
+  "duration_ms": 98
+}
