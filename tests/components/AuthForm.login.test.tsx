@@ -8,6 +8,7 @@ vi.mock("@/lib/auth/login", () => ({ login: mockLogin }))
 vi.mock("next/navigation", () => ({ useRouter: () => ({ push: vi.fn() }) }))
 vi.mock("@/lib/firebase", () => ({ auth: {} }))
 vi.mock("firebase/auth", () => ({ getAuth: vi.fn(() => ({})) }))
+vi.mock("@/app/actions/logLoginAttempt", () => ({ logLoginAttempt: vi.fn() }))
 
 beforeEach(() => vi.clearAllMocks())
 

@@ -7,6 +7,7 @@ import { Eye, EyeOff } from "lucide-react"
 import styles from "./AuthForm.module.css"
 import { signup } from "@/lib/auth/signup"
 import { login } from "@/lib/auth/login"
+import { logLoginAttempt } from "@/app/actions/logLoginAttempt"
 
 interface AuthFormProps {
   mode: "login" | "signup"
@@ -60,8 +61,10 @@ export default function AuthForm({ mode }: AuthFormProps) {
         const displayName = await login(email, password)
         setSuccessName(displayName)
         setSuccess(true)
+        void logLoginAttempt(email, "success")
       } catch (err) {
         setError(humanReadableError(err))
+        void logLoginAttempt(email, "failure", (err as { code?: string }).code ?? "unknown")
       } finally {
         setLoading(false)
       }

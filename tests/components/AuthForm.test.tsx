@@ -12,6 +12,8 @@ vi.mock("@/lib/auth/login", () => ({ login: mockLogin }))
 const { mockPush } = vi.hoisted(() => ({ mockPush: vi.fn() }))
 vi.mock("next/navigation", () => ({ useRouter: () => ({ push: mockPush }) }))
 
+vi.mock("@/app/actions/logLoginAttempt", () => ({ logLoginAttempt: vi.fn() }))
+
 describe("AuthForm", () => {
   beforeEach(() => {
     vi.clearAllMocks()

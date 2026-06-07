@@ -6121,3 +6121,283 @@
   "tool_use_id": "toolu_01RXv2XM1Rr3RZjdVLwsxZxW",
   "duration_ms": 70
 }
+{
+  "session_id": "af9850cc-23cc-4711-ae15-ac05c8a350dd",
+  "transcript_path": "C:\\Users\\Ahmed.Elhawary\\.claude\\projects\\D--Learn-AgenticAI-pocket-heist\\af9850cc-23cc-4711-ae15-ac05c8a350dd.jsonl",
+  "cwd": "D:\\Learn\\AgenticAI\\pocket-heist",
+  "permission_mode": "default",
+  "effort": {
+    "level": "high"
+  },
+  "hook_event_name": "PostToolUse",
+  "tool_name": "Write",
+  "tool_input": {
+    "file_path": "D:\\Learn\\AgenticAI\\pocket-heist\\_specs\\log-login-operations.md",
+    "content": "# Spec for Log Login Operations\n\nbranch: claude/feature/log-login-operations\n\n## Summary\n- Record every login attempt (successful or failed) so that operators can audit authentication activity.\n- Each log entry captures who tried to log in, when, whether it succeeded, and basic contextual metadata (e.g. IP address, user-agent).\n- Logs are persisted and queryable; they are not ephemeral console output.\n\n## Functional Requirements\n- On every login attempt via the `/login` page, create a login-log record before redirecting the user.\n- A log record must include: user identifier (email or username), timestamp (UTC), outcome (`success` | `failure`), failure reason if applicable (e.g. wrong password, account not found), and request metadata (IP address, user-agent string).\n- Failed login attempts must be logged even when no matching user account exists.\n- Logs must be written server-side; they must not rely on client-side calls.\n- Existing login flow UX must not change — logging is a silent side effect.\n- The login page must continue to behave identically from the user's perspective regardless of any logging errors (log failures must not break the login flow).\n\n## Figma Design Reference (only if referenced)\n- N/A — this is a back-end/observability feature with no UI changes.\n\n## Possible Edge Cases\n- Logging service is unavailable or throws — must not propagate to the user; swallow the error and potentially emit a warning to the server console.\n- Very high frequency of failed attempts from a single IP — logging must not become a bottleneck; consider async/non-blocking writes.\n- User provides an extremely long email string — sanitise or truncate before persisting to avoid storage issues.\n- Concurrent login attempts for the same account — log entries should be independent and not cause race conditions.\n- Login attempt with no user-agent header (e.g. scripted requests) — store an empty string or a sentinel value rather than crashing.\n\n## Acceptance Criteria\n- A successful login produces exactly one log entry with `outcome: \"success\"` and the correct user identifier.\n- A failed login (wrong password) produces exactly one log entry with `outcome: \"failure\"` and a populated `reason` field.\n- A login attempt for a non-existent user produces a log entry with `outcome: \"failure\"` and `reason` indicating the account was not found.\n- Log entries include a UTC timestamp accurate to at least the second.\n- Log entries include the IP address and user-agent of the request.\n- A logging-layer error does not return an error response to the client or alter the redirect behaviour.\n- All acceptance criteria are covered by automated tests.\n\n## Open Questions\n- Where should logs be persisted? Options: dedicated Firestore collection, a separate logging service, or a structured server-side log file. Needs a decision before implementation begins.\n- Should login logs be surfaced in any admin UI now, or is raw storage sufficient for this iteration?\n- Is there a data-retention policy — how long should login logs be kept?\n- Should repeated failed attempts from the same IP trigger any alert or rate-limit mechanism, or is that out of scope?\n\n## Testing Guidelines\nCreate a test file(s) in the ./tests folder for the new feature, and create meaningful tests for the following cases, without going too heavy:\n- Successful login writes a log entry with `outcome: \"success\"` and correct user identifier.\n- Failed login (wrong credentials) writes a log entry with `outcome: \"failure\"` and a non-empty `reason`.\n- Login for unknown user writes a log entry with `outcome: \"failure\"`.\n- Log entry includes a timestamp, IP address, and user-agent.\n- A thrown error inside the logging function does not cause the login route handler to return an error response.\n"
+  },
+  "tool_response": {
+    "type": "create",
+    "filePath": "D:\\Learn\\AgenticAI\\pocket-heist\\_specs\\log-login-operations.md",
+    "content": "# Spec for Log Login Operations\n\nbranch: claude/feature/log-login-operations\n\n## Summary\n- Record every login attempt (successful or failed) so that operators can audit authentication activity.\n- Each log entry captures who tried to log in, when, whether it succeeded, and basic contextual metadata (e.g. IP address, user-agent).\n- Logs are persisted and queryable; they are not ephemeral console output.\n\n## Functional Requirements\n- On every login attempt via the `/login` page, create a login-log record before redirecting the user.\n- A log record must include: user identifier (email or username), timestamp (UTC), outcome (`success` | `failure`), failure reason if applicable (e.g. wrong password, account not found), and request metadata (IP address, user-agent string).\n- Failed login attempts must be logged even when no matching user account exists.\n- Logs must be written server-side; they must not rely on client-side calls.\n- Existing login flow UX must not change — logging is a silent side effect.\n- The login page must continue to behave identically from the user's perspective regardless of any logging errors (log failures must not break the login flow).\n\n## Figma Design Reference (only if referenced)\n- N/A — this is a back-end/observability feature with no UI changes.\n\n## Possible Edge Cases\n- Logging service is unavailable or throws — must not propagate to the user; swallow the error and potentially emit a warning to the server console.\n- Very high frequency of failed attempts from a single IP — logging must not become a bottleneck; consider async/non-blocking writes.\n- User provides an extremely long email string — sanitise or truncate before persisting to avoid storage issues.\n- Concurrent login attempts for the same account — log entries should be independent and not cause race conditions.\n- Login attempt with no user-agent header (e.g. scripted requests) — store an empty string or a sentinel value rather than crashing.\n\n## Acceptance Criteria\n- A successful login produces exactly one log entry with `outcome: \"success\"` and the correct user identifier.\n- A failed login (wrong password) produces exactly one log entry with `outcome: \"failure\"` and a populated `reason` field.\n- A login attempt for a non-existent user produces a log entry with `outcome: \"failure\"` and `reason` indicating the account was not found.\n- Log entries include a UTC timestamp accurate to at least the second.\n- Log entries include the IP address and user-agent of the request.\n- A logging-layer error does not return an error response to the client or alter the redirect behaviour.\n- All acceptance criteria are covered by automated tests.\n\n## Open Questions\n- Where should logs be persisted? Options: dedicated Firestore collection, a separate logging service, or a structured server-side log file. Needs a decision before implementation begins.\n- Should login logs be surfaced in any admin UI now, or is raw storage sufficient for this iteration?\n- Is there a data-retention policy — how long should login logs be kept?\n- Should repeated failed attempts from the same IP trigger any alert or rate-limit mechanism, or is that out of scope?\n\n## Testing Guidelines\nCreate a test file(s) in the ./tests folder for the new feature, and create meaningful tests for the following cases, without going too heavy:\n- Successful login writes a log entry with `outcome: \"success\"` and correct user identifier.\n- Failed login (wrong credentials) writes a log entry with `outcome: \"failure\"` and a non-empty `reason`.\n- Login for unknown user writes a log entry with `outcome: \"failure\"`.\n- Log entry includes a timestamp, IP address, and user-agent.\n- A thrown error inside the logging function does not cause the login route handler to return an error response.\n",
+    "structuredPatch": [],
+    "originalFile": null,
+    "userModified": false
+  },
+  "tool_use_id": "toolu_01J8JUR84RRquikaoaA9HN25",
+  "duration_ms": 27
+}
+{
+  "session_id": "af9850cc-23cc-4711-ae15-ac05c8a350dd",
+  "transcript_path": "C:\\Users\\Ahmed.Elhawary\\.claude\\projects\\D--Learn-AgenticAI-pocket-heist\\af9850cc-23cc-4711-ae15-ac05c8a350dd.jsonl",
+  "cwd": "D:\\Learn\\AgenticAI\\pocket-heist",
+  "permission_mode": "default",
+  "effort": {
+    "level": "high"
+  },
+  "hook_event_name": "PostToolUse",
+  "tool_name": "Write",
+  "tool_input": {
+    "file_path": "D:\\Learn\\AgenticAI\\pocket-heist\\lib\\auth\\loginLogger.ts",
+    "content": "import { collection, addDoc, query, where, getDocs, Timestamp } from \"firebase/firestore\"\nimport { db } from \"@/lib/firebase\"\n\nexport interface LoginLogEntry {\n  email: string\n  outcome: \"success\" | \"failure\"\n  reason?: string\n  timestamp: Date\n  ip: string\n  userAgent: string\n  suspicious?: boolean\n}\n\nconst FAILURE_THRESHOLD = 5\nconst WINDOW_MINUTES = 15\n\nexport async function writeLoginLog(entry: LoginLogEntry): Promise<void> {\n  const doc: Record<string, unknown> = {\n    email: entry.email.slice(0, 254),\n    outcome: entry.outcome,\n    timestamp: Timestamp.fromDate(entry.timestamp),\n    ip: entry.ip,\n    userAgent: entry.userAgent,\n  }\n  if (entry.reason !== undefined) doc.reason = entry.reason\n  if (entry.suspicious !== undefined) doc.suspicious = entry.suspicious\n  await addDoc(collection(db, \"loginLogs\"), doc)\n}\n\nexport async function isSuspiciousIp(ip: string): Promise<boolean> {\n  if (!ip) return false\n  const windowStart = new Date(Date.now() - WINDOW_MINUTES * 60 * 1000)\n  const q = query(\n    collection(db, \"loginLogs\"),\n    where(\"ip\", \"==\", ip),\n    where(\"outcome\", \"==\", \"failure\"),\n    where(\"timestamp\", \">=\", Timestamp.fromDate(windowStart))\n  )\n  const snap = await getDocs(q)\n  return snap.size >= FAILURE_THRESHOLD\n}\n"
+  },
+  "tool_response": {
+    "type": "create",
+    "filePath": "D:\\Learn\\AgenticAI\\pocket-heist\\lib\\auth\\loginLogger.ts",
+    "content": "import { collection, addDoc, query, where, getDocs, Timestamp } from \"firebase/firestore\"\nimport { db } from \"@/lib/firebase\"\n\nexport interface LoginLogEntry {\n  email: string\n  outcome: \"success\" | \"failure\"\n  reason?: string\n  timestamp: Date\n  ip: string\n  userAgent: string\n  suspicious?: boolean\n}\n\nconst FAILURE_THRESHOLD = 5\nconst WINDOW_MINUTES = 15\n\nexport async function writeLoginLog(entry: LoginLogEntry): Promise<void> {\n  const doc: Record<string, unknown> = {\n    email: entry.email.slice(0, 254),\n    outcome: entry.outcome,\n    timestamp: Timestamp.fromDate(entry.timestamp),\n    ip: entry.ip,\n    userAgent: entry.userAgent,\n  }\n  if (entry.reason !== undefined) doc.reason = entry.reason\n  if (entry.suspicious !== undefined) doc.suspicious = entry.suspicious\n  await addDoc(collection(db, \"loginLogs\"), doc)\n}\n\nexport async function isSuspiciousIp(ip: string): Promise<boolean> {\n  if (!ip) return false\n  const windowStart = new Date(Date.now() - WINDOW_MINUTES * 60 * 1000)\n  const q = query(\n    collection(db, \"loginLogs\"),\n    where(\"ip\", \"==\", ip),\n    where(\"outcome\", \"==\", \"failure\"),\n    where(\"timestamp\", \">=\", Timestamp.fromDate(windowStart))\n  )\n  const snap = await getDocs(q)\n  return snap.size >= FAILURE_THRESHOLD\n}\n",
+    "structuredPatch": [],
+    "originalFile": null,
+    "userModified": false
+  },
+  "tool_use_id": "toolu_016NCtoKpCEoDPbPZ26rKnP6",
+  "duration_ms": 114
+}
+{
+  "session_id": "af9850cc-23cc-4711-ae15-ac05c8a350dd",
+  "transcript_path": "C:\\Users\\Ahmed.Elhawary\\.claude\\projects\\D--Learn-AgenticAI-pocket-heist\\af9850cc-23cc-4711-ae15-ac05c8a350dd.jsonl",
+  "cwd": "D:\\Learn\\AgenticAI\\pocket-heist",
+  "permission_mode": "default",
+  "effort": {
+    "level": "high"
+  },
+  "hook_event_name": "PostToolUse",
+  "tool_name": "Write",
+  "tool_input": {
+    "file_path": "D:\\Learn\\AgenticAI\\pocket-heist\\app\\actions\\logLoginAttempt.ts",
+    "content": "\"use server\"\n\nimport { headers } from \"next/headers\"\nimport { writeLoginLog, isSuspiciousIp } from \"@/lib/auth/loginLogger\"\n\nexport async function logLoginAttempt(\n  email: string,\n  outcome: \"success\" | \"failure\",\n  reason?: string\n): Promise<void> {\n  try {\n    const hdrs = await headers()\n    const ip =\n      hdrs.get(\"x-forwarded-for\")?.split(\",\")[0]?.trim() ??\n      hdrs.get(\"x-real-ip\") ??\n      \"\"\n    const userAgent = hdrs.get(\"user-agent\") ?? \"\"\n\n    const suspicious = outcome === \"failure\" ? await isSuspiciousIp(ip) : false\n\n    await writeLoginLog({\n      email,\n      outcome,\n      reason,\n      timestamp: new Date(),\n      ip,\n      userAgent,\n      suspicious,\n    })\n  } catch {\n    console.warn(\"[loginLog] Failed to write login log\")\n  }\n}\n"
+  },
+  "tool_response": {
+    "type": "create",
+    "filePath": "D:\\Learn\\AgenticAI\\pocket-heist\\app\\actions\\logLoginAttempt.ts",
+    "content": "\"use server\"\n\nimport { headers } from \"next/headers\"\nimport { writeLoginLog, isSuspiciousIp } from \"@/lib/auth/loginLogger\"\n\nexport async function logLoginAttempt(\n  email: string,\n  outcome: \"success\" | \"failure\",\n  reason?: string\n): Promise<void> {\n  try {\n    const hdrs = await headers()\n    const ip =\n      hdrs.get(\"x-forwarded-for\")?.split(\",\")[0]?.trim() ??\n      hdrs.get(\"x-real-ip\") ??\n      \"\"\n    const userAgent = hdrs.get(\"user-agent\") ?? \"\"\n\n    const suspicious = outcome === \"failure\" ? await isSuspiciousIp(ip) : false\n\n    await writeLoginLog({\n      email,\n      outcome,\n      reason,\n      timestamp: new Date(),\n      ip,\n      userAgent,\n      suspicious,\n    })\n  } catch {\n    console.warn(\"[loginLog] Failed to write login log\")\n  }\n}\n",
+    "structuredPatch": [],
+    "originalFile": null,
+    "userModified": false
+  },
+  "tool_use_id": "toolu_01P558RSMmHFSV51xRZuKTyf",
+  "duration_ms": 64
+}
+{
+  "session_id": "af9850cc-23cc-4711-ae15-ac05c8a350dd",
+  "transcript_path": "C:\\Users\\Ahmed.Elhawary\\.claude\\projects\\D--Learn-AgenticAI-pocket-heist\\af9850cc-23cc-4711-ae15-ac05c8a350dd.jsonl",
+  "cwd": "D:\\Learn\\AgenticAI\\pocket-heist",
+  "permission_mode": "default",
+  "effort": {
+    "level": "high"
+  },
+  "hook_event_name": "PostToolUse",
+  "tool_name": "Edit",
+  "tool_input": {
+    "file_path": "D:\\Learn\\AgenticAI\\pocket-heist\\components\\AuthForm\\AuthForm.tsx",
+    "old_string": "import { signup } from \"@/lib/auth/signup\"\nimport { login } from \"@/lib/auth/login\"",
+    "new_string": "import { signup } from \"@/lib/auth/signup\"\nimport { login } from \"@/lib/auth/login\"\nimport { logLoginAttempt } from \"@/app/actions/logLoginAttempt\"",
+    "replace_all": false
+  },
+  "tool_response": {
+    "filePath": "D:\\Learn\\AgenticAI\\pocket-heist\\components\\AuthForm\\AuthForm.tsx",
+    "oldString": "import { signup } from \"@/lib/auth/signup\"\nimport { login } from \"@/lib/auth/login\"",
+    "newString": "import { signup } from \"@/lib/auth/signup\"\nimport { login } from \"@/lib/auth/login\"\nimport { logLoginAttempt } from \"@/app/actions/logLoginAttempt\"",
+    "originalFile": "\"use client\"\n\nimport { useState } from \"react\"\nimport Link from \"next/link\"\nimport { useRouter } from \"next/navigation\"\nimport { Eye, EyeOff } from \"lucide-react\"\nimport styles from \"./AuthForm.module.css\"\nimport { signup } from \"@/lib/auth/signup\"\nimport { login } from \"@/lib/auth/login\"\n\ninterface AuthFormProps {\n  mode: \"login\" | \"signup\"\n}\n\nfunction humanReadableError(err: unknown): string {\n  const code = (err as { code?: string }).code\n  if (code === \"auth/email-already-in-use\") return \"An account with this email already exists.\"\n  if (code === \"auth/weak-password\") return \"Password must be at least 6 characters.\"\n  if (code === \"auth/invalid-email\") return \"Please enter a valid email address.\"\n  if (code === \"auth/invalid-login-credentials\") return \"Incorrect email or password.\"\n  if (code === \"auth/wrong-password\") return \"Incorrect email or password.\"\n  if (code === \"auth/user-not-found\") return \"No account found with that email.\"\n  if (code === \"auth/too-many-requests\") return \"Too many attempts. Please try again later.\"\n  return \"Something went wrong. Please try again.\"\n}\n\nexport default function AuthForm({ mode }: AuthFormProps) {\n  const router = useRouter()\n  const [email, setEmail] = useState(\"\")\n  const [password, setPassword] = useState(\"\")\n  const [showPassword, setShowPassword] = useState(false)\n  const [error, setError] = useState<string | null>(null)\n  const [loading, setLoading] = useState(false)\n  const [success, setSuccess] = useState(false)\n  const [successName, setSuccessName] = useState(\"\")\n\n  const isLogin = mode === \"login\"\n  const heading = isLogin ? \"Log in to Your Account\" : \"Signup for an Account\"\n  const submitLabel = isLogin ? \"Log In\" : \"Sign Up\"\n  const switchText = isLogin ? \"Don't have an account? Sign up\" : \"Already have an account? Log in\"\n  const switchHref = isLogin ? \"/signup\" : \"/login\"\n\n  async function handleSubmit(e: React.FormEvent) {\n    e.preventDefault()\n    if (mode === \"signup\") {\n      setLoading(true)\n      setError(null)\n      try {\n        await signup(email, password)\n        router.push(\"/heists\")\n      } catch (err) {\n        setError(humanReadableError(err))\n      } finally {\n        setLoading(false)\n      }\n    } else {\n      setLoading(true)\n      setError(null)\n      try {\n        const displayName = await login(email, password)\n        setSuccessName(displayName)\n        setSuccess(true)\n      } catch (err) {\n        setError(humanReadableError(err))\n      } finally {\n        setLoading(false)\n      }\n    }\n  }\n\n  return (\n    <div className={styles.authForm}>\n      <h1 className=\"form-title\">{heading}</h1>\n      <form onSubmit={handleSubmit}>\n        <div className={styles.field}>\n          <label htmlFor=\"email\">Email</label>\n          <input\n            id=\"email\"\n            type=\"email\"\n            value={email}\n            onChange={(e) => setEmail(e.target.value)}\n            autoComplete=\"email\"\n          />\n        </div>\n        <div className={styles.field}>\n          <label htmlFor=\"password\">Password</label>\n          <div className={styles.passwordWrapper}>\n            <input\n              id=\"password\"\n              type={showPassword ? \"text\" : \"password\"}\n              value={password}\n              onChange={(e) => setPassword(e.target.value)}\n              autoComplete={isLogin ? \"current-password\" : \"new-password\"}\n            />\n            <button\n              type=\"button\"\n              className={styles.toggleBtn}\n              aria-label={showPassword ? \"Hide password\" : \"Show password\"}\n              onClick={() => setShowPassword((v) => !v)}\n            >\n              {showPassword\n                ? <EyeOff size={18} strokeWidth={2} />\n                : <Eye size={18} strokeWidth={2} />\n              }\n            </button>\n          </div>\n        </div>\n        {error && <p role=\"alert\" className={styles.errorMsg}>{error}</p>}\n        {success ? (\n          <p role=\"status\" className={styles.successMsg}>Welcome, {successName}.</p>\n        ) : (\n          <button type=\"submit\" className={`btn ${styles.submitBtn}`} disabled={loading}>\n            {loading ? (mode === \"signup\" ? \"Signing up…\" : \"Logging in…\") : submitLabel}\n          </button>\n        )}\n      </form>\n      <Link href={switchHref} className={styles.switchLink}>\n        {switchText}\n      </Link>\n    </div>\n  )\n}\n",
+    "structuredPatch": [
+      {
+        "oldStart": 7,
+        "oldLines": 6,
+        "newStart": 7,
+        "newLines": 7,
+        "lines": [
+          " import styles from \"./AuthForm.module.css\"",
+          " import { signup } from \"@/lib/auth/signup\"",
+          " import { login } from \"@/lib/auth/login\"",
+          "+import { logLoginAttempt } from \"@/app/actions/logLoginAttempt\"",
+          " ",
+          " interface AuthFormProps {",
+          "   mode: \"login\" | \"signup\""
+        ]
+      }
+    ],
+    "userModified": false,
+    "replaceAll": false
+  },
+  "tool_use_id": "toolu_013H3VhNcaoMHLL8dEdL64Fj",
+  "duration_ms": 132
+}
+{
+  "session_id": "af9850cc-23cc-4711-ae15-ac05c8a350dd",
+  "transcript_path": "C:\\Users\\Ahmed.Elhawary\\.claude\\projects\\D--Learn-AgenticAI-pocket-heist\\af9850cc-23cc-4711-ae15-ac05c8a350dd.jsonl",
+  "cwd": "D:\\Learn\\AgenticAI\\pocket-heist",
+  "permission_mode": "default",
+  "effort": {
+    "level": "high"
+  },
+  "hook_event_name": "PostToolUse",
+  "tool_name": "Edit",
+  "tool_input": {
+    "file_path": "D:\\Learn\\AgenticAI\\pocket-heist\\components\\AuthForm\\AuthForm.tsx",
+    "old_string": "      try {\n        const displayName = await login(email, password)\n        setSuccessName(displayName)\n        setSuccess(true)\n      } catch (err) {\n        setError(humanReadableError(err))\n      } finally {",
+    "new_string": "      try {\n        const displayName = await login(email, password)\n        setSuccessName(displayName)\n        setSuccess(true)\n        void logLoginAttempt(email, \"success\")\n      } catch (err) {\n        setError(humanReadableError(err))\n        void logLoginAttempt(email, \"failure\", (err as { code?: string }).code ?? \"unknown\")\n      } finally {",
+    "replace_all": false
+  },
+  "tool_response": {
+    "filePath": "D:\\Learn\\AgenticAI\\pocket-heist\\components\\AuthForm\\AuthForm.tsx",
+    "oldString": "      try {\n        const displayName = await login(email, password)\n        setSuccessName(displayName)\n        setSuccess(true)\n      } catch (err) {\n        setError(humanReadableError(err))\n      } finally {",
+    "newString": "      try {\n        const displayName = await login(email, password)\n        setSuccessName(displayName)\n        setSuccess(true)\n        void logLoginAttempt(email, \"success\")\n      } catch (err) {\n        setError(humanReadableError(err))\n        void logLoginAttempt(email, \"failure\", (err as { code?: string }).code ?? \"unknown\")\n      } finally {",
+    "originalFile": "\"use client\"\n\nimport { useState } from \"react\"\nimport Link from \"next/link\"\nimport { useRouter } from \"next/navigation\"\nimport { Eye, EyeOff } from \"lucide-react\"\nimport styles from \"./AuthForm.module.css\"\nimport { signup } from \"@/lib/auth/signup\"\nimport { login } from \"@/lib/auth/login\"\nimport { logLoginAttempt } from \"@/app/actions/logLoginAttempt\"\n\ninterface AuthFormProps {\n  mode: \"login\" | \"signup\"\n}\n\nfunction humanReadableError(err: unknown): string {\n  const code = (err as { code?: string }).code\n  if (code === \"auth/email-already-in-use\") return \"An account with this email already exists.\"\n  if (code === \"auth/weak-password\") return \"Password must be at least 6 characters.\"\n  if (code === \"auth/invalid-email\") return \"Please enter a valid email address.\"\n  if (code === \"auth/invalid-login-credentials\") return \"Incorrect email or password.\"\n  if (code === \"auth/wrong-password\") return \"Incorrect email or password.\"\n  if (code === \"auth/user-not-found\") return \"No account found with that email.\"\n  if (code === \"auth/too-many-requests\") return \"Too many attempts. Please try again later.\"\n  return \"Something went wrong. Please try again.\"\n}\n\nexport default function AuthForm({ mode }: AuthFormProps) {\n  const router = useRouter()\n  const [email, setEmail] = useState(\"\")\n  const [password, setPassword] = useState(\"\")\n  const [showPassword, setShowPassword] = useState(false)\n  const [error, setError] = useState<string | null>(null)\n  const [loading, setLoading] = useState(false)\n  const [success, setSuccess] = useState(false)\n  const [successName, setSuccessName] = useState(\"\")\n\n  const isLogin = mode === \"login\"\n  const heading = isLogin ? \"Log in to Your Account\" : \"Signup for an Account\"\n  const submitLabel = isLogin ? \"Log In\" : \"Sign Up\"\n  const switchText = isLogin ? \"Don't have an account? Sign up\" : \"Already have an account? Log in\"\n  const switchHref = isLogin ? \"/signup\" : \"/login\"\n\n  async function handleSubmit(e: React.FormEvent) {\n    e.preventDefault()\n    if (mode === \"signup\") {\n      setLoading(true)\n      setError(null)\n      try {\n        await signup(email, password)\n        router.push(\"/heists\")\n      } catch (err) {\n        setError(humanReadableError(err))\n      } finally {\n        setLoading(false)\n      }\n    } else {\n      setLoading(true)\n      setError(null)\n      try {\n        const displayName = await login(email, password)\n        setSuccessName(displayName)\n        setSuccess(true)\n      } catch (err) {\n        setError(humanReadableError(err))\n      } finally {\n        setLoading(false)\n      }\n    }\n  }\n\n  return (\n    <div className={styles.authForm}>\n      <h1 className=\"form-title\">{heading}</h1>\n      <form onSubmit={handleSubmit}>\n        <div className={styles.field}>\n          <label htmlFor=\"email\">Email</label>\n          <input\n            id=\"email\"\n            type=\"email\"\n            value={email}\n            onChange={(e) => setEmail(e.target.value)}\n            autoComplete=\"email\"\n          />\n        </div>\n        <div className={styles.field}>\n          <label htmlFor=\"password\">Password</label>\n          <div className={styles.passwordWrapper}>\n            <input\n              id=\"password\"\n              type={showPassword ? \"text\" : \"password\"}\n              value={password}\n              onChange={(e) => setPassword(e.target.value)}\n              autoComplete={isLogin ? \"current-password\" : \"new-password\"}\n            />\n            <button\n              type=\"button\"\n              className={styles.toggleBtn}\n              aria-label={showPassword ? \"Hide password\" : \"Show password\"}\n              onClick={() => setShowPassword((v) => !v)}\n            >\n              {showPassword\n                ? <EyeOff size={18} strokeWidth={2} />\n                : <Eye size={18} strokeWidth={2} />\n              }\n            </button>\n          </div>\n        </div>\n        {error && <p role=\"alert\" className={styles.errorMsg}>{error}</p>}\n        {success ? (\n          <p role=\"status\" className={styles.successMsg}>Welcome, {successName}.</p>\n        ) : (\n          <button type=\"submit\" className={`btn ${styles.submitBtn}`} disabled={loading}>\n            {loading ? (mode === \"signup\" ? \"Signing up…\" : \"Logging in…\") : submitLabel}\n          </button>\n        )}\n      </form>\n      <Link href={switchHref} className={styles.switchLink}>\n        {switchText}\n      </Link>\n    </div>\n  )\n}\n",
+    "structuredPatch": [
+      {
+        "oldStart": 61,
+        "oldLines": 8,
+        "newStart": 61,
+        "newLines": 10,
+        "lines": [
+          "         const displayName = await login(email, password)",
+          "         setSuccessName(displayName)",
+          "         setSuccess(true)",
+          "+        void logLoginAttempt(email, \"success\")",
+          "       } catch (err) {",
+          "         setError(humanReadableError(err))",
+          "+        void logLoginAttempt(email, \"failure\", (err as { code?: string }).code ?? \"unknown\")",
+          "       } finally {",
+          "         setLoading(false)",
+          "       }"
+        ]
+      }
+    ],
+    "userModified": false,
+    "replaceAll": false
+  },
+  "tool_use_id": "toolu_01HHCx4EcUkGLDecZnb6NCsj",
+  "duration_ms": 60
+}
+{
+  "session_id": "af9850cc-23cc-4711-ae15-ac05c8a350dd",
+  "transcript_path": "C:\\Users\\Ahmed.Elhawary\\.claude\\projects\\D--Learn-AgenticAI-pocket-heist\\af9850cc-23cc-4711-ae15-ac05c8a350dd.jsonl",
+  "cwd": "D:\\Learn\\AgenticAI\\pocket-heist",
+  "permission_mode": "default",
+  "effort": {
+    "level": "high"
+  },
+  "hook_event_name": "PostToolUse",
+  "tool_name": "Edit",
+  "tool_input": {
+    "file_path": "D:\\Learn\\AgenticAI\\pocket-heist\\tests\\components\\AuthForm.login.test.tsx",
+    "old_string": "vi.mock(\"@/lib/firebase\", () => ({ auth: {} }))\nvi.mock(\"firebase/auth\", () => ({ getAuth: vi.fn(() => ({})) }))",
+    "new_string": "vi.mock(\"@/lib/firebase\", () => ({ auth: {} }))\nvi.mock(\"firebase/auth\", () => ({ getAuth: vi.fn(() => ({})) }))\nvi.mock(\"@/app/actions/logLoginAttempt\", () => ({ logLoginAttempt: vi.fn() }))",
+    "replace_all": false
+  },
+  "tool_response": {
+    "filePath": "D:\\Learn\\AgenticAI\\pocket-heist\\tests\\components\\AuthForm.login.test.tsx",
+    "oldString": "vi.mock(\"@/lib/firebase\", () => ({ auth: {} }))\nvi.mock(\"firebase/auth\", () => ({ getAuth: vi.fn(() => ({})) }))",
+    "newString": "vi.mock(\"@/lib/firebase\", () => ({ auth: {} }))\nvi.mock(\"firebase/auth\", () => ({ getAuth: vi.fn(() => ({})) }))\nvi.mock(\"@/app/actions/logLoginAttempt\", () => ({ logLoginAttempt: vi.fn() }))",
+    "originalFile": "import { render, screen, waitFor } from \"@testing-library/react\"\nimport userEvent from \"@testing-library/user-event\"\nimport { describe, it, expect } from \"vitest\"\nimport AuthForm from \"@/components/AuthForm\"\n\nconst { mockLogin } = vi.hoisted(() => ({ mockLogin: vi.fn() }))\nvi.mock(\"@/lib/auth/login\", () => ({ login: mockLogin }))\nvi.mock(\"next/navigation\", () => ({ useRouter: () => ({ push: vi.fn() }) }))\nvi.mock(\"@/lib/firebase\", () => ({ auth: {} }))\nvi.mock(\"firebase/auth\", () => ({ getAuth: vi.fn(() => ({})) }))\n\nbeforeEach(() => vi.clearAllMocks())\n\nasync function fillAndSubmit(email = \"agent@heist.com\", password = \"password123\") {\n  await userEvent.type(screen.getByLabelText(\"Email\"), email)\n  await userEvent.type(screen.getByLabelText(\"Password\"), password)\n  await userEvent.click(screen.getByRole(\"button\", { name: /log in/i }))\n}\n\ndescribe(\"AuthForm (login mode)\", () => {\n  it(\"renders email and password fields\", () => {\n    render(<AuthForm mode=\"login\" />)\n    expect(screen.getByLabelText(\"Email\")).toBeInTheDocument()\n    expect(screen.getByLabelText(\"Password\")).toBeInTheDocument()\n  })\n\n  it(\"disables the button and shows 'Logging in…' while pending\", async () => {\n    let resolve: (v: string) => void\n    mockLogin.mockReturnValue(new Promise<string>((r) => { resolve = r }))\n    render(<AuthForm mode=\"login\" />)\n    await fillAndSubmit()\n    const btn = screen.getByRole(\"button\", { name: /logging in/i })\n    expect(btn).toBeDisabled()\n    resolve!(\"GhostFox\")\n  })\n\n  it(\"replaces the form with a success message on successful login\", async () => {\n    mockLogin.mockResolvedValue(\"GhostFox\")\n    render(<AuthForm mode=\"login\" />)\n    await fillAndSubmit()\n    await waitFor(() =>\n      expect(screen.getByRole(\"status\")).toHaveTextContent(\"Welcome, GhostFox.\")\n    )\n    expect(screen.queryByRole(\"button\", { name: /log in/i })).not.toBeInTheDocument()\n  })\n\n  it(\"shows a human-readable error for a known Firebase error code\", async () => {\n    mockLogin.mockRejectedValue({ code: \"auth/invalid-login-credentials\" })\n    render(<AuthForm mode=\"login\" />)\n    await fillAndSubmit()\n    await waitFor(() =>\n      expect(screen.getByRole(\"alert\")).toHaveTextContent(\"Incorrect email or password.\")\n    )\n  })\n\n  it(\"shows a generic error for an unknown Firebase error code\", async () => {\n    mockLogin.mockRejectedValue({ code: \"auth/unknown-code\" })\n    render(<AuthForm mode=\"login\" />)\n    await fillAndSubmit()\n    await waitFor(() =>\n      expect(screen.getByRole(\"alert\")).toHaveTextContent(\"Something went wrong. Please try again.\")\n    )\n  })\n})\n",
+    "structuredPatch": [
+      {
+        "oldStart": 8,
+        "oldLines": 6,
+        "newStart": 8,
+        "newLines": 7,
+        "lines": [
+          " vi.mock(\"next/navigation\", () => ({ useRouter: () => ({ push: vi.fn() }) }))",
+          " vi.mock(\"@/lib/firebase\", () => ({ auth: {} }))",
+          " vi.mock(\"firebase/auth\", () => ({ getAuth: vi.fn(() => ({})) }))",
+          "+vi.mock(\"@/app/actions/logLoginAttempt\", () => ({ logLoginAttempt: vi.fn() }))",
+          " ",
+          " beforeEach(() => vi.clearAllMocks())",
+          " "
+        ]
+      }
+    ],
+    "userModified": false,
+    "replaceAll": false
+  },
+  "tool_use_id": "toolu_01NXUsNUE7ZKXXSrLWXCvyz1",
+  "duration_ms": 86
+}
+{
+  "session_id": "af9850cc-23cc-4711-ae15-ac05c8a350dd",
+  "transcript_path": "C:\\Users\\Ahmed.Elhawary\\.claude\\projects\\D--Learn-AgenticAI-pocket-heist\\af9850cc-23cc-4711-ae15-ac05c8a350dd.jsonl",
+  "cwd": "D:\\Learn\\AgenticAI\\pocket-heist",
+  "permission_mode": "default",
+  "effort": {
+    "level": "high"
+  },
+  "hook_event_name": "PostToolUse",
+  "tool_name": "Write",
+  "tool_input": {
+    "file_path": "D:\\Learn\\AgenticAI\\pocket-heist\\tests\\lib\\loginLogger.test.ts",
+    "content": "import { describe, it, expect, vi, beforeEach } from \"vitest\"\n\nconst { mockAddDoc, mockGetDocs } = vi.hoisted(() => ({\n  mockAddDoc: vi.fn(),\n  mockGetDocs: vi.fn(),\n}))\n\nvi.mock(\"firebase/firestore\", () => ({\n  collection: vi.fn(),\n  addDoc: mockAddDoc,\n  query: vi.fn(),\n  where: vi.fn(),\n  getDocs: mockGetDocs,\n  Timestamp: {\n    fromDate: (d: Date) => ({ seconds: Math.floor(d.getTime() / 1000) }),\n  },\n}))\n\nvi.mock(\"@/lib/firebase\", () => ({ db: {} }))\n\nimport { writeLoginLog, isSuspiciousIp } from \"@/lib/auth/loginLogger\"\n\nconst baseEntry = {\n  email: \"agent@heist.com\",\n  outcome: \"success\" as const,\n  timestamp: new Date(\"2026-06-07T10:00:00Z\"),\n  ip: \"1.2.3.4\",\n  userAgent: \"Mozilla/5.0\",\n}\n\nbeforeEach(() => vi.clearAllMocks())\n\ndescribe(\"writeLoginLog\", () => {\n  it(\"writes a success entry with correct fields\", async () => {\n    mockAddDoc.mockResolvedValue({})\n    await writeLoginLog(baseEntry)\n    expect(mockAddDoc).toHaveBeenCalledOnce()\n    const [, doc] = mockAddDoc.mock.calls[0]\n    expect(doc.email).toBe(\"agent@heist.com\")\n    expect(doc.outcome).toBe(\"success\")\n    expect(doc.ip).toBe(\"1.2.3.4\")\n    expect(doc.userAgent).toBe(\"Mozilla/5.0\")\n    expect(doc.timestamp).toBeDefined()\n  })\n\n  it(\"writes a failure entry with a reason field\", async () => {\n    mockAddDoc.mockResolvedValue({})\n    await writeLoginLog({ ...baseEntry, outcome: \"failure\", reason: \"auth/wrong-password\" })\n    const [, doc] = mockAddDoc.mock.calls[0]\n    expect(doc.outcome).toBe(\"failure\")\n    expect(doc.reason).toBe(\"auth/wrong-password\")\n  })\n\n  it(\"writes a failure entry for unknown user with a reason\", async () => {\n    mockAddDoc.mockResolvedValue({})\n    await writeLoginLog({ ...baseEntry, outcome: \"failure\", reason: \"auth/user-not-found\" })\n    const [, doc] = mockAddDoc.mock.calls[0]\n    expect(doc.outcome).toBe(\"failure\")\n    expect(doc.reason).toBe(\"auth/user-not-found\")\n  })\n\n  it(\"omits reason field when not provided\", async () => {\n    mockAddDoc.mockResolvedValue({})\n    await writeLoginLog(baseEntry)\n    const [, doc] = mockAddDoc.mock.calls[0]\n    expect(\"reason\" in doc).toBe(false)\n  })\n\n  it(\"truncates email to 254 characters\", async () => {\n    mockAddDoc.mockResolvedValue({})\n    await writeLoginLog({ ...baseEntry, email: \"a\".repeat(300) + \"@heist.com\" })\n    const [, doc] = mockAddDoc.mock.calls[0]\n    expect(doc.email.length).toBe(254)\n  })\n\n  it(\"stores an empty userAgent without throwing\", async () => {\n    mockAddDoc.mockResolvedValue({})\n    await writeLoginLog({ ...baseEntry, userAgent: \"\" })\n    const [, doc] = mockAddDoc.mock.calls[0]\n    expect(doc.userAgent).toBe(\"\")\n  })\n\n  it(\"propagates Firestore errors to the caller\", async () => {\n    mockAddDoc.mockRejectedValue(new Error(\"Firestore unavailable\"))\n    await expect(writeLoginLog(baseEntry)).rejects.toThrow(\"Firestore unavailable\")\n  })\n})\n\ndescribe(\"isSuspiciousIp\", () => {\n  it(\"returns true when recent failure count meets the threshold\", async () => {\n    mockGetDocs.mockResolvedValue({ size: 5 })\n    expect(await isSuspiciousIp(\"1.2.3.4\")).toBe(true)\n  })\n\n  it(\"returns false when recent failure count is below the threshold\", async () => {\n    mockGetDocs.mockResolvedValue({ size: 4 })\n    expect(await isSuspiciousIp(\"1.2.3.4\")).toBe(false)\n  })\n\n  it(\"returns false without querying Firestore for an empty IP\", async () => {\n    expect(await isSuspiciousIp(\"\")).toBe(false)\n    expect(mockGetDocs).not.toHaveBeenCalled()\n  })\n})\n"
+  },
+  "tool_response": {
+    "type": "create",
+    "filePath": "D:\\Learn\\AgenticAI\\pocket-heist\\tests\\lib\\loginLogger.test.ts",
+    "content": "import { describe, it, expect, vi, beforeEach } from \"vitest\"\n\nconst { mockAddDoc, mockGetDocs } = vi.hoisted(() => ({\n  mockAddDoc: vi.fn(),\n  mockGetDocs: vi.fn(),\n}))\n\nvi.mock(\"firebase/firestore\", () => ({\n  collection: vi.fn(),\n  addDoc: mockAddDoc,\n  query: vi.fn(),\n  where: vi.fn(),\n  getDocs: mockGetDocs,\n  Timestamp: {\n    fromDate: (d: Date) => ({ seconds: Math.floor(d.getTime() / 1000) }),\n  },\n}))\n\nvi.mock(\"@/lib/firebase\", () => ({ db: {} }))\n\nimport { writeLoginLog, isSuspiciousIp } from \"@/lib/auth/loginLogger\"\n\nconst baseEntry = {\n  email: \"agent@heist.com\",\n  outcome: \"success\" as const,\n  timestamp: new Date(\"2026-06-07T10:00:00Z\"),\n  ip: \"1.2.3.4\",\n  userAgent: \"Mozilla/5.0\",\n}\n\nbeforeEach(() => vi.clearAllMocks())\n\ndescribe(\"writeLoginLog\", () => {\n  it(\"writes a success entry with correct fields\", async () => {\n    mockAddDoc.mockResolvedValue({})\n    await writeLoginLog(baseEntry)\n    expect(mockAddDoc).toHaveBeenCalledOnce()\n    const [, doc] = mockAddDoc.mock.calls[0]\n    expect(doc.email).toBe(\"agent@heist.com\")\n    expect(doc.outcome).toBe(\"success\")\n    expect(doc.ip).toBe(\"1.2.3.4\")\n    expect(doc.userAgent).toBe(\"Mozilla/5.0\")\n    expect(doc.timestamp).toBeDefined()\n  })\n\n  it(\"writes a failure entry with a reason field\", async () => {\n    mockAddDoc.mockResolvedValue({})\n    await writeLoginLog({ ...baseEntry, outcome: \"failure\", reason: \"auth/wrong-password\" })\n    const [, doc] = mockAddDoc.mock.calls[0]\n    expect(doc.outcome).toBe(\"failure\")\n    expect(doc.reason).toBe(\"auth/wrong-password\")\n  })\n\n  it(\"writes a failure entry for unknown user with a reason\", async () => {\n    mockAddDoc.mockResolvedValue({})\n    await writeLoginLog({ ...baseEntry, outcome: \"failure\", reason: \"auth/user-not-found\" })\n    const [, doc] = mockAddDoc.mock.calls[0]\n    expect(doc.outcome).toBe(\"failure\")\n    expect(doc.reason).toBe(\"auth/user-not-found\")\n  })\n\n  it(\"omits reason field when not provided\", async () => {\n    mockAddDoc.mockResolvedValue({})\n    await writeLoginLog(baseEntry)\n    const [, doc] = mockAddDoc.mock.calls[0]\n    expect(\"reason\" in doc).toBe(false)\n  })\n\n  it(\"truncates email to 254 characters\", async () => {\n    mockAddDoc.mockResolvedValue({})\n    await writeLoginLog({ ...baseEntry, email: \"a\".repeat(300) + \"@heist.com\" })\n    const [, doc] = mockAddDoc.mock.calls[0]\n    expect(doc.email.length).toBe(254)\n  })\n\n  it(\"stores an empty userAgent without throwing\", async () => {\n    mockAddDoc.mockResolvedValue({})\n    await writeLoginLog({ ...baseEntry, userAgent: \"\" })\n    const [, doc] = mockAddDoc.mock.calls[0]\n    expect(doc.userAgent).toBe(\"\")\n  })\n\n  it(\"propagates Firestore errors to the caller\", async () => {\n    mockAddDoc.mockRejectedValue(new Error(\"Firestore unavailable\"))\n    await expect(writeLoginLog(baseEntry)).rejects.toThrow(\"Firestore unavailable\")\n  })\n})\n\ndescribe(\"isSuspiciousIp\", () => {\n  it(\"returns true when recent failure count meets the threshold\", async () => {\n    mockGetDocs.mockResolvedValue({ size: 5 })\n    expect(await isSuspiciousIp(\"1.2.3.4\")).toBe(true)\n  })\n\n  it(\"returns false when recent failure count is below the threshold\", async () => {\n    mockGetDocs.mockResolvedValue({ size: 4 })\n    expect(await isSuspiciousIp(\"1.2.3.4\")).toBe(false)\n  })\n\n  it(\"returns false without querying Firestore for an empty IP\", async () => {\n    expect(await isSuspiciousIp(\"\")).toBe(false)\n    expect(mockGetDocs).not.toHaveBeenCalled()\n  })\n})\n",
+    "structuredPatch": [],
+    "originalFile": null,
+    "userModified": false
+  },
+  "tool_use_id": "toolu_016w8motD6Jc9yQY8C48FuuU",
+  "duration_ms": 108
+}
+{
+  "session_id": "af9850cc-23cc-4711-ae15-ac05c8a350dd",
+  "transcript_path": "C:\\Users\\Ahmed.Elhawary\\.claude\\projects\\D--Learn-AgenticAI-pocket-heist\\af9850cc-23cc-4711-ae15-ac05c8a350dd.jsonl",
+  "cwd": "D:\\Learn\\AgenticAI\\pocket-heist",
+  "permission_mode": "default",
+  "effort": {
+    "level": "high"
+  },
+  "hook_event_name": "PostToolUse",
+  "tool_name": "Edit",
+  "tool_input": {
+    "file_path": "D:\\Learn\\AgenticAI\\pocket-heist\\tests\\components\\AuthForm.test.tsx",
+    "old_string": "const { mockPush } = vi.hoisted(() => ({ mockPush: vi.fn() }))\nvi.mock(\"next/navigation\", () => ({ useRouter: () => ({ push: mockPush }) }))",
+    "new_string": "const { mockPush } = vi.hoisted(() => ({ mockPush: vi.fn() }))\nvi.mock(\"next/navigation\", () => ({ useRouter: () => ({ push: mockPush }) }))\n\nvi.mock(\"@/app/actions/logLoginAttempt\", () => ({ logLoginAttempt: vi.fn() }))",
+    "replace_all": false
+  },
+  "tool_response": {
+    "filePath": "D:\\Learn\\AgenticAI\\pocket-heist\\tests\\components\\AuthForm.test.tsx",
+    "oldString": "const { mockPush } = vi.hoisted(() => ({ mockPush: vi.fn() }))\nvi.mock(\"next/navigation\", () => ({ useRouter: () => ({ push: mockPush }) }))",
+    "newString": "const { mockPush } = vi.hoisted(() => ({ mockPush: vi.fn() }))\nvi.mock(\"next/navigation\", () => ({ useRouter: () => ({ push: mockPush }) }))\n\nvi.mock(\"@/app/actions/logLoginAttempt\", () => ({ logLoginAttempt: vi.fn() }))",
+    "originalFile": "import { render, screen, waitFor } from \"@testing-library/react\"\nimport userEvent from \"@testing-library/user-event\"\nimport { describe, it, expect, vi, afterEach, beforeEach } from \"vitest\"\nimport AuthForm from \"@/components/AuthForm\"\n\nconst { mockSignup } = vi.hoisted(() => ({ mockSignup: vi.fn() }))\nvi.mock(\"@/lib/auth/signup\", () => ({ signup: mockSignup }))\n\nconst { mockLogin } = vi.hoisted(() => ({ mockLogin: vi.fn() }))\nvi.mock(\"@/lib/auth/login\", () => ({ login: mockLogin }))\n\nconst { mockPush } = vi.hoisted(() => ({ mockPush: vi.fn() }))\nvi.mock(\"next/navigation\", () => ({ useRouter: () => ({ push: mockPush }) }))\n\ndescribe(\"AuthForm\", () => {\n  beforeEach(() => {\n    vi.clearAllMocks()\n  })\n\n  afterEach(() => {\n    vi.restoreAllMocks()\n  })\n\n  it(\"renders the login heading when mode is login\", () => {\n    render(<AuthForm mode=\"login\" />)\n    expect(screen.getByRole(\"heading\", { name: /log in to your account/i })).toBeInTheDocument()\n  })\n\n  it(\"renders the signup heading when mode is signup\", () => {\n    render(<AuthForm mode=\"signup\" />)\n    expect(screen.getByRole(\"heading\", { name: /signup for an account/i })).toBeInTheDocument()\n  })\n\n  it(\"renders an email input\", () => {\n    render(<AuthForm mode=\"login\" />)\n    expect(screen.getByLabelText(/email/i)).toBeInTheDocument()\n  })\n\n  it(\"password input is initially obscured\", () => {\n    render(<AuthForm mode=\"login\" />)\n    expect(screen.getByLabelText(\"Password\")).toHaveAttribute(\"type\", \"password\")\n  })\n\n  it(\"toggles password visibility when the show/hide button is clicked\", async () => {\n    const user = userEvent.setup()\n    render(<AuthForm mode=\"login\" />)\n    const input = screen.getByLabelText(\"Password\")\n    const toggleBtn = screen.getByRole(\"button\", { name: /show password/i })\n\n    await user.click(toggleBtn)\n    expect(input).toHaveAttribute(\"type\", \"text\")\n\n    await user.click(screen.getByRole(\"button\", { name: /hide password/i }))\n    expect(input).toHaveAttribute(\"type\", \"password\")\n  })\n\n  it(\"calls login with email and password on submit\", async () => {\n    mockLogin.mockResolvedValue(\"SilentFox\")\n    const user = userEvent.setup()\n    render(<AuthForm mode=\"login\" />)\n\n    await user.type(screen.getByLabelText(\"Email\"), \"test@example.com\")\n    await user.type(screen.getByLabelText(\"Password\"), \"secret123\")\n    await user.click(screen.getByRole(\"button\", { name: /log in/i }))\n\n    await waitFor(() => expect(mockLogin).toHaveBeenCalledWith(\"test@example.com\", \"secret123\"))\n  })\n\n  it(\"renders a link to /signup when mode is login\", () => {\n    render(<AuthForm mode=\"login\" />)\n    const link = screen.getByRole(\"link\", { name: /sign up/i })\n    expect(link).toHaveAttribute(\"href\", \"/signup\")\n  })\n\n  it(\"renders a link to /login when mode is signup\", () => {\n    render(<AuthForm mode=\"signup\" />)\n    const link = screen.getByRole(\"link\", { name: /log in/i })\n    expect(link).toHaveAttribute(\"href\", \"/login\")\n  })\n\n  it(\"shows an error message when signup fails\", async () => {\n    mockSignup.mockRejectedValueOnce({ code: \"auth/email-already-in-use\" })\n    const user = userEvent.setup()\n    render(<AuthForm mode=\"signup\" />)\n    await user.type(screen.getByLabelText(/email/i), \"a@b.com\")\n    await user.type(screen.getByLabelText(\"Password\"), \"pass123\")\n    await user.click(screen.getByRole(\"button\", { name: /sign up/i }))\n    expect(await screen.findByRole(\"alert\")).toHaveTextContent(/already exists/i)\n  })\n\n  it(\"disables the submit button and shows loading text while submitting\", async () => {\n    let resolve!: () => void\n    mockSignup.mockReturnValueOnce(new Promise<void>((r) => { resolve = r }))\n    const user = userEvent.setup()\n    render(<AuthForm mode=\"signup\" />)\n    await user.type(screen.getByLabelText(/email/i), \"a@b.com\")\n    await user.type(screen.getByLabelText(\"Password\"), \"pass123\")\n    await user.click(screen.getByRole(\"button\", { name: /sign up/i }))\n    const btn = screen.getByRole(\"button\", { name: /signing up/i })\n    expect(btn).toBeDisabled()\n    resolve()\n    await waitFor(() => expect(screen.getByRole(\"button\", { name: /sign up/i })).not.toBeDisabled())\n  })\n})\n",
+    "structuredPatch": [
+      {
+        "oldStart": 12,
+        "oldLines": 6,
+        "newStart": 12,
+        "newLines": 8,
+        "lines": [
+          " const { mockPush } = vi.hoisted(() => ({ mockPush: vi.fn() }))",
+          " vi.mock(\"next/navigation\", () => ({ useRouter: () => ({ push: mockPush }) }))",
+          " ",
+          "+vi.mock(\"@/app/actions/logLoginAttempt\", () => ({ logLoginAttempt: vi.fn() }))",
+          "+",
+          " describe(\"AuthForm\", () => {",
+          "   beforeEach(() => {",
+          "     vi.clearAllMocks()"
+        ]
+      }
+    ],
+    "userModified": false,
+    "replaceAll": false
+  },
+  "tool_use_id": "toolu_01RuYuUDUWo6L9YGrK7B35iN",
+  "duration_ms": 106
+}
