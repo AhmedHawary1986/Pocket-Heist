@@ -4898,3 +4898,1226 @@
   "tool_use_id": "toolu_01NsKdeEpzxzYPH6uKB94quf",
   "duration_ms": 98
 }
+{
+  "session_id": "2a90b3fe-c460-426e-a5c4-d86fd2606363",
+  "transcript_path": "C:\\Users\\Ahmed.Elhawary\\.claude\\projects\\D--Learn-AgenticAI-pocket-heist\\2a90b3fe-c460-426e-a5c4-d86fd2606363.jsonl",
+  "cwd": "D:\\Learn\\AgenticAI\\pocket-heist",
+  "permission_mode": "default",
+  "effort": {
+    "level": "medium"
+  },
+  "hook_event_name": "PostToolUse",
+  "tool_name": "Write",
+  "tool_input": {
+    "file_path": "D:\\Learn\\AgenticAI\\pocket-heist\\_specs\\heists-dashboard-design.md",
+    "content": "# Spec for heists-dashboard-design\n\nbranch: claude/feature/heists-dashboard-design  \nfigma_component (if used): N/A  \n\n## Summary\n- Redesign the `/heists` dashboard page to display heists in two visually distinct sections: **Assigned Heists** (active/upcoming, card grid) and **Heist History** (completed, list rows).\n- Heist cards show the title, target user, creator, scheduled datetime, and a countdown timer.\n- History rows show the heist title, target, creator, datetime, and a status badge (e.g. SUCCESS).\n\n## Functional Requirements\n- The page renders two sections in order: \"Assigned Heists\" then \"Heist History\".\n- **Assigned Heists section:**\n  - Section heading with a target/crosshair icon and the text \"Assigned Heists\".\n  - Renders heists where the current user is the creator (`By`) or target (`To`) and the heist has not yet expired/completed.\n  - Cards are displayed in a 2-column responsive grid (single column on mobile).\n  - Each card shows:\n    - Heist title (bold, prominent)\n    - A clock icon in the top-right corner\n    - \"To: @username\" with a person icon (the target)\n    - \"By: @username\" with a person icon (the creator)\n    - Scheduled datetime formatted as \"MMM D, h:mm A\"\n    - Countdown label showing time remaining (e.g. \"4h 42m\", \"1d 0h\", \"2d 0h\") highlighted in a distinct accent color (orange/purple per urgency or as a theme accent)\n- **Heist History section:**\n  - Section heading with an archive/box icon and the text \"Heist History\".\n  - Renders heists that are expired or marked complete/successful.\n  - Each row (full width) shows:\n    - A green success checkmark icon on the left\n    - Heist title\n    - Scheduled datetime on the right (formatted as \"MMM D, h:mm A\")\n    - A \"SUCCESS\" badge (green, pill/rounded) on the far right\n    - Below the title: \"To: @username\" and \"By: @username\" in a horizontal row with person icons\n- Username mentions are rendered in the `primary` color (purple `#C27AFF`) to match the theme.\n- Countdown text color varies to indicate urgency: use `secondary` (pink) for near-deadline and `primary` (purple) for further deadlines.\n\n## Figma Design Reference (only if referenced)\n- File: Screenshot provided by user (D:\\Learn\\AgenticAI\\Images\\Screenshot 2026-06-03 042950.png)\n- Component name: Heists Dashboard\n- Key visual constraints:\n  - Dark background matching the app's `dark`/`light` theme tokens\n  - Cards use a slightly lighter card surface (`lighter` token, `#101828`) with rounded corners\n  - Section headings use a small icon inline with the label text\n  - Countdown timer text is distinctly colored (not plain body text)\n  - SUCCESS badge is a solid green pill with uppercase label text\n  - Person icon and calendar icon prefix the To/By and datetime fields respectively\n\n## Possible Edge Cases\n- No assigned heists: show an empty-state message within the Assigned Heists section (e.g. \"No active heists assigned to you.\").\n- No history: show an empty-state message within the Heist History section.\n- Long heist titles should wrap gracefully within the card without overflowing.\n- Countdown hits zero or goes negative: show \"Expired\" or \"0h 0m\" rather than a negative value.\n- Heist has no target user or no creator: gracefully omit that row rather than rendering \"@undefined\".\n\n## Acceptance Criteria\n- `/heists` page renders two sections: Assigned Heists and Heist History.\n- Assigned heists are displayed in a 2-column grid of cards matching the screenshot layout.\n- Each card displays: title, clock icon, To/By usernames in primary color, datetime, and countdown.\n- History rows display: success icon, title, To/By usernames, datetime, and SUCCESS badge.\n- Empty states render when either section has no data.\n- Page is responsive: 2-column grid collapses to 1 column on small screens.\n- All theme tokens (colors, fonts) are used — no hard-coded hex values in component files.\n\n## Open Questions\n- Should the countdown be computed client-side in real time (live ticking) or rendered as a static snapshot on page load?\n- What determines \"assigned\" vs \"history\" — is it a `status` field on the heist document, or purely based on whether the `scheduledAt` date is in the past?\n- Are usernames pulled from the Firestore user profile, or are they stored directly on the heist document?\n\n## Testing Guidelines\nCreate a test file(s) in the ./tests folder for the new feature, and create meaningful tests for the following cases, without going too heavy:\n- Renders the \"Assigned Heists\" section heading and cards when assigned heist data is provided.\n- Renders the \"Heist History\" section heading and rows when historical heist data is provided.\n- Displays the correct To/By usernames and datetime for each heist card and history row.\n- Shows an empty-state message when there are no assigned heists.\n- Shows an empty-state message when there is no heist history.\n- Countdown label renders with a value for a future heist.\n- SUCCESS badge is visible on each history row.\n"
+  },
+  "tool_response": {
+    "type": "create",
+    "filePath": "D:\\Learn\\AgenticAI\\pocket-heist\\_specs\\heists-dashboard-design.md",
+    "content": "# Spec for heists-dashboard-design\n\nbranch: claude/feature/heists-dashboard-design  \nfigma_component (if used): N/A  \n\n## Summary\n- Redesign the `/heists` dashboard page to display heists in two visually distinct sections: **Assigned Heists** (active/upcoming, card grid) and **Heist History** (completed, list rows).\n- Heist cards show the title, target user, creator, scheduled datetime, and a countdown timer.\n- History rows show the heist title, target, creator, datetime, and a status badge (e.g. SUCCESS).\n\n## Functional Requirements\n- The page renders two sections in order: \"Assigned Heists\" then \"Heist History\".\n- **Assigned Heists section:**\n  - Section heading with a target/crosshair icon and the text \"Assigned Heists\".\n  - Renders heists where the current user is the creator (`By`) or target (`To`) and the heist has not yet expired/completed.\n  - Cards are displayed in a 2-column responsive grid (single column on mobile).\n  - Each card shows:\n    - Heist title (bold, prominent)\n    - A clock icon in the top-right corner\n    - \"To: @username\" with a person icon (the target)\n    - \"By: @username\" with a person icon (the creator)\n    - Scheduled datetime formatted as \"MMM D, h:mm A\"\n    - Countdown label showing time remaining (e.g. \"4h 42m\", \"1d 0h\", \"2d 0h\") highlighted in a distinct accent color (orange/purple per urgency or as a theme accent)\n- **Heist History section:**\n  - Section heading with an archive/box icon and the text \"Heist History\".\n  - Renders heists that are expired or marked complete/successful.\n  - Each row (full width) shows:\n    - A green success checkmark icon on the left\n    - Heist title\n    - Scheduled datetime on the right (formatted as \"MMM D, h:mm A\")\n    - A \"SUCCESS\" badge (green, pill/rounded) on the far right\n    - Below the title: \"To: @username\" and \"By: @username\" in a horizontal row with person icons\n- Username mentions are rendered in the `primary` color (purple `#C27AFF`) to match the theme.\n- Countdown text color varies to indicate urgency: use `secondary` (pink) for near-deadline and `primary` (purple) for further deadlines.\n\n## Figma Design Reference (only if referenced)\n- File: Screenshot provided by user (D:\\Learn\\AgenticAI\\Images\\Screenshot 2026-06-03 042950.png)\n- Component name: Heists Dashboard\n- Key visual constraints:\n  - Dark background matching the app's `dark`/`light` theme tokens\n  - Cards use a slightly lighter card surface (`lighter` token, `#101828`) with rounded corners\n  - Section headings use a small icon inline with the label text\n  - Countdown timer text is distinctly colored (not plain body text)\n  - SUCCESS badge is a solid green pill with uppercase label text\n  - Person icon and calendar icon prefix the To/By and datetime fields respectively\n\n## Possible Edge Cases\n- No assigned heists: show an empty-state message within the Assigned Heists section (e.g. \"No active heists assigned to you.\").\n- No history: show an empty-state message within the Heist History section.\n- Long heist titles should wrap gracefully within the card without overflowing.\n- Countdown hits zero or goes negative: show \"Expired\" or \"0h 0m\" rather than a negative value.\n- Heist has no target user or no creator: gracefully omit that row rather than rendering \"@undefined\".\n\n## Acceptance Criteria\n- `/heists` page renders two sections: Assigned Heists and Heist History.\n- Assigned heists are displayed in a 2-column grid of cards matching the screenshot layout.\n- Each card displays: title, clock icon, To/By usernames in primary color, datetime, and countdown.\n- History rows display: success icon, title, To/By usernames, datetime, and SUCCESS badge.\n- Empty states render when either section has no data.\n- Page is responsive: 2-column grid collapses to 1 column on small screens.\n- All theme tokens (colors, fonts) are used — no hard-coded hex values in component files.\n\n## Open Questions\n- Should the countdown be computed client-side in real time (live ticking) or rendered as a static snapshot on page load?\n- What determines \"assigned\" vs \"history\" — is it a `status` field on the heist document, or purely based on whether the `scheduledAt` date is in the past?\n- Are usernames pulled from the Firestore user profile, or are they stored directly on the heist document?\n\n## Testing Guidelines\nCreate a test file(s) in the ./tests folder for the new feature, and create meaningful tests for the following cases, without going too heavy:\n- Renders the \"Assigned Heists\" section heading and cards when assigned heist data is provided.\n- Renders the \"Heist History\" section heading and rows when historical heist data is provided.\n- Displays the correct To/By usernames and datetime for each heist card and history row.\n- Shows an empty-state message when there are no assigned heists.\n- Shows an empty-state message when there is no heist history.\n- Countdown label renders with a value for a future heist.\n- SUCCESS badge is visible on each history row.\n",
+    "structuredPatch": [],
+    "originalFile": null,
+    "userModified": false
+  },
+  "tool_use_id": "toolu_01XBoxDD2j2ECG4wMVKfNK2N",
+  "duration_ms": 71
+}
+{
+  "session_id": "2a90b3fe-c460-426e-a5c4-d86fd2606363",
+  "transcript_path": "C:\\Users\\Ahmed.Elhawary\\.claude\\projects\\D--Learn-AgenticAI-pocket-heist\\2a90b3fe-c460-426e-a5c4-d86fd2606363.jsonl",
+  "cwd": "D:\\Learn\\AgenticAI\\pocket-heist",
+  "permission_mode": "plan",
+  "effort": {
+    "level": "medium"
+  },
+  "hook_event_name": "PostToolUse",
+  "tool_name": "Write",
+  "tool_input": {
+    "file_path": "C:\\Users\\Ahmed.Elhawary\\.claude\\plans\\let-s-make-a-plan-flickering-thunder.md",
+    "content": "# Plan: Heists Dashboard Redesign\n\n## Context\n\nThe `/heists` page (`app/(dashboard)/heists/page.tsx`) currently renders a bare `<ul>` of heist titles across three plain sections. The spec (`_specs/heists-dashboard-design.md`) and the reference screenshot call for a styled dashboard with two sections:\n\n1. **Assigned Heists** — a 2-column responsive card grid of ongoing heists, each card showing title, a live-ticking countdown to the deadline, the To/By operatives, and the scheduled datetime.\n2. **Heist History** — a full-width list of completed heists, each row showing a success/failure icon, title, To/By operatives, datetime, and a status badge.\n\n**Confirmed decisions (from the user):**\n- *Assigned Heists* = **both** ongoing buckets merged: heists assigned to me **and** heists I created for others (`finalStatus === null`), deduped by id.\n- *Heist History* = **all** completed heists globally (existing `\"expired\"` filter), badged with both **SUCCESS** (green) and **FAILURE** (red).\n- Countdown is **live-ticking** (client-side interval).\n- The status field (`finalStatus`) distinguishes assigned vs. history; operative names come denormalized from the heist document (`createdByCodeName`, `assignedToCodeName`).\n\nThe data layer (`hooks/useHeists.ts`, `types/firestore/heist.ts`) already provides everything needed — no Firestore/schema changes required. This is purely a presentation rebuild plus small pure utilities.\n\n## Data wiring\n\nKeep the page a Client Component (`\"use client\"`) and reuse the existing `useHeists` hook as-is:\n\n```\nconst { heists: active,   loading: l1 } = useHeists(\"active\")    // assigned TO me, not yet due\nconst { heists: assigned, loading: l2 } = useHeists(\"assigned\")  // created BY me, not yet due\nconst { heists: expired,  loading: l3 } = useHeists(\"expired\")   // all completed (history)\n```\n\n- **Assigned grid data**: merge `active` + `assigned`, dedupe by `heist.id` (a self-assigned heist appears in both), sort by `deadline` ascending. Do this with a small `useMemo` in the page.\n- **History data**: use `expired` directly (already ordered by `finalStatus`, then `deadline` desc).\n\n`Heist` fields used: `id`, `title`, `assignedToCodeName` (To), `createdByCodeName` (By), `deadline`, `finalStatus`.\n\n## Components to create\n\nFollow the established folder-per-component convention (`index.ts` barrel re-exporting the default, `<Name>.tsx`, optional `<Name>.module.css` with `@reference \"../../app/globals.css\"`). Icons come from `lucide-react` (already a dependency). All colors via theme tokens — no hard-coded hex.\n\n1. **`components/StatusBadge/`** — pill badge. Props: `status: HeistFinalStatus` (`'success' | 'failure'`). Renders `SUCCESS` (green/`success` token) or `FAILURE` (red/`error` token), uppercase, rounded pill. Returns `null` if status is null.\n\n2. **`components/Countdown/`** — live-ticking remaining-time label. Props: `deadline: Date`. Uses `useEffect` + `setInterval` (1s tick) and `formatCountdown` (below). Color via theme token: `secondary` (pink) when under the near-deadline threshold (< 24h), else `primary` (purple); `body` gray when expired. Clears the interval on unmount.\n\n3. **`components/HeistCard/`** — card for the Assigned grid. Props: `heist: Heist`. Layout per screenshot:\n   - Title (bold, `heading`) with a `Clock` icon top-right.\n   - `User` icon + `To:` + `@{assignedToCodeName}` in `primary` (purple).\n   - `User` icon + `By:` + `@{createdByCodeName}` in `secondary` (pink) — matches screenshot.\n   - `Calendar` icon + formatted datetime + ` • ` + `<Countdown deadline={heist.deadline} />`.\n   - Card surface uses `lighter`/`light` token, rounded corners, padding (mirror `Skeleton.module.css` `.card`). Long titles wrap.\n   - Omit the To or By row if its codename is missing (edge case: no `@undefined`).\n\n4. **`components/HeistHistoryRow/`** — full-width row for History. Props: `heist: Heist`. Layout:\n   - Left: green `CheckCircle2` for success / red `XCircle` for failure.\n   - Title (`heading`), and below it `To: @… By: @…` inline with `User` icons (To purple, By pink).\n   - Right: `Calendar` icon + formatted datetime, then `<StatusBadge status={heist.finalStatus} />`.\n\nSection headings (Target icon + \"Assigned Heists\"; Archive icon + \"Heist History\") are simple enough to render inline in the page — no separate component.\n\n## Utilities to create\n\n**`lib/format/heistDate.ts`** (new) — two pure functions, native `Intl`/arithmetic (no new deps):\n- `formatHeistDate(date: Date): string` → `\"Dec 7, 02:00 PM\"` via `Intl.DateTimeFormat` (month short, day numeric, 2-digit hour/minute, 12h).\n- `formatCountdown(deadline: Date, now?: Date): string` → `\"Expired\"` when `deadline <= now`; `\"{d}d {h}h\"` when ≥ 24h remain; else `\"{h}h {m}m\"`. `now` param defaults to `new Date()` for testability.\n\n## Page rewrite\n\nRewrite `app/(dashboard)/heists/page.tsx`:\n- Keep `\"use client\"` and the `.page-content` wrapper.\n- Two `<section>`s, each with an icon + `<h2>` heading.\n- Assigned: `grid grid-cols-1 md:grid-cols-2 gap-4` of `<HeistCard>`; empty state `\"No active heists assigned to you.\"` when the merged list is empty.\n- History: `flex flex-col gap-3` of `<HeistHistoryRow>`; empty state `\"No heist history yet.\"` when empty.\n- While any relevant `loading` flag is true and its list is empty, render the existing `Skeleton` placeholder (optional polish; reuse `components/Skeleton`).\n- Remove the old `HeistTitles` helper.\n\n## Critical files\n\n| File | Change |\n|------|--------|\n| `app/(dashboard)/heists/page.tsx` | Rewrite to two styled sections; merge/dedupe assigned, reuse `expired` for history |\n| `components/HeistCard/*` | New |\n| `components/HeistHistoryRow/*` | New |\n| `components/StatusBadge/*` | New |\n| `components/Countdown/*` | New |\n| `lib/format/heistDate.ts` | New — `formatHeistDate`, `formatCountdown` |\n| `hooks/useHeists.ts` | **No change** — reused as-is |\n| `types/firestore/heist.ts` | **No change** — reused as-is |\n\n## Tests (mirror existing Vitest conventions in `tests/`)\n\nUse a `makeHeist(overrides)` factory inside each test file. Prefer role/text queries.\n\n- **`tests/lib/heistDate.test.ts`** — `formatHeistDate` formats a known date; `formatCountdown` returns `\"Expired\"` for past, `\"Nd Nh\"` for ≥1 day, `\"Nh Nm\"` for <1 day (pass explicit `now`).\n- **`tests/components/StatusBadge.test.tsx`** — renders `SUCCESS` for `'success'`, `FAILURE` for `'failure'`, nothing for `null`.\n- **`tests/components/Countdown.test.tsx`** — renders a value for a future deadline; shows `\"Expired\"` for a past one. (Optionally `vi.useFakeTimers()` to assert it ticks.)\n- **`tests/components/HeistCard.test.tsx`** — shows title, `@assignedToCodeName`, `@createdByCodeName`, formatted datetime, and a countdown value.\n- **`tests/components/HeistHistoryRow.test.tsx`** — shows title, To/By codenames, datetime, and the SUCCESS badge (and FAILURE variant).\n- **`tests/pages/HeistsPage.test.tsx`** — `vi.mock(\"@/hooks/useHeists\")` returning fixtures keyed by filter arg. Assert: both section headings render; assigned cards render and are deduped across active+assigned; history rows render with badges; empty-state messages render when a bucket is empty.\n\n## Verification\n\n1. `npx vitest run` — all new + existing tests pass.\n2. `npm run lint` — clean (no hard-coded hex; `@/` imports).\n3. `npm run dev`, sign in, visit `/heists`:\n   - Assigned cards show in a 2-col grid (collapsing to 1 col when narrow), countdown ticks live, To purple / By pink.\n   - History rows show success/failure icon + matching badge.\n   - Empty states appear when a section has no data.\n"
+  },
+  "tool_response": {
+    "type": "create",
+    "filePath": "C:\\Users\\Ahmed.Elhawary\\.claude\\plans\\let-s-make-a-plan-flickering-thunder.md",
+    "content": "# Plan: Heists Dashboard Redesign\n\n## Context\n\nThe `/heists` page (`app/(dashboard)/heists/page.tsx`) currently renders a bare `<ul>` of heist titles across three plain sections. The spec (`_specs/heists-dashboard-design.md`) and the reference screenshot call for a styled dashboard with two sections:\n\n1. **Assigned Heists** — a 2-column responsive card grid of ongoing heists, each card showing title, a live-ticking countdown to the deadline, the To/By operatives, and the scheduled datetime.\n2. **Heist History** — a full-width list of completed heists, each row showing a success/failure icon, title, To/By operatives, datetime, and a status badge.\n\n**Confirmed decisions (from the user):**\n- *Assigned Heists* = **both** ongoing buckets merged: heists assigned to me **and** heists I created for others (`finalStatus === null`), deduped by id.\n- *Heist History* = **all** completed heists globally (existing `\"expired\"` filter), badged with both **SUCCESS** (green) and **FAILURE** (red).\n- Countdown is **live-ticking** (client-side interval).\n- The status field (`finalStatus`) distinguishes assigned vs. history; operative names come denormalized from the heist document (`createdByCodeName`, `assignedToCodeName`).\n\nThe data layer (`hooks/useHeists.ts`, `types/firestore/heist.ts`) already provides everything needed — no Firestore/schema changes required. This is purely a presentation rebuild plus small pure utilities.\n\n## Data wiring\n\nKeep the page a Client Component (`\"use client\"`) and reuse the existing `useHeists` hook as-is:\n\n```\nconst { heists: active,   loading: l1 } = useHeists(\"active\")    // assigned TO me, not yet due\nconst { heists: assigned, loading: l2 } = useHeists(\"assigned\")  // created BY me, not yet due\nconst { heists: expired,  loading: l3 } = useHeists(\"expired\")   // all completed (history)\n```\n\n- **Assigned grid data**: merge `active` + `assigned`, dedupe by `heist.id` (a self-assigned heist appears in both), sort by `deadline` ascending. Do this with a small `useMemo` in the page.\n- **History data**: use `expired` directly (already ordered by `finalStatus`, then `deadline` desc).\n\n`Heist` fields used: `id`, `title`, `assignedToCodeName` (To), `createdByCodeName` (By), `deadline`, `finalStatus`.\n\n## Components to create\n\nFollow the established folder-per-component convention (`index.ts` barrel re-exporting the default, `<Name>.tsx`, optional `<Name>.module.css` with `@reference \"../../app/globals.css\"`). Icons come from `lucide-react` (already a dependency). All colors via theme tokens — no hard-coded hex.\n\n1. **`components/StatusBadge/`** — pill badge. Props: `status: HeistFinalStatus` (`'success' | 'failure'`). Renders `SUCCESS` (green/`success` token) or `FAILURE` (red/`error` token), uppercase, rounded pill. Returns `null` if status is null.\n\n2. **`components/Countdown/`** — live-ticking remaining-time label. Props: `deadline: Date`. Uses `useEffect` + `setInterval` (1s tick) and `formatCountdown` (below). Color via theme token: `secondary` (pink) when under the near-deadline threshold (< 24h), else `primary` (purple); `body` gray when expired. Clears the interval on unmount.\n\n3. **`components/HeistCard/`** — card for the Assigned grid. Props: `heist: Heist`. Layout per screenshot:\n   - Title (bold, `heading`) with a `Clock` icon top-right.\n   - `User` icon + `To:` + `@{assignedToCodeName}` in `primary` (purple).\n   - `User` icon + `By:` + `@{createdByCodeName}` in `secondary` (pink) — matches screenshot.\n   - `Calendar` icon + formatted datetime + ` • ` + `<Countdown deadline={heist.deadline} />`.\n   - Card surface uses `lighter`/`light` token, rounded corners, padding (mirror `Skeleton.module.css` `.card`). Long titles wrap.\n   - Omit the To or By row if its codename is missing (edge case: no `@undefined`).\n\n4. **`components/HeistHistoryRow/`** — full-width row for History. Props: `heist: Heist`. Layout:\n   - Left: green `CheckCircle2` for success / red `XCircle` for failure.\n   - Title (`heading`), and below it `To: @… By: @…` inline with `User` icons (To purple, By pink).\n   - Right: `Calendar` icon + formatted datetime, then `<StatusBadge status={heist.finalStatus} />`.\n\nSection headings (Target icon + \"Assigned Heists\"; Archive icon + \"Heist History\") are simple enough to render inline in the page — no separate component.\n\n## Utilities to create\n\n**`lib/format/heistDate.ts`** (new) — two pure functions, native `Intl`/arithmetic (no new deps):\n- `formatHeistDate(date: Date): string` → `\"Dec 7, 02:00 PM\"` via `Intl.DateTimeFormat` (month short, day numeric, 2-digit hour/minute, 12h).\n- `formatCountdown(deadline: Date, now?: Date): string` → `\"Expired\"` when `deadline <= now`; `\"{d}d {h}h\"` when ≥ 24h remain; else `\"{h}h {m}m\"`. `now` param defaults to `new Date()` for testability.\n\n## Page rewrite\n\nRewrite `app/(dashboard)/heists/page.tsx`:\n- Keep `\"use client\"` and the `.page-content` wrapper.\n- Two `<section>`s, each with an icon + `<h2>` heading.\n- Assigned: `grid grid-cols-1 md:grid-cols-2 gap-4` of `<HeistCard>`; empty state `\"No active heists assigned to you.\"` when the merged list is empty.\n- History: `flex flex-col gap-3` of `<HeistHistoryRow>`; empty state `\"No heist history yet.\"` when empty.\n- While any relevant `loading` flag is true and its list is empty, render the existing `Skeleton` placeholder (optional polish; reuse `components/Skeleton`).\n- Remove the old `HeistTitles` helper.\n\n## Critical files\n\n| File | Change |\n|------|--------|\n| `app/(dashboard)/heists/page.tsx` | Rewrite to two styled sections; merge/dedupe assigned, reuse `expired` for history |\n| `components/HeistCard/*` | New |\n| `components/HeistHistoryRow/*` | New |\n| `components/StatusBadge/*` | New |\n| `components/Countdown/*` | New |\n| `lib/format/heistDate.ts` | New — `formatHeistDate`, `formatCountdown` |\n| `hooks/useHeists.ts` | **No change** — reused as-is |\n| `types/firestore/heist.ts` | **No change** — reused as-is |\n\n## Tests (mirror existing Vitest conventions in `tests/`)\n\nUse a `makeHeist(overrides)` factory inside each test file. Prefer role/text queries.\n\n- **`tests/lib/heistDate.test.ts`** — `formatHeistDate` formats a known date; `formatCountdown` returns `\"Expired\"` for past, `\"Nd Nh\"` for ≥1 day, `\"Nh Nm\"` for <1 day (pass explicit `now`).\n- **`tests/components/StatusBadge.test.tsx`** — renders `SUCCESS` for `'success'`, `FAILURE` for `'failure'`, nothing for `null`.\n- **`tests/components/Countdown.test.tsx`** — renders a value for a future deadline; shows `\"Expired\"` for a past one. (Optionally `vi.useFakeTimers()` to assert it ticks.)\n- **`tests/components/HeistCard.test.tsx`** — shows title, `@assignedToCodeName`, `@createdByCodeName`, formatted datetime, and a countdown value.\n- **`tests/components/HeistHistoryRow.test.tsx`** — shows title, To/By codenames, datetime, and the SUCCESS badge (and FAILURE variant).\n- **`tests/pages/HeistsPage.test.tsx`** — `vi.mock(\"@/hooks/useHeists\")` returning fixtures keyed by filter arg. Assert: both section headings render; assigned cards render and are deduped across active+assigned; history rows render with badges; empty-state messages render when a bucket is empty.\n\n## Verification\n\n1. `npx vitest run` — all new + existing tests pass.\n2. `npm run lint` — clean (no hard-coded hex; `@/` imports).\n3. `npm run dev`, sign in, visit `/heists`:\n   - Assigned cards show in a 2-col grid (collapsing to 1 col when narrow), countdown ticks live, To purple / By pink.\n   - History rows show success/failure icon + matching badge.\n   - Empty states appear when a section has no data.\n",
+    "structuredPatch": [],
+    "originalFile": null,
+    "userModified": false
+  },
+  "tool_use_id": "toolu_01BQiuuj5Z5foXu6KUgC8zKP",
+  "duration_ms": 80
+}
+{
+  "session_id": "2a90b3fe-c460-426e-a5c4-d86fd2606363",
+  "transcript_path": "C:\\Users\\Ahmed.Elhawary\\.claude\\projects\\D--Learn-AgenticAI-pocket-heist\\2a90b3fe-c460-426e-a5c4-d86fd2606363.jsonl",
+  "cwd": "D:\\Learn\\AgenticAI\\pocket-heist",
+  "permission_mode": "plan",
+  "effort": {
+    "level": "medium"
+  },
+  "hook_event_name": "PostToolUse",
+  "tool_name": "Write",
+  "tool_input": {
+    "file_path": "D:\\Learn\\AgenticAI\\pocket-heist\\_plans\\heists-dashboard-design.md",
+    "content": "# Plan: Heists Dashboard Design\n\n**Spec:** `_specs/heists-dashboard-design.md`  \n**Branch:** `claude/feature/heists-dashboard-design`\n\n## Context\n\nThe `/heists` page (`app/(dashboard)/heists/page.tsx`) currently renders a bare `<ul>` of heist titles across three plain sections. The spec and reference screenshot call for a styled dashboard with two sections:\n\n1. **Assigned Heists** — a 2-column responsive card grid of ongoing heists, each card showing title, a live-ticking countdown to the deadline, the To/By operatives, and the scheduled datetime.\n2. **Heist History** — a full-width list of completed heists, each row showing a success/failure icon, title, To/By operatives, datetime, and a status badge.\n\n**Confirmed decisions:**\n- *Assigned Heists* = **both** ongoing buckets merged — heists assigned to me **and** heists I created for others (`finalStatus === null`), deduped by id.\n- *Heist History* = **all** completed heists globally (existing `\"expired\"` filter), badged with both **SUCCESS** (green) and **FAILURE** (red).\n- Countdown is **live-ticking** (client-side interval).\n- `finalStatus` distinguishes assigned vs. history; operative names come denormalized from the heist document (`createdByCodeName`, `assignedToCodeName`).\n\nThe data layer (`hooks/useHeists.ts`, `types/firestore/heist.ts`) already provides everything needed — **no Firestore/schema changes**. This is a presentation rebuild plus small pure utilities.\n\n---\n\n## Step 1 — Date/countdown utilities\n\nCreate `lib/format/heistDate.ts` — two pure functions, native `Intl`/arithmetic (no new deps):\n\n- `formatHeistDate(date: Date): string` → `\"Dec 7, 02:00 PM\"` via `Intl.DateTimeFormat` (month short, day numeric, 2-digit hour/minute, 12h).\n- `formatCountdown(deadline: Date, now?: Date): string` → `\"Expired\"` when `deadline <= now`; `\"{d}d {h}h\"` when ≥ 24h remain; else `\"{h}h {m}m\"`. `now` defaults to `new Date()` for testability.\n\n---\n\n## Step 2 — `StatusBadge` component\n\n`components/StatusBadge/` (folder convention: `index.ts` barrel, `StatusBadge.tsx`, `StatusBadge.module.css`).\n\n- Props: `status: HeistFinalStatus` (`'success' | 'failure'`).\n- Renders `SUCCESS` (`success` token, green) or `FAILURE` (`error` token, red), uppercase, rounded pill.\n- Returns `null` if status is null.\n\n---\n\n## Step 3 — `Countdown` component\n\n`components/Countdown/`.\n\n- Props: `deadline: Date`.\n- `useEffect` + `setInterval` (1s tick); cleans up the interval on unmount.\n- Uses `formatCountdown` for the label.\n- Color via theme token: `secondary` (pink) when under near-deadline threshold (< 24h), else `primary` (purple); `body` gray when expired.\n\n---\n\n## Step 4 — `HeistCard` component\n\n`components/HeistCard/`. Props: `heist: Heist`. Layout per screenshot:\n\n- Title (bold, `heading`) with a `Clock` icon (lucide-react) top-right.\n- `User` icon + `To:` + `@{assignedToCodeName}` in `primary` (purple).\n- `User` icon + `By:` + `@{createdByCodeName}` in `secondary` (pink).\n- `Calendar` icon + `formatHeistDate(deadline)` + ` • ` + `<Countdown deadline={heist.deadline} />`.\n- Card surface uses `lighter`/`light` token, rounded corners, padding (mirror `Skeleton.module.css` `.card`). Long titles wrap.\n- Omit the To or By row if its codename is missing (no `@undefined`).\n\n---\n\n## Step 5 — `HeistHistoryRow` component\n\n`components/HeistHistoryRow/`. Props: `heist: Heist`. Layout:\n\n- Left: green `CheckCircle2` for success / red `XCircle` for failure.\n- Title (`heading`); below it `To: @… By: @…` inline with `User` icons (To purple, By pink).\n- Right: `Calendar` icon + `formatHeistDate(deadline)`, then `<StatusBadge status={heist.finalStatus} />`.\n\n---\n\n## Step 6 — Rewrite the page\n\nUpdate `app/(dashboard)/heists/page.tsx` (keep `\"use client\"`, reuse `useHeists` as-is):\n\n```ts\nconst { heists: active }   = useHeists(\"active\")    // assigned TO me, not yet due\nconst { heists: assigned } = useHeists(\"assigned\")  // created BY me, not yet due\nconst { heists: expired }  = useHeists(\"expired\")   // all completed (history)\n```\n\n- **Assigned grid data**: `useMemo` → merge `active` + `assigned`, dedupe by `heist.id`, sort by `deadline` asc.\n- **History data**: use `expired` directly.\n- Two `<section>`s, each with an icon + `<h2>` heading: `Target` + \"Assigned Heists\", `Archive` + \"Heist History\" (headings inline — no separate component).\n- Assigned: `grid grid-cols-1 md:grid-cols-2 gap-4` of `<HeistCard>`; empty state `\"No active heists assigned to you.\"`.\n- History: `flex flex-col gap-3` of `<HeistHistoryRow>`; empty state `\"No heist history yet.\"`.\n- Optional polish: render existing `Skeleton` while a bucket is loading and empty.\n- Remove the old `HeistTitles` helper.\n\nAll colors via theme tokens — no hard-coded hex; use `@/` imports.\n\n---\n\n## Step 7 — Tests\n\nMirror existing Vitest conventions (`vi.hoisted` / `vi.mock`, role/text queries). Use a `makeHeist(overrides)` factory per test file.\n\n- `tests/lib/heistDate.test.ts` — `formatHeistDate` formats a known date; `formatCountdown` → `\"Expired\"` (past), `\"Nd Nh\"` (≥1 day), `\"Nh Nm\"` (<1 day), with explicit `now`.\n- `tests/components/StatusBadge.test.tsx` — `SUCCESS` for `'success'`, `FAILURE` for `'failure'`, nothing for `null`.\n- `tests/components/Countdown.test.tsx` — renders a value for a future deadline; `\"Expired\"` for a past one.\n- `tests/components/HeistCard.test.tsx` — shows title, both codenames, formatted datetime, and a countdown value.\n- `tests/components/HeistHistoryRow.test.tsx` — shows title, To/By codenames, datetime, SUCCESS badge (and FAILURE variant).\n- `tests/pages/HeistsPage.test.tsx` — `vi.mock(\"@/hooks/useHeists\")` returning fixtures keyed by filter arg. Assert both headings render; assigned cards render and dedupe across active+assigned; history rows render with badges; empty states render when a bucket is empty.\n\n---\n\n## Verification\n\n1. `npx vitest run` — all new + existing tests pass.\n2. `npm run lint` — clean (no hard-coded hex; `@/` imports).\n3. `npm run dev`, sign in, visit `/heists`:\n   - Assigned cards in a 2-col grid (collapsing to 1 col when narrow), countdown ticks live, To purple / By pink.\n   - History rows show success/failure icon + matching badge.\n   - Empty states appear when a section has no data.\n"
+  },
+  "tool_response": {
+    "type": "create",
+    "filePath": "D:\\Learn\\AgenticAI\\pocket-heist\\_plans\\heists-dashboard-design.md",
+    "content": "# Plan: Heists Dashboard Design\n\n**Spec:** `_specs/heists-dashboard-design.md`  \n**Branch:** `claude/feature/heists-dashboard-design`\n\n## Context\n\nThe `/heists` page (`app/(dashboard)/heists/page.tsx`) currently renders a bare `<ul>` of heist titles across three plain sections. The spec and reference screenshot call for a styled dashboard with two sections:\n\n1. **Assigned Heists** — a 2-column responsive card grid of ongoing heists, each card showing title, a live-ticking countdown to the deadline, the To/By operatives, and the scheduled datetime.\n2. **Heist History** — a full-width list of completed heists, each row showing a success/failure icon, title, To/By operatives, datetime, and a status badge.\n\n**Confirmed decisions:**\n- *Assigned Heists* = **both** ongoing buckets merged — heists assigned to me **and** heists I created for others (`finalStatus === null`), deduped by id.\n- *Heist History* = **all** completed heists globally (existing `\"expired\"` filter), badged with both **SUCCESS** (green) and **FAILURE** (red).\n- Countdown is **live-ticking** (client-side interval).\n- `finalStatus` distinguishes assigned vs. history; operative names come denormalized from the heist document (`createdByCodeName`, `assignedToCodeName`).\n\nThe data layer (`hooks/useHeists.ts`, `types/firestore/heist.ts`) already provides everything needed — **no Firestore/schema changes**. This is a presentation rebuild plus small pure utilities.\n\n---\n\n## Step 1 — Date/countdown utilities\n\nCreate `lib/format/heistDate.ts` — two pure functions, native `Intl`/arithmetic (no new deps):\n\n- `formatHeistDate(date: Date): string` → `\"Dec 7, 02:00 PM\"` via `Intl.DateTimeFormat` (month short, day numeric, 2-digit hour/minute, 12h).\n- `formatCountdown(deadline: Date, now?: Date): string` → `\"Expired\"` when `deadline <= now`; `\"{d}d {h}h\"` when ≥ 24h remain; else `\"{h}h {m}m\"`. `now` defaults to `new Date()` for testability.\n\n---\n\n## Step 2 — `StatusBadge` component\n\n`components/StatusBadge/` (folder convention: `index.ts` barrel, `StatusBadge.tsx`, `StatusBadge.module.css`).\n\n- Props: `status: HeistFinalStatus` (`'success' | 'failure'`).\n- Renders `SUCCESS` (`success` token, green) or `FAILURE` (`error` token, red), uppercase, rounded pill.\n- Returns `null` if status is null.\n\n---\n\n## Step 3 — `Countdown` component\n\n`components/Countdown/`.\n\n- Props: `deadline: Date`.\n- `useEffect` + `setInterval` (1s tick); cleans up the interval on unmount.\n- Uses `formatCountdown` for the label.\n- Color via theme token: `secondary` (pink) when under near-deadline threshold (< 24h), else `primary` (purple); `body` gray when expired.\n\n---\n\n## Step 4 — `HeistCard` component\n\n`components/HeistCard/`. Props: `heist: Heist`. Layout per screenshot:\n\n- Title (bold, `heading`) with a `Clock` icon (lucide-react) top-right.\n- `User` icon + `To:` + `@{assignedToCodeName}` in `primary` (purple).\n- `User` icon + `By:` + `@{createdByCodeName}` in `secondary` (pink).\n- `Calendar` icon + `formatHeistDate(deadline)` + ` • ` + `<Countdown deadline={heist.deadline} />`.\n- Card surface uses `lighter`/`light` token, rounded corners, padding (mirror `Skeleton.module.css` `.card`). Long titles wrap.\n- Omit the To or By row if its codename is missing (no `@undefined`).\n\n---\n\n## Step 5 — `HeistHistoryRow` component\n\n`components/HeistHistoryRow/`. Props: `heist: Heist`. Layout:\n\n- Left: green `CheckCircle2` for success / red `XCircle` for failure.\n- Title (`heading`); below it `To: @… By: @…` inline with `User` icons (To purple, By pink).\n- Right: `Calendar` icon + `formatHeistDate(deadline)`, then `<StatusBadge status={heist.finalStatus} />`.\n\n---\n\n## Step 6 — Rewrite the page\n\nUpdate `app/(dashboard)/heists/page.tsx` (keep `\"use client\"`, reuse `useHeists` as-is):\n\n```ts\nconst { heists: active }   = useHeists(\"active\")    // assigned TO me, not yet due\nconst { heists: assigned } = useHeists(\"assigned\")  // created BY me, not yet due\nconst { heists: expired }  = useHeists(\"expired\")   // all completed (history)\n```\n\n- **Assigned grid data**: `useMemo` → merge `active` + `assigned`, dedupe by `heist.id`, sort by `deadline` asc.\n- **History data**: use `expired` directly.\n- Two `<section>`s, each with an icon + `<h2>` heading: `Target` + \"Assigned Heists\", `Archive` + \"Heist History\" (headings inline — no separate component).\n- Assigned: `grid grid-cols-1 md:grid-cols-2 gap-4` of `<HeistCard>`; empty state `\"No active heists assigned to you.\"`.\n- History: `flex flex-col gap-3` of `<HeistHistoryRow>`; empty state `\"No heist history yet.\"`.\n- Optional polish: render existing `Skeleton` while a bucket is loading and empty.\n- Remove the old `HeistTitles` helper.\n\nAll colors via theme tokens — no hard-coded hex; use `@/` imports.\n\n---\n\n## Step 7 — Tests\n\nMirror existing Vitest conventions (`vi.hoisted` / `vi.mock`, role/text queries). Use a `makeHeist(overrides)` factory per test file.\n\n- `tests/lib/heistDate.test.ts` — `formatHeistDate` formats a known date; `formatCountdown` → `\"Expired\"` (past), `\"Nd Nh\"` (≥1 day), `\"Nh Nm\"` (<1 day), with explicit `now`.\n- `tests/components/StatusBadge.test.tsx` — `SUCCESS` for `'success'`, `FAILURE` for `'failure'`, nothing for `null`.\n- `tests/components/Countdown.test.tsx` — renders a value for a future deadline; `\"Expired\"` for a past one.\n- `tests/components/HeistCard.test.tsx` — shows title, both codenames, formatted datetime, and a countdown value.\n- `tests/components/HeistHistoryRow.test.tsx` — shows title, To/By codenames, datetime, SUCCESS badge (and FAILURE variant).\n- `tests/pages/HeistsPage.test.tsx` — `vi.mock(\"@/hooks/useHeists\")` returning fixtures keyed by filter arg. Assert both headings render; assigned cards render and dedupe across active+assigned; history rows render with badges; empty states render when a bucket is empty.\n\n---\n\n## Verification\n\n1. `npx vitest run` — all new + existing tests pass.\n2. `npm run lint` — clean (no hard-coded hex; `@/` imports).\n3. `npm run dev`, sign in, visit `/heists`:\n   - Assigned cards in a 2-col grid (collapsing to 1 col when narrow), countdown ticks live, To purple / By pink.\n   - History rows show success/failure icon + matching badge.\n   - Empty states appear when a section has no data.\n",
+    "structuredPatch": [],
+    "originalFile": null,
+    "userModified": false
+  },
+  "tool_use_id": "toolu_01LTr6JLJnDkyj4r2wFMQ5Bj",
+  "duration_ms": 149
+}
+{
+  "session_id": "2a90b3fe-c460-426e-a5c4-d86fd2606363",
+  "transcript_path": "C:\\Users\\Ahmed.Elhawary\\.claude\\projects\\D--Learn-AgenticAI-pocket-heist\\2a90b3fe-c460-426e-a5c4-d86fd2606363.jsonl",
+  "cwd": "D:\\Learn\\AgenticAI\\pocket-heist",
+  "permission_mode": "auto",
+  "effort": {
+    "level": "medium"
+  },
+  "hook_event_name": "PostToolUse",
+  "tool_name": "Write",
+  "tool_input": {
+    "file_path": "D:\\Learn\\AgenticAI\\pocket-heist\\lib\\format\\heistDate.ts",
+    "content": "/**\n * Formatting helpers for heist deadlines.\n *\n * Heist `deadline`/`createdAt` are native `Date`s (see the Firestore converter\n * in `types/firestore/heist.ts`). These helpers keep date/countdown rendering\n * pure and testable, with `now` injectable for the countdown.\n */\n\nconst dateFormatter = new Intl.DateTimeFormat(\"en-US\", {\n  month: \"short\",\n  day: \"numeric\",\n  hour: \"2-digit\",\n  minute: \"2-digit\",\n  hour12: true,\n})\n\n/** Formats a deadline like `\"Dec 7, 02:00 PM\"`. */\nexport function formatHeistDate(date: Date): string {\n  return dateFormatter.format(date)\n}\n\nconst MS_PER_MINUTE = 60 * 1000\nconst MS_PER_HOUR = 60 * MS_PER_MINUTE\nconst MS_PER_DAY = 24 * MS_PER_HOUR\n\n/**\n * Formats the time remaining until `deadline`.\n * - `\"Expired\"` once the deadline has passed\n * - `\"{d}d {h}h\"` when a day or more remains\n * - `\"{h}h {m}m\"` otherwise\n */\nexport function formatCountdown(deadline: Date, now: Date = new Date()): string {\n  const diff = deadline.getTime() - now.getTime()\n  if (diff <= 0) return \"Expired\"\n\n  if (diff >= MS_PER_DAY) {\n    const days = Math.floor(diff / MS_PER_DAY)\n    const hours = Math.floor((diff % MS_PER_DAY) / MS_PER_HOUR)\n    return `${days}d ${hours}h`\n  }\n\n  const hours = Math.floor(diff / MS_PER_HOUR)\n  const minutes = Math.floor((diff % MS_PER_HOUR) / MS_PER_MINUTE)\n  return `${hours}h ${minutes}m`\n}\n\n/** Whether a deadline is within the \"near\" window (< 24h) used to accent the countdown. */\nexport function isNearDeadline(deadline: Date, now: Date = new Date()): boolean {\n  const diff = deadline.getTime() - now.getTime()\n  return diff > 0 && diff < MS_PER_DAY\n}\n"
+  },
+  "tool_response": {
+    "type": "create",
+    "filePath": "D:\\Learn\\AgenticAI\\pocket-heist\\lib\\format\\heistDate.ts",
+    "content": "/**\n * Formatting helpers for heist deadlines.\n *\n * Heist `deadline`/`createdAt` are native `Date`s (see the Firestore converter\n * in `types/firestore/heist.ts`). These helpers keep date/countdown rendering\n * pure and testable, with `now` injectable for the countdown.\n */\n\nconst dateFormatter = new Intl.DateTimeFormat(\"en-US\", {\n  month: \"short\",\n  day: \"numeric\",\n  hour: \"2-digit\",\n  minute: \"2-digit\",\n  hour12: true,\n})\n\n/** Formats a deadline like `\"Dec 7, 02:00 PM\"`. */\nexport function formatHeistDate(date: Date): string {\n  return dateFormatter.format(date)\n}\n\nconst MS_PER_MINUTE = 60 * 1000\nconst MS_PER_HOUR = 60 * MS_PER_MINUTE\nconst MS_PER_DAY = 24 * MS_PER_HOUR\n\n/**\n * Formats the time remaining until `deadline`.\n * - `\"Expired\"` once the deadline has passed\n * - `\"{d}d {h}h\"` when a day or more remains\n * - `\"{h}h {m}m\"` otherwise\n */\nexport function formatCountdown(deadline: Date, now: Date = new Date()): string {\n  const diff = deadline.getTime() - now.getTime()\n  if (diff <= 0) return \"Expired\"\n\n  if (diff >= MS_PER_DAY) {\n    const days = Math.floor(diff / MS_PER_DAY)\n    const hours = Math.floor((diff % MS_PER_DAY) / MS_PER_HOUR)\n    return `${days}d ${hours}h`\n  }\n\n  const hours = Math.floor(diff / MS_PER_HOUR)\n  const minutes = Math.floor((diff % MS_PER_HOUR) / MS_PER_MINUTE)\n  return `${hours}h ${minutes}m`\n}\n\n/** Whether a deadline is within the \"near\" window (< 24h) used to accent the countdown. */\nexport function isNearDeadline(deadline: Date, now: Date = new Date()): boolean {\n  const diff = deadline.getTime() - now.getTime()\n  return diff > 0 && diff < MS_PER_DAY\n}\n",
+    "structuredPatch": [],
+    "originalFile": null,
+    "userModified": false
+  },
+  "tool_use_id": "toolu_01CFiCZ1cyKsuCo3p7EDiW5J",
+  "duration_ms": 63
+}
+{
+  "session_id": "2a90b3fe-c460-426e-a5c4-d86fd2606363",
+  "transcript_path": "C:\\Users\\Ahmed.Elhawary\\.claude\\projects\\D--Learn-AgenticAI-pocket-heist\\2a90b3fe-c460-426e-a5c4-d86fd2606363.jsonl",
+  "cwd": "D:\\Learn\\AgenticAI\\pocket-heist",
+  "permission_mode": "auto",
+  "effort": {
+    "level": "medium"
+  },
+  "hook_event_name": "PostToolUse",
+  "tool_name": "Write",
+  "tool_input": {
+    "file_path": "D:\\Learn\\AgenticAI\\pocket-heist\\components\\StatusBadge\\index.ts",
+    "content": "export { default } from \"./StatusBadge\"\n"
+  },
+  "tool_response": {
+    "type": "create",
+    "filePath": "D:\\Learn\\AgenticAI\\pocket-heist\\components\\StatusBadge\\index.ts",
+    "content": "export { default } from \"./StatusBadge\"\n",
+    "structuredPatch": [],
+    "originalFile": null,
+    "userModified": false
+  },
+  "tool_use_id": "toolu_01WhMzzCwjzxquR64jtbSeMg",
+  "duration_ms": 50
+}
+{
+  "session_id": "2a90b3fe-c460-426e-a5c4-d86fd2606363",
+  "transcript_path": "C:\\Users\\Ahmed.Elhawary\\.claude\\projects\\D--Learn-AgenticAI-pocket-heist\\2a90b3fe-c460-426e-a5c4-d86fd2606363.jsonl",
+  "cwd": "D:\\Learn\\AgenticAI\\pocket-heist",
+  "permission_mode": "auto",
+  "effort": {
+    "level": "medium"
+  },
+  "hook_event_name": "PostToolUse",
+  "tool_name": "Write",
+  "tool_input": {
+    "file_path": "D:\\Learn\\AgenticAI\\pocket-heist\\components\\StatusBadge\\StatusBadge.tsx",
+    "content": "import type { HeistFinalStatus } from \"@/types/firestore/heist\"\nimport styles from \"./StatusBadge.module.css\"\n\ninterface StatusBadgeProps {\n  status: HeistFinalStatus | null\n}\n\nexport default function StatusBadge({ status }: StatusBadgeProps) {\n  if (!status) return null\n\n  return (\n    <span className={`${styles.badge} ${styles[status]}`}>{status}</span>\n  )\n}\n"
+  },
+  "tool_response": {
+    "type": "create",
+    "filePath": "D:\\Learn\\AgenticAI\\pocket-heist\\components\\StatusBadge\\StatusBadge.tsx",
+    "content": "import type { HeistFinalStatus } from \"@/types/firestore/heist\"\nimport styles from \"./StatusBadge.module.css\"\n\ninterface StatusBadgeProps {\n  status: HeistFinalStatus | null\n}\n\nexport default function StatusBadge({ status }: StatusBadgeProps) {\n  if (!status) return null\n\n  return (\n    <span className={`${styles.badge} ${styles[status]}`}>{status}</span>\n  )\n}\n",
+    "structuredPatch": [],
+    "originalFile": null,
+    "userModified": false
+  },
+  "tool_use_id": "toolu_018E59g311kFRjmVBcnWqaZ4",
+  "duration_ms": 72
+}
+{
+  "session_id": "2a90b3fe-c460-426e-a5c4-d86fd2606363",
+  "transcript_path": "C:\\Users\\Ahmed.Elhawary\\.claude\\projects\\D--Learn-AgenticAI-pocket-heist\\2a90b3fe-c460-426e-a5c4-d86fd2606363.jsonl",
+  "cwd": "D:\\Learn\\AgenticAI\\pocket-heist",
+  "permission_mode": "auto",
+  "effort": {
+    "level": "medium"
+  },
+  "hook_event_name": "PostToolUse",
+  "tool_name": "Write",
+  "tool_input": {
+    "file_path": "D:\\Learn\\AgenticAI\\pocket-heist\\components\\StatusBadge\\StatusBadge.module.css",
+    "content": "@reference \"../../app/globals.css\";\n\n.badge {\n  @apply inline-flex items-center rounded-full px-3 py-1 text-xs font-semibold uppercase tracking-wide;\n}\n\n.success {\n  @apply text-success;\n  background: color-mix(in srgb, var(--color-success) 15%, transparent);\n}\n\n.failure {\n  @apply text-error;\n  background: color-mix(in srgb, var(--color-error) 15%, transparent);\n}\n"
+  },
+  "tool_response": {
+    "type": "create",
+    "filePath": "D:\\Learn\\AgenticAI\\pocket-heist\\components\\StatusBadge\\StatusBadge.module.css",
+    "content": "@reference \"../../app/globals.css\";\n\n.badge {\n  @apply inline-flex items-center rounded-full px-3 py-1 text-xs font-semibold uppercase tracking-wide;\n}\n\n.success {\n  @apply text-success;\n  background: color-mix(in srgb, var(--color-success) 15%, transparent);\n}\n\n.failure {\n  @apply text-error;\n  background: color-mix(in srgb, var(--color-error) 15%, transparent);\n}\n",
+    "structuredPatch": [],
+    "originalFile": null,
+    "userModified": false
+  },
+  "tool_use_id": "toolu_01BZ8u3ciqHNgVY5pWZ9RR6u",
+  "duration_ms": 21
+}
+{
+  "session_id": "2a90b3fe-c460-426e-a5c4-d86fd2606363",
+  "transcript_path": "C:\\Users\\Ahmed.Elhawary\\.claude\\projects\\D--Learn-AgenticAI-pocket-heist\\2a90b3fe-c460-426e-a5c4-d86fd2606363.jsonl",
+  "cwd": "D:\\Learn\\AgenticAI\\pocket-heist",
+  "permission_mode": "auto",
+  "effort": {
+    "level": "medium"
+  },
+  "hook_event_name": "PostToolUse",
+  "tool_name": "Write",
+  "tool_input": {
+    "file_path": "D:\\Learn\\AgenticAI\\pocket-heist\\components\\Countdown\\index.ts",
+    "content": "export { default } from \"./Countdown\"\n"
+  },
+  "tool_response": {
+    "type": "create",
+    "filePath": "D:\\Learn\\AgenticAI\\pocket-heist\\components\\Countdown\\index.ts",
+    "content": "export { default } from \"./Countdown\"\n",
+    "structuredPatch": [],
+    "originalFile": null,
+    "userModified": false
+  },
+  "tool_use_id": "toolu_016vmyiBnM1t2sPNhKjMLcpk",
+  "duration_ms": 64
+}
+{
+  "session_id": "2a90b3fe-c460-426e-a5c4-d86fd2606363",
+  "transcript_path": "C:\\Users\\Ahmed.Elhawary\\.claude\\projects\\D--Learn-AgenticAI-pocket-heist\\2a90b3fe-c460-426e-a5c4-d86fd2606363.jsonl",
+  "cwd": "D:\\Learn\\AgenticAI\\pocket-heist",
+  "permission_mode": "auto",
+  "effort": {
+    "level": "medium"
+  },
+  "hook_event_name": "PostToolUse",
+  "tool_name": "Write",
+  "tool_input": {
+    "file_path": "D:\\Learn\\AgenticAI\\pocket-heist\\components\\Countdown\\Countdown.tsx",
+    "content": "\"use client\"\n\nimport { useEffect, useState } from \"react\"\nimport { formatCountdown, isNearDeadline } from \"@/lib/format/heistDate\"\n\ninterface CountdownProps {\n  deadline: Date\n}\n\n/** Live-ticking remaining-time label that updates every second. */\nexport default function Countdown({ deadline }: CountdownProps) {\n  const [now, setNow] = useState(() => new Date())\n\n  useEffect(() => {\n    const id = setInterval(() => setNow(new Date()), 1000)\n    return () => clearInterval(id)\n  }, [])\n\n  const label = formatCountdown(deadline, now)\n  const expired = label === \"Expired\"\n  const near = isNearDeadline(deadline, now)\n\n  // Pink (secondary) when close to the deadline, purple (primary) when further\n  // out, muted body grey once expired.\n  const color = expired\n    ? \"var(--color-body)\"\n    : near\n      ? \"var(--color-secondary)\"\n      : \"var(--color-primary)\"\n\n  return (\n    <span style={{ color }} className=\"font-medium\">\n      {label}\n    </span>\n  )\n}\n"
+  },
+  "tool_response": {
+    "type": "create",
+    "filePath": "D:\\Learn\\AgenticAI\\pocket-heist\\components\\Countdown\\Countdown.tsx",
+    "content": "\"use client\"\n\nimport { useEffect, useState } from \"react\"\nimport { formatCountdown, isNearDeadline } from \"@/lib/format/heistDate\"\n\ninterface CountdownProps {\n  deadline: Date\n}\n\n/** Live-ticking remaining-time label that updates every second. */\nexport default function Countdown({ deadline }: CountdownProps) {\n  const [now, setNow] = useState(() => new Date())\n\n  useEffect(() => {\n    const id = setInterval(() => setNow(new Date()), 1000)\n    return () => clearInterval(id)\n  }, [])\n\n  const label = formatCountdown(deadline, now)\n  const expired = label === \"Expired\"\n  const near = isNearDeadline(deadline, now)\n\n  // Pink (secondary) when close to the deadline, purple (primary) when further\n  // out, muted body grey once expired.\n  const color = expired\n    ? \"var(--color-body)\"\n    : near\n      ? \"var(--color-secondary)\"\n      : \"var(--color-primary)\"\n\n  return (\n    <span style={{ color }} className=\"font-medium\">\n      {label}\n    </span>\n  )\n}\n",
+    "structuredPatch": [],
+    "originalFile": null,
+    "userModified": false
+  },
+  "tool_use_id": "toolu_01FqWNu1xAweSwfR2UgwCyiU",
+  "duration_ms": 115
+}
+{
+  "session_id": "2a90b3fe-c460-426e-a5c4-d86fd2606363",
+  "transcript_path": "C:\\Users\\Ahmed.Elhawary\\.claude\\projects\\D--Learn-AgenticAI-pocket-heist\\2a90b3fe-c460-426e-a5c4-d86fd2606363.jsonl",
+  "cwd": "D:\\Learn\\AgenticAI\\pocket-heist",
+  "permission_mode": "auto",
+  "effort": {
+    "level": "medium"
+  },
+  "hook_event_name": "PostToolUse",
+  "tool_name": "Write",
+  "tool_input": {
+    "file_path": "D:\\Learn\\AgenticAI\\pocket-heist\\components\\HeistCard\\index.ts",
+    "content": "export { default } from \"./HeistCard\"\n"
+  },
+  "tool_response": {
+    "type": "create",
+    "filePath": "D:\\Learn\\AgenticAI\\pocket-heist\\components\\HeistCard\\index.ts",
+    "content": "export { default } from \"./HeistCard\"\n",
+    "structuredPatch": [],
+    "originalFile": null,
+    "userModified": false
+  },
+  "tool_use_id": "toolu_01FPxuh4R3thTBkrbK3FkBc6",
+  "duration_ms": 78
+}
+{
+  "session_id": "2a90b3fe-c460-426e-a5c4-d86fd2606363",
+  "transcript_path": "C:\\Users\\Ahmed.Elhawary\\.claude\\projects\\D--Learn-AgenticAI-pocket-heist\\2a90b3fe-c460-426e-a5c4-d86fd2606363.jsonl",
+  "cwd": "D:\\Learn\\AgenticAI\\pocket-heist",
+  "permission_mode": "auto",
+  "effort": {
+    "level": "medium"
+  },
+  "hook_event_name": "PostToolUse",
+  "tool_name": "Write",
+  "tool_input": {
+    "file_path": "D:\\Learn\\AgenticAI\\pocket-heist\\components\\HeistCard\\HeistCard.tsx",
+    "content": "import { Calendar, Clock, User } from \"lucide-react\"\nimport Countdown from \"@/components/Countdown\"\nimport { formatHeistDate } from \"@/lib/format/heistDate\"\nimport type { Heist } from \"@/types/firestore/heist\"\nimport styles from \"./HeistCard.module.css\"\n\ninterface HeistCardProps {\n  heist: Heist\n}\n\nexport default function HeistCard({ heist }: HeistCardProps) {\n  return (\n    <article className={styles.card}>\n      <header className={styles.header}>\n        <h3 className={styles.title}>{heist.title}</h3>\n        <Clock className={styles.clock} size={18} aria-hidden=\"true\" />\n      </header>\n\n      <dl className={styles.meta}>\n        {heist.assignedToCodeName && (\n          <div className={styles.row}>\n            <User size={14} aria-hidden=\"true\" />\n            <dt>To:</dt>\n            <dd className={styles.to}>@{heist.assignedToCodeName}</dd>\n          </div>\n        )}\n        {heist.createdByCodeName && (\n          <div className={styles.row}>\n            <User size={14} aria-hidden=\"true\" />\n            <dt>By:</dt>\n            <dd className={styles.by}>@{heist.createdByCodeName}</dd>\n          </div>\n        )}\n        <div className={styles.row}>\n          <Calendar size={14} aria-hidden=\"true\" />\n          <dd>{formatHeistDate(heist.deadline)}</dd>\n          <span className={styles.separator}>•</span>\n          <Countdown deadline={heist.deadline} />\n        </div>\n      </dl>\n    </article>\n  )\n}\n"
+  },
+  "tool_response": {
+    "type": "create",
+    "filePath": "D:\\Learn\\AgenticAI\\pocket-heist\\components\\HeistCard\\HeistCard.tsx",
+    "content": "import { Calendar, Clock, User } from \"lucide-react\"\nimport Countdown from \"@/components/Countdown\"\nimport { formatHeistDate } from \"@/lib/format/heistDate\"\nimport type { Heist } from \"@/types/firestore/heist\"\nimport styles from \"./HeistCard.module.css\"\n\ninterface HeistCardProps {\n  heist: Heist\n}\n\nexport default function HeistCard({ heist }: HeistCardProps) {\n  return (\n    <article className={styles.card}>\n      <header className={styles.header}>\n        <h3 className={styles.title}>{heist.title}</h3>\n        <Clock className={styles.clock} size={18} aria-hidden=\"true\" />\n      </header>\n\n      <dl className={styles.meta}>\n        {heist.assignedToCodeName && (\n          <div className={styles.row}>\n            <User size={14} aria-hidden=\"true\" />\n            <dt>To:</dt>\n            <dd className={styles.to}>@{heist.assignedToCodeName}</dd>\n          </div>\n        )}\n        {heist.createdByCodeName && (\n          <div className={styles.row}>\n            <User size={14} aria-hidden=\"true\" />\n            <dt>By:</dt>\n            <dd className={styles.by}>@{heist.createdByCodeName}</dd>\n          </div>\n        )}\n        <div className={styles.row}>\n          <Calendar size={14} aria-hidden=\"true\" />\n          <dd>{formatHeistDate(heist.deadline)}</dd>\n          <span className={styles.separator}>•</span>\n          <Countdown deadline={heist.deadline} />\n        </div>\n      </dl>\n    </article>\n  )\n}\n",
+    "structuredPatch": [],
+    "originalFile": null,
+    "userModified": false
+  },
+  "tool_use_id": "toolu_01Y9f9RYYy9QeMrZ8hpjnjp6",
+  "duration_ms": 42
+}
+{
+  "session_id": "2a90b3fe-c460-426e-a5c4-d86fd2606363",
+  "transcript_path": "C:\\Users\\Ahmed.Elhawary\\.claude\\projects\\D--Learn-AgenticAI-pocket-heist\\2a90b3fe-c460-426e-a5c4-d86fd2606363.jsonl",
+  "cwd": "D:\\Learn\\AgenticAI\\pocket-heist",
+  "permission_mode": "auto",
+  "effort": {
+    "level": "medium"
+  },
+  "hook_event_name": "PostToolUse",
+  "tool_name": "Write",
+  "tool_input": {
+    "file_path": "D:\\Learn\\AgenticAI\\pocket-heist\\components\\HeistCard\\HeistCard.module.css",
+    "content": "@reference \"../../app/globals.css\";\n\n.card {\n  @apply bg-lighter rounded-xl p-5 flex flex-col gap-4;\n}\n\n.header {\n  @apply flex items-start justify-between gap-3;\n}\n\n.title {\n  @apply text-lg font-semibold leading-snug break-words;\n}\n\n.clock {\n  @apply text-primary shrink-0 mt-1;\n}\n\n.meta {\n  @apply flex flex-col gap-2 text-sm;\n}\n\n.row {\n  @apply flex items-center gap-2;\n}\n\n.row dt {\n  @apply text-body;\n}\n\n.to {\n  @apply text-primary font-medium;\n}\n\n.by {\n  @apply text-secondary font-medium;\n}\n\n.separator {\n  @apply text-body;\n}\n"
+  },
+  "tool_response": {
+    "type": "create",
+    "filePath": "D:\\Learn\\AgenticAI\\pocket-heist\\components\\HeistCard\\HeistCard.module.css",
+    "content": "@reference \"../../app/globals.css\";\n\n.card {\n  @apply bg-lighter rounded-xl p-5 flex flex-col gap-4;\n}\n\n.header {\n  @apply flex items-start justify-between gap-3;\n}\n\n.title {\n  @apply text-lg font-semibold leading-snug break-words;\n}\n\n.clock {\n  @apply text-primary shrink-0 mt-1;\n}\n\n.meta {\n  @apply flex flex-col gap-2 text-sm;\n}\n\n.row {\n  @apply flex items-center gap-2;\n}\n\n.row dt {\n  @apply text-body;\n}\n\n.to {\n  @apply text-primary font-medium;\n}\n\n.by {\n  @apply text-secondary font-medium;\n}\n\n.separator {\n  @apply text-body;\n}\n",
+    "structuredPatch": [],
+    "originalFile": null,
+    "userModified": false
+  },
+  "tool_use_id": "toolu_011NDdSooBMeeJYZ78pbj4z9",
+  "duration_ms": 109
+}
+{
+  "session_id": "2a90b3fe-c460-426e-a5c4-d86fd2606363",
+  "transcript_path": "C:\\Users\\Ahmed.Elhawary\\.claude\\projects\\D--Learn-AgenticAI-pocket-heist\\2a90b3fe-c460-426e-a5c4-d86fd2606363.jsonl",
+  "cwd": "D:\\Learn\\AgenticAI\\pocket-heist",
+  "permission_mode": "auto",
+  "effort": {
+    "level": "medium"
+  },
+  "hook_event_name": "PostToolUse",
+  "tool_name": "Write",
+  "tool_input": {
+    "file_path": "D:\\Learn\\AgenticAI\\pocket-heist\\components\\HeistHistoryRow\\index.ts",
+    "content": "export { default } from \"./HeistHistoryRow\"\n"
+  },
+  "tool_response": {
+    "type": "create",
+    "filePath": "D:\\Learn\\AgenticAI\\pocket-heist\\components\\HeistHistoryRow\\index.ts",
+    "content": "export { default } from \"./HeistHistoryRow\"\n",
+    "structuredPatch": [],
+    "originalFile": null,
+    "userModified": false
+  },
+  "tool_use_id": "toolu_012Z1FtXP5eRz4pUU8smdUav",
+  "duration_ms": 58
+}
+{
+  "session_id": "2a90b3fe-c460-426e-a5c4-d86fd2606363",
+  "transcript_path": "C:\\Users\\Ahmed.Elhawary\\.claude\\projects\\D--Learn-AgenticAI-pocket-heist\\2a90b3fe-c460-426e-a5c4-d86fd2606363.jsonl",
+  "cwd": "D:\\Learn\\AgenticAI\\pocket-heist",
+  "permission_mode": "auto",
+  "effort": {
+    "level": "medium"
+  },
+  "hook_event_name": "PostToolUse",
+  "tool_name": "Write",
+  "tool_input": {
+    "file_path": "D:\\Learn\\AgenticAI\\pocket-heist\\components\\HeistHistoryRow\\HeistHistoryRow.tsx",
+    "content": "import { Calendar, CheckCircle2, User, XCircle } from \"lucide-react\"\nimport StatusBadge from \"@/components/StatusBadge\"\nimport { formatHeistDate } from \"@/lib/format/heistDate\"\nimport type { Heist } from \"@/types/firestore/heist\"\nimport styles from \"./HeistHistoryRow.module.css\"\n\ninterface HeistHistoryRowProps {\n  heist: Heist\n}\n\nexport default function HeistHistoryRow({ heist }: HeistHistoryRowProps) {\n  const failed = heist.finalStatus === \"failure\"\n\n  return (\n    <article className={styles.row}>\n      <div className={styles.icon}>\n        {failed ? (\n          <XCircle className={styles.failure} size={20} aria-hidden=\"true\" />\n        ) : (\n          <CheckCircle2 className={styles.success} size={20} aria-hidden=\"true\" />\n        )}\n      </div>\n\n      <div className={styles.main}>\n        <h3 className={styles.title}>{heist.title}</h3>\n        <div className={styles.operatives}>\n          {heist.assignedToCodeName && (\n            <span className={styles.operative}>\n              <User size={14} aria-hidden=\"true\" />\n              To: <span className={styles.to}>@{heist.assignedToCodeName}</span>\n            </span>\n          )}\n          {heist.createdByCodeName && (\n            <span className={styles.operative}>\n              <User size={14} aria-hidden=\"true\" />\n              By: <span className={styles.by}>@{heist.createdByCodeName}</span>\n            </span>\n          )}\n        </div>\n      </div>\n\n      <div className={styles.aside}>\n        <span className={styles.date}>\n          <Calendar size={14} aria-hidden=\"true\" />\n          {formatHeistDate(heist.deadline)}\n        </span>\n        <StatusBadge status={heist.finalStatus} />\n      </div>\n    </article>\n  )\n}\n"
+  },
+  "tool_response": {
+    "type": "create",
+    "filePath": "D:\\Learn\\AgenticAI\\pocket-heist\\components\\HeistHistoryRow\\HeistHistoryRow.tsx",
+    "content": "import { Calendar, CheckCircle2, User, XCircle } from \"lucide-react\"\nimport StatusBadge from \"@/components/StatusBadge\"\nimport { formatHeistDate } from \"@/lib/format/heistDate\"\nimport type { Heist } from \"@/types/firestore/heist\"\nimport styles from \"./HeistHistoryRow.module.css\"\n\ninterface HeistHistoryRowProps {\n  heist: Heist\n}\n\nexport default function HeistHistoryRow({ heist }: HeistHistoryRowProps) {\n  const failed = heist.finalStatus === \"failure\"\n\n  return (\n    <article className={styles.row}>\n      <div className={styles.icon}>\n        {failed ? (\n          <XCircle className={styles.failure} size={20} aria-hidden=\"true\" />\n        ) : (\n          <CheckCircle2 className={styles.success} size={20} aria-hidden=\"true\" />\n        )}\n      </div>\n\n      <div className={styles.main}>\n        <h3 className={styles.title}>{heist.title}</h3>\n        <div className={styles.operatives}>\n          {heist.assignedToCodeName && (\n            <span className={styles.operative}>\n              <User size={14} aria-hidden=\"true\" />\n              To: <span className={styles.to}>@{heist.assignedToCodeName}</span>\n            </span>\n          )}\n          {heist.createdByCodeName && (\n            <span className={styles.operative}>\n              <User size={14} aria-hidden=\"true\" />\n              By: <span className={styles.by}>@{heist.createdByCodeName}</span>\n            </span>\n          )}\n        </div>\n      </div>\n\n      <div className={styles.aside}>\n        <span className={styles.date}>\n          <Calendar size={14} aria-hidden=\"true\" />\n          {formatHeistDate(heist.deadline)}\n        </span>\n        <StatusBadge status={heist.finalStatus} />\n      </div>\n    </article>\n  )\n}\n",
+    "structuredPatch": [],
+    "originalFile": null,
+    "userModified": false
+  },
+  "tool_use_id": "toolu_01QHZ8hqgbA2bP35rBRj3Srx",
+  "duration_ms": 66
+}
+{
+  "session_id": "2a90b3fe-c460-426e-a5c4-d86fd2606363",
+  "transcript_path": "C:\\Users\\Ahmed.Elhawary\\.claude\\projects\\D--Learn-AgenticAI-pocket-heist\\2a90b3fe-c460-426e-a5c4-d86fd2606363.jsonl",
+  "cwd": "D:\\Learn\\AgenticAI\\pocket-heist",
+  "permission_mode": "auto",
+  "effort": {
+    "level": "medium"
+  },
+  "hook_event_name": "PostToolUse",
+  "tool_name": "Write",
+  "tool_input": {
+    "file_path": "D:\\Learn\\AgenticAI\\pocket-heist\\components\\HeistHistoryRow\\HeistHistoryRow.module.css",
+    "content": "@reference \"../../app/globals.css\";\n\n.row {\n  @apply bg-lighter rounded-xl px-5 py-4 flex items-center gap-4;\n}\n\n.icon {\n  @apply shrink-0;\n}\n\n.success {\n  @apply text-success;\n}\n\n.failure {\n  @apply text-error;\n}\n\n.main {\n  @apply flex flex-col gap-1 flex-1 min-w-0;\n}\n\n.title {\n  @apply text-base font-semibold break-words;\n}\n\n.operatives {\n  @apply flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-body;\n}\n\n.operative {\n  @apply flex items-center gap-1.5;\n}\n\n.to {\n  @apply text-primary font-medium;\n}\n\n.by {\n  @apply text-secondary font-medium;\n}\n\n.aside {\n  @apply flex items-center gap-4 shrink-0;\n}\n\n.date {\n  @apply flex items-center gap-1.5 text-sm text-body whitespace-nowrap;\n}\n"
+  },
+  "tool_response": {
+    "type": "create",
+    "filePath": "D:\\Learn\\AgenticAI\\pocket-heist\\components\\HeistHistoryRow\\HeistHistoryRow.module.css",
+    "content": "@reference \"../../app/globals.css\";\n\n.row {\n  @apply bg-lighter rounded-xl px-5 py-4 flex items-center gap-4;\n}\n\n.icon {\n  @apply shrink-0;\n}\n\n.success {\n  @apply text-success;\n}\n\n.failure {\n  @apply text-error;\n}\n\n.main {\n  @apply flex flex-col gap-1 flex-1 min-w-0;\n}\n\n.title {\n  @apply text-base font-semibold break-words;\n}\n\n.operatives {\n  @apply flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-body;\n}\n\n.operative {\n  @apply flex items-center gap-1.5;\n}\n\n.to {\n  @apply text-primary font-medium;\n}\n\n.by {\n  @apply text-secondary font-medium;\n}\n\n.aside {\n  @apply flex items-center gap-4 shrink-0;\n}\n\n.date {\n  @apply flex items-center gap-1.5 text-sm text-body whitespace-nowrap;\n}\n",
+    "structuredPatch": [],
+    "originalFile": null,
+    "userModified": false
+  },
+  "tool_use_id": "toolu_01GmhDo43HjKRsFk4JapLoGR",
+  "duration_ms": 52
+}
+{
+  "session_id": "2a90b3fe-c460-426e-a5c4-d86fd2606363",
+  "transcript_path": "C:\\Users\\Ahmed.Elhawary\\.claude\\projects\\D--Learn-AgenticAI-pocket-heist\\2a90b3fe-c460-426e-a5c4-d86fd2606363.jsonl",
+  "cwd": "D:\\Learn\\AgenticAI\\pocket-heist",
+  "permission_mode": "auto",
+  "effort": {
+    "level": "medium"
+  },
+  "hook_event_name": "PostToolUse",
+  "tool_name": "Write",
+  "tool_input": {
+    "file_path": "D:\\Learn\\AgenticAI\\pocket-heist\\app\\(dashboard)\\heists\\page.tsx",
+    "content": "\"use client\"\n\nimport { useMemo } from \"react\"\nimport { Archive, Target } from \"lucide-react\"\nimport HeistCard from \"@/components/HeistCard\"\nimport HeistHistoryRow from \"@/components/HeistHistoryRow\"\nimport { useHeists } from \"@/hooks/useHeists\"\nimport type { Heist } from \"@/types/firestore/heist\"\n\nexport default function HeistsPage() {\n  const { heists: active } = useHeists(\"active\")\n  const { heists: assigned } = useHeists(\"assigned\")\n  const { heists: expired } = useHeists(\"expired\")\n\n  // Ongoing heists the current user is involved in — assigned to them and\n  // created by them — merged, deduped by id, and ordered by soonest deadline.\n  const assignedHeists = useMemo(() => {\n    const byId = new Map<string, Heist>()\n    for (const heist of [...active, ...assigned]) {\n      byId.set(heist.id, heist)\n    }\n    return [...byId.values()].sort(\n      (a, b) => a.deadline.getTime() - b.deadline.getTime()\n    )\n  }, [active, assigned])\n\n  return (\n    <div className=\"page-content flex flex-col gap-10\">\n      <section className=\"flex flex-col gap-4\">\n        <h2 className=\"flex items-center gap-2 text-xl font-semibold\">\n          <Target className=\"text-secondary\" size={22} aria-hidden=\"true\" />\n          Assigned Heists\n        </h2>\n        {assignedHeists.length === 0 ? (\n          <p className=\"text-body\">No active heists assigned to you.</p>\n        ) : (\n          <div className=\"grid grid-cols-1 md:grid-cols-2 gap-4\">\n            {assignedHeists.map((heist) => (\n              <HeistCard key={heist.id} heist={heist} />\n            ))}\n          </div>\n        )}\n      </section>\n\n      <section className=\"flex flex-col gap-4\">\n        <h2 className=\"flex items-center gap-2 text-xl font-semibold\">\n          <Archive className=\"text-body\" size={22} aria-hidden=\"true\" />\n          Heist History\n        </h2>\n        {expired.length === 0 ? (\n          <p className=\"text-body\">No heist history yet.</p>\n        ) : (\n          <div className=\"flex flex-col gap-3\">\n            {expired.map((heist) => (\n              <HeistHistoryRow key={heist.id} heist={heist} />\n            ))}\n          </div>\n        )}\n      </section>\n    </div>\n  )\n}\n"
+  },
+  "tool_response": {
+    "type": "update",
+    "filePath": "D:\\Learn\\AgenticAI\\pocket-heist\\app\\(dashboard)\\heists\\page.tsx",
+    "content": "\"use client\"\n\nimport { useMemo } from \"react\"\nimport { Archive, Target } from \"lucide-react\"\nimport HeistCard from \"@/components/HeistCard\"\nimport HeistHistoryRow from \"@/components/HeistHistoryRow\"\nimport { useHeists } from \"@/hooks/useHeists\"\nimport type { Heist } from \"@/types/firestore/heist\"\n\nexport default function HeistsPage() {\n  const { heists: active } = useHeists(\"active\")\n  const { heists: assigned } = useHeists(\"assigned\")\n  const { heists: expired } = useHeists(\"expired\")\n\n  // Ongoing heists the current user is involved in — assigned to them and\n  // created by them — merged, deduped by id, and ordered by soonest deadline.\n  const assignedHeists = useMemo(() => {\n    const byId = new Map<string, Heist>()\n    for (const heist of [...active, ...assigned]) {\n      byId.set(heist.id, heist)\n    }\n    return [...byId.values()].sort(\n      (a, b) => a.deadline.getTime() - b.deadline.getTime()\n    )\n  }, [active, assigned])\n\n  return (\n    <div className=\"page-content flex flex-col gap-10\">\n      <section className=\"flex flex-col gap-4\">\n        <h2 className=\"flex items-center gap-2 text-xl font-semibold\">\n          <Target className=\"text-secondary\" size={22} aria-hidden=\"true\" />\n          Assigned Heists\n        </h2>\n        {assignedHeists.length === 0 ? (\n          <p className=\"text-body\">No active heists assigned to you.</p>\n        ) : (\n          <div className=\"grid grid-cols-1 md:grid-cols-2 gap-4\">\n            {assignedHeists.map((heist) => (\n              <HeistCard key={heist.id} heist={heist} />\n            ))}\n          </div>\n        )}\n      </section>\n\n      <section className=\"flex flex-col gap-4\">\n        <h2 className=\"flex items-center gap-2 text-xl font-semibold\">\n          <Archive className=\"text-body\" size={22} aria-hidden=\"true\" />\n          Heist History\n        </h2>\n        {expired.length === 0 ? (\n          <p className=\"text-body\">No heist history yet.</p>\n        ) : (\n          <div className=\"flex flex-col gap-3\">\n            {expired.map((heist) => (\n              <HeistHistoryRow key={heist.id} heist={heist} />\n            ))}\n          </div>\n        )}\n      </section>\n    </div>\n  )\n}\n",
+    "structuredPatch": [
+      {
+        "oldStart": 1,
+        "oldLines": 37,
+        "newStart": 1,
+        "newLines": 62,
+        "lines": [
+          " \"use client\"",
+          " ",
+          "+import { useMemo } from \"react\"",
+          "+import { Archive, Target } from \"lucide-react\"",
+          "+import HeistCard from \"@/components/HeistCard\"",
+          "+import HeistHistoryRow from \"@/components/HeistHistoryRow\"",
+          " import { useHeists } from \"@/hooks/useHeists\"",
+          " import type { Heist } from \"@/types/firestore/heist\"",
+          " ",
+          "-function HeistTitles({ heists }: { heists: Heist[] }) {",
+          "-  return (",
+          "-    <ul>",
+          "-      {heists.map((heist) => (",
+          "-        <li key={heist.id}>{heist.title}</li>",
+          "-      ))}",
+          "-    </ul>",
+          "-  )",
+          "-}",
+          "-",
+          " export default function HeistsPage() {",
+          "   const { heists: active } = useHeists(\"active\")",
+          "   const { heists: assigned } = useHeists(\"assigned\")",
+          "   const { heists: expired } = useHeists(\"expired\")",
+          " ",
+          "+  // Ongoing heists the current user is involved in — assigned to them and",
+          "+  // created by them — merged, deduped by id, and ordered by soonest deadline.",
+          "+  const assignedHeists = useMemo(() => {",
+          "+    const byId = new Map<string, Heist>()",
+          "+    for (const heist of [...active, ...assigned]) {",
+          "+      byId.set(heist.id, heist)",
+          "+    }",
+          "+    return [...byId.values()].sort(",
+          "+      (a, b) => a.deadline.getTime() - b.deadline.getTime()",
+          "+    )",
+          "+  }, [active, assigned])",
+          "+",
+          "   return (",
+          "-    <div className=\"page-content\">",
+          "-      <div className=\"active-heists\">",
+          "-        <h2>Your Active Heists</h2>",
+          "-        <HeistTitles heists={active} />",
+          "-      </div>",
+          "-      <div className=\"assigned-heists\">",
+          "-        <h2>Heists You&apos;ve Assigned</h2>",
+          "-        <HeistTitles heists={assigned} />",
+          "-      </div>",
+          "-      <div className=\"expired-heists\">",
+          "-        <h2>All Expired Heists</h2>",
+          "-        <HeistTitles heists={expired} />",
+          "-      </div>",
+          "+    <div className=\"page-content flex flex-col gap-10\">",
+          "+      <section className=\"flex flex-col gap-4\">",
+          "+        <h2 className=\"flex items-center gap-2 text-xl font-semibold\">",
+          "+          <Target className=\"text-secondary\" size={22} aria-hidden=\"true\" />",
+          "+          Assigned Heists",
+          "+        </h2>",
+          "+        {assignedHeists.length === 0 ? (",
+          "+          <p className=\"text-body\">No active heists assigned to you.</p>",
+          "+        ) : (",
+          "+          <div className=\"grid grid-cols-1 md:grid-cols-2 gap-4\">",
+          "+            {assignedHeists.map((heist) => (",
+          "+              <HeistCard key={heist.id} heist={heist} />",
+          "+            ))}",
+          "+          </div>",
+          "+        )}",
+          "+      </section>",
+          "+",
+          "+      <section className=\"flex flex-col gap-4\">",
+          "+        <h2 className=\"flex items-center gap-2 text-xl font-semibold\">",
+          "+          <Archive className=\"text-body\" size={22} aria-hidden=\"true\" />",
+          "+          Heist History",
+          "+        </h2>",
+          "+        {expired.length === 0 ? (",
+          "+          <p className=\"text-body\">No heist history yet.</p>",
+          "+        ) : (",
+          "+          <div className=\"flex flex-col gap-3\">",
+          "+            {expired.map((heist) => (",
+          "+              <HeistHistoryRow key={heist.id} heist={heist} />",
+          "+            ))}",
+          "+          </div>",
+          "+        )}",
+          "+      </section>",
+          "     </div>",
+          "   )",
+          " }"
+        ]
+      }
+    ],
+    "originalFile": "\"use client\"\n\nimport { useHeists } from \"@/hooks/useHeists\"\nimport type { Heist } from \"@/types/firestore/heist\"\n\nfunction HeistTitles({ heists }: { heists: Heist[] }) {\n  return (\n    <ul>\n      {heists.map((heist) => (\n        <li key={heist.id}>{heist.title}</li>\n      ))}\n    </ul>\n  )\n}\n\nexport default function HeistsPage() {\n  const { heists: active } = useHeists(\"active\")\n  const { heists: assigned } = useHeists(\"assigned\")\n  const { heists: expired } = useHeists(\"expired\")\n\n  return (\n    <div className=\"page-content\">\n      <div className=\"active-heists\">\n        <h2>Your Active Heists</h2>\n        <HeistTitles heists={active} />\n      </div>\n      <div className=\"assigned-heists\">\n        <h2>Heists You&apos;ve Assigned</h2>\n        <HeistTitles heists={assigned} />\n      </div>\n      <div className=\"expired-heists\">\n        <h2>All Expired Heists</h2>\n        <HeistTitles heists={expired} />\n      </div>\n    </div>\n  )\n}\n",
+    "userModified": false
+  },
+  "tool_use_id": "toolu_01Hr8xpDH5cFKTeamGiPujhW",
+  "duration_ms": 111
+}
+{
+  "session_id": "2a90b3fe-c460-426e-a5c4-d86fd2606363",
+  "transcript_path": "C:\\Users\\Ahmed.Elhawary\\.claude\\projects\\D--Learn-AgenticAI-pocket-heist\\2a90b3fe-c460-426e-a5c4-d86fd2606363.jsonl",
+  "cwd": "D:\\Learn\\AgenticAI\\pocket-heist",
+  "permission_mode": "auto",
+  "effort": {
+    "level": "medium"
+  },
+  "hook_event_name": "PostToolUse",
+  "tool_name": "Write",
+  "tool_input": {
+    "file_path": "D:\\Learn\\AgenticAI\\pocket-heist\\tests\\lib\\heistDate.test.ts",
+    "content": "import { describe, it, expect } from \"vitest\"\nimport {\n  formatHeistDate,\n  formatCountdown,\n  isNearDeadline,\n} from \"@/lib/format/heistDate\"\n\ndescribe(\"formatHeistDate\", () => {\n  it(\"formats a date as 'MMM D, hh:mm AM/PM'\", () => {\n    // Dec 7 2025, 14:00 local time\n    const date = new Date(2025, 11, 7, 14, 0)\n    expect(formatHeistDate(date)).toBe(\"Dec 7, 02:00 PM\")\n  })\n})\n\ndescribe(\"formatCountdown\", () => {\n  const now = new Date(2025, 11, 7, 12, 0)\n\n  it(\"returns 'Expired' for a past deadline\", () => {\n    const past = new Date(now.getTime() - 60 * 1000)\n    expect(formatCountdown(past, now)).toBe(\"Expired\")\n  })\n\n  it(\"returns 'Expired' exactly at the deadline\", () => {\n    expect(formatCountdown(now, now)).toBe(\"Expired\")\n  })\n\n  it(\"uses 'Nd Nh' when a day or more remains\", () => {\n    const deadline = new Date(now.getTime() + 2 * 24 * 60 * 60 * 1000 + 3 * 60 * 60 * 1000)\n    expect(formatCountdown(deadline, now)).toBe(\"2d 3h\")\n  })\n\n  it(\"uses 'Nh Nm' when less than a day remains\", () => {\n    const deadline = new Date(now.getTime() + 4 * 60 * 60 * 1000 + 42 * 60 * 1000)\n    expect(formatCountdown(deadline, now)).toBe(\"4h 42m\")\n  })\n})\n\ndescribe(\"isNearDeadline\", () => {\n  const now = new Date(2025, 11, 7, 12, 0)\n\n  it(\"is true within 24h\", () => {\n    const deadline = new Date(now.getTime() + 3 * 60 * 60 * 1000)\n    expect(isNearDeadline(deadline, now)).toBe(true)\n  })\n\n  it(\"is false beyond 24h\", () => {\n    const deadline = new Date(now.getTime() + 30 * 60 * 60 * 1000)\n    expect(isNearDeadline(deadline, now)).toBe(false)\n  })\n\n  it(\"is false once expired\", () => {\n    const deadline = new Date(now.getTime() - 60 * 1000)\n    expect(isNearDeadline(deadline, now)).toBe(false)\n  })\n})\n"
+  },
+  "tool_response": {
+    "type": "create",
+    "filePath": "D:\\Learn\\AgenticAI\\pocket-heist\\tests\\lib\\heistDate.test.ts",
+    "content": "import { describe, it, expect } from \"vitest\"\nimport {\n  formatHeistDate,\n  formatCountdown,\n  isNearDeadline,\n} from \"@/lib/format/heistDate\"\n\ndescribe(\"formatHeistDate\", () => {\n  it(\"formats a date as 'MMM D, hh:mm AM/PM'\", () => {\n    // Dec 7 2025, 14:00 local time\n    const date = new Date(2025, 11, 7, 14, 0)\n    expect(formatHeistDate(date)).toBe(\"Dec 7, 02:00 PM\")\n  })\n})\n\ndescribe(\"formatCountdown\", () => {\n  const now = new Date(2025, 11, 7, 12, 0)\n\n  it(\"returns 'Expired' for a past deadline\", () => {\n    const past = new Date(now.getTime() - 60 * 1000)\n    expect(formatCountdown(past, now)).toBe(\"Expired\")\n  })\n\n  it(\"returns 'Expired' exactly at the deadline\", () => {\n    expect(formatCountdown(now, now)).toBe(\"Expired\")\n  })\n\n  it(\"uses 'Nd Nh' when a day or more remains\", () => {\n    const deadline = new Date(now.getTime() + 2 * 24 * 60 * 60 * 1000 + 3 * 60 * 60 * 1000)\n    expect(formatCountdown(deadline, now)).toBe(\"2d 3h\")\n  })\n\n  it(\"uses 'Nh Nm' when less than a day remains\", () => {\n    const deadline = new Date(now.getTime() + 4 * 60 * 60 * 1000 + 42 * 60 * 1000)\n    expect(formatCountdown(deadline, now)).toBe(\"4h 42m\")\n  })\n})\n\ndescribe(\"isNearDeadline\", () => {\n  const now = new Date(2025, 11, 7, 12, 0)\n\n  it(\"is true within 24h\", () => {\n    const deadline = new Date(now.getTime() + 3 * 60 * 60 * 1000)\n    expect(isNearDeadline(deadline, now)).toBe(true)\n  })\n\n  it(\"is false beyond 24h\", () => {\n    const deadline = new Date(now.getTime() + 30 * 60 * 60 * 1000)\n    expect(isNearDeadline(deadline, now)).toBe(false)\n  })\n\n  it(\"is false once expired\", () => {\n    const deadline = new Date(now.getTime() - 60 * 1000)\n    expect(isNearDeadline(deadline, now)).toBe(false)\n  })\n})\n",
+    "structuredPatch": [],
+    "originalFile": null,
+    "userModified": false
+  },
+  "tool_use_id": "toolu_01W4HA4Xcpg2czEMNqrFKKDV",
+  "duration_ms": 232
+}
+{
+  "session_id": "2a90b3fe-c460-426e-a5c4-d86fd2606363",
+  "transcript_path": "C:\\Users\\Ahmed.Elhawary\\.claude\\projects\\D--Learn-AgenticAI-pocket-heist\\2a90b3fe-c460-426e-a5c4-d86fd2606363.jsonl",
+  "cwd": "D:\\Learn\\AgenticAI\\pocket-heist",
+  "permission_mode": "auto",
+  "effort": {
+    "level": "medium"
+  },
+  "hook_event_name": "PostToolUse",
+  "tool_name": "Write",
+  "tool_input": {
+    "file_path": "D:\\Learn\\AgenticAI\\pocket-heist\\tests\\components\\StatusBadge.test.tsx",
+    "content": "import { render, screen } from \"@testing-library/react\"\nimport { describe, it, expect } from \"vitest\"\nimport StatusBadge from \"@/components/StatusBadge\"\n\ndescribe(\"StatusBadge\", () => {\n  it(\"renders SUCCESS for a successful heist\", () => {\n    render(<StatusBadge status=\"success\" />)\n    expect(screen.getByText(\"success\")).toBeInTheDocument()\n  })\n\n  it(\"renders FAILURE for a failed heist\", () => {\n    render(<StatusBadge status=\"failure\" />)\n    expect(screen.getByText(\"failure\")).toBeInTheDocument()\n  })\n\n  it(\"renders nothing when status is null\", () => {\n    const { container } = render(<StatusBadge status={null} />)\n    expect(container).toBeEmptyDOMElement()\n  })\n})\n"
+  },
+  "tool_response": {
+    "type": "create",
+    "filePath": "D:\\Learn\\AgenticAI\\pocket-heist\\tests\\components\\StatusBadge.test.tsx",
+    "content": "import { render, screen } from \"@testing-library/react\"\nimport { describe, it, expect } from \"vitest\"\nimport StatusBadge from \"@/components/StatusBadge\"\n\ndescribe(\"StatusBadge\", () => {\n  it(\"renders SUCCESS for a successful heist\", () => {\n    render(<StatusBadge status=\"success\" />)\n    expect(screen.getByText(\"success\")).toBeInTheDocument()\n  })\n\n  it(\"renders FAILURE for a failed heist\", () => {\n    render(<StatusBadge status=\"failure\" />)\n    expect(screen.getByText(\"failure\")).toBeInTheDocument()\n  })\n\n  it(\"renders nothing when status is null\", () => {\n    const { container } = render(<StatusBadge status={null} />)\n    expect(container).toBeEmptyDOMElement()\n  })\n})\n",
+    "structuredPatch": [],
+    "originalFile": null,
+    "userModified": false
+  },
+  "tool_use_id": "toolu_01QVuVHTAeqXL9G8crgPpYeU",
+  "duration_ms": 145
+}
+{
+  "session_id": "2a90b3fe-c460-426e-a5c4-d86fd2606363",
+  "transcript_path": "C:\\Users\\Ahmed.Elhawary\\.claude\\projects\\D--Learn-AgenticAI-pocket-heist\\2a90b3fe-c460-426e-a5c4-d86fd2606363.jsonl",
+  "cwd": "D:\\Learn\\AgenticAI\\pocket-heist",
+  "permission_mode": "auto",
+  "effort": {
+    "level": "medium"
+  },
+  "hook_event_name": "PostToolUse",
+  "tool_name": "Write",
+  "tool_input": {
+    "file_path": "D:\\Learn\\AgenticAI\\pocket-heist\\tests\\components\\Countdown.test.tsx",
+    "content": "import { render, screen } from \"@testing-library/react\"\nimport { describe, it, expect } from \"vitest\"\nimport Countdown from \"@/components/Countdown\"\n\ndescribe(\"Countdown\", () => {\n  it(\"renders a remaining-time value for a future deadline\", () => {\n    const deadline = new Date(Date.now() + 4 * 60 * 60 * 1000 + 42 * 60 * 1000)\n    render(<Countdown deadline={deadline} />)\n    expect(screen.getByText(/^\\d+h \\d+m$/)).toBeInTheDocument()\n  })\n\n  it(\"renders 'Expired' for a past deadline\", () => {\n    const deadline = new Date(Date.now() - 60 * 1000)\n    render(<Countdown deadline={deadline} />)\n    expect(screen.getByText(\"Expired\")).toBeInTheDocument()\n  })\n})\n"
+  },
+  "tool_response": {
+    "type": "create",
+    "filePath": "D:\\Learn\\AgenticAI\\pocket-heist\\tests\\components\\Countdown.test.tsx",
+    "content": "import { render, screen } from \"@testing-library/react\"\nimport { describe, it, expect } from \"vitest\"\nimport Countdown from \"@/components/Countdown\"\n\ndescribe(\"Countdown\", () => {\n  it(\"renders a remaining-time value for a future deadline\", () => {\n    const deadline = new Date(Date.now() + 4 * 60 * 60 * 1000 + 42 * 60 * 1000)\n    render(<Countdown deadline={deadline} />)\n    expect(screen.getByText(/^\\d+h \\d+m$/)).toBeInTheDocument()\n  })\n\n  it(\"renders 'Expired' for a past deadline\", () => {\n    const deadline = new Date(Date.now() - 60 * 1000)\n    render(<Countdown deadline={deadline} />)\n    expect(screen.getByText(\"Expired\")).toBeInTheDocument()\n  })\n})\n",
+    "structuredPatch": [],
+    "originalFile": null,
+    "userModified": false
+  },
+  "tool_use_id": "toolu_01F5DvAsPTTHQsLMcnfKB3z4",
+  "duration_ms": 190
+}
+{
+  "session_id": "2a90b3fe-c460-426e-a5c4-d86fd2606363",
+  "transcript_path": "C:\\Users\\Ahmed.Elhawary\\.claude\\projects\\D--Learn-AgenticAI-pocket-heist\\2a90b3fe-c460-426e-a5c4-d86fd2606363.jsonl",
+  "cwd": "D:\\Learn\\AgenticAI\\pocket-heist",
+  "permission_mode": "auto",
+  "effort": {
+    "level": "medium"
+  },
+  "hook_event_name": "PostToolUse",
+  "tool_name": "Write",
+  "tool_input": {
+    "file_path": "D:\\Learn\\AgenticAI\\pocket-heist\\tests\\components\\HeistCard.test.tsx",
+    "content": "import { render, screen } from \"@testing-library/react\"\nimport { describe, it, expect } from \"vitest\"\nimport HeistCard from \"@/components/HeistCard\"\nimport type { Heist } from \"@/types/firestore/heist\"\n\nfunction makeHeist(overrides: Partial<Heist> = {}): Heist {\n  return {\n    id: \"h1\",\n    title: \"Swap the keyboard keys on a colleague's desk\",\n    description: \"A classic.\",\n    createdBy: \"u1\",\n    createdByCodeName: \"SecretSauceAgent\",\n    assignedTo: \"u2\",\n    assignedToCodeName: \"KeySmash\",\n    deadline: new Date(Date.now() + 5 * 60 * 60 * 1000),\n    finalStatus: null,\n    createdAt: new Date(),\n    ...overrides,\n  }\n}\n\ndescribe(\"HeistCard\", () => {\n  it(\"shows the title, operatives, datetime, and a countdown\", () => {\n    render(<HeistCard heist={makeHeist()} />)\n\n    expect(\n      screen.getByText(\"Swap the keyboard keys on a colleague's desk\")\n    ).toBeInTheDocument()\n    expect(screen.getByText(\"@KeySmash\")).toBeInTheDocument()\n    expect(screen.getByText(\"@SecretSauceAgent\")).toBeInTheDocument()\n    // Countdown renders an \"Nh Nm\" value for a deadline within the day.\n    expect(screen.getByText(/^\\d+h \\d+m$/)).toBeInTheDocument()\n  })\n\n  it(\"omits the assignee row when there is no assignee codename\", () => {\n    render(<HeistCard heist={makeHeist({ assignedToCodeName: \"\" })} />)\n    expect(screen.queryByText(/^@/)).toHaveTextContent(\"@SecretSauceAgent\")\n    expect(screen.queryByText(\"To:\")).not.toBeInTheDocument()\n  })\n})\n"
+  },
+  "tool_response": {
+    "type": "create",
+    "filePath": "D:\\Learn\\AgenticAI\\pocket-heist\\tests\\components\\HeistCard.test.tsx",
+    "content": "import { render, screen } from \"@testing-library/react\"\nimport { describe, it, expect } from \"vitest\"\nimport HeistCard from \"@/components/HeistCard\"\nimport type { Heist } from \"@/types/firestore/heist\"\n\nfunction makeHeist(overrides: Partial<Heist> = {}): Heist {\n  return {\n    id: \"h1\",\n    title: \"Swap the keyboard keys on a colleague's desk\",\n    description: \"A classic.\",\n    createdBy: \"u1\",\n    createdByCodeName: \"SecretSauceAgent\",\n    assignedTo: \"u2\",\n    assignedToCodeName: \"KeySmash\",\n    deadline: new Date(Date.now() + 5 * 60 * 60 * 1000),\n    finalStatus: null,\n    createdAt: new Date(),\n    ...overrides,\n  }\n}\n\ndescribe(\"HeistCard\", () => {\n  it(\"shows the title, operatives, datetime, and a countdown\", () => {\n    render(<HeistCard heist={makeHeist()} />)\n\n    expect(\n      screen.getByText(\"Swap the keyboard keys on a colleague's desk\")\n    ).toBeInTheDocument()\n    expect(screen.getByText(\"@KeySmash\")).toBeInTheDocument()\n    expect(screen.getByText(\"@SecretSauceAgent\")).toBeInTheDocument()\n    // Countdown renders an \"Nh Nm\" value for a deadline within the day.\n    expect(screen.getByText(/^\\d+h \\d+m$/)).toBeInTheDocument()\n  })\n\n  it(\"omits the assignee row when there is no assignee codename\", () => {\n    render(<HeistCard heist={makeHeist({ assignedToCodeName: \"\" })} />)\n    expect(screen.queryByText(/^@/)).toHaveTextContent(\"@SecretSauceAgent\")\n    expect(screen.queryByText(\"To:\")).not.toBeInTheDocument()\n  })\n})\n",
+    "structuredPatch": [],
+    "originalFile": null,
+    "userModified": false
+  },
+  "tool_use_id": "toolu_01W6rPGW7fdsVciGL1Yzpw6P",
+  "duration_ms": 162
+}
+{
+  "session_id": "2a90b3fe-c460-426e-a5c4-d86fd2606363",
+  "transcript_path": "C:\\Users\\Ahmed.Elhawary\\.claude\\projects\\D--Learn-AgenticAI-pocket-heist\\2a90b3fe-c460-426e-a5c4-d86fd2606363.jsonl",
+  "cwd": "D:\\Learn\\AgenticAI\\pocket-heist",
+  "permission_mode": "auto",
+  "effort": {
+    "level": "medium"
+  },
+  "hook_event_name": "PostToolUse",
+  "tool_name": "Write",
+  "tool_input": {
+    "file_path": "D:\\Learn\\AgenticAI\\pocket-heist\\tests\\components\\HeistHistoryRow.test.tsx",
+    "content": "import { render, screen } from \"@testing-library/react\"\nimport { describe, it, expect } from \"vitest\"\nimport HeistHistoryRow from \"@/components/HeistHistoryRow\"\nimport type { Heist } from \"@/types/firestore/heist\"\n\nfunction makeHeist(overrides: Partial<Heist> = {}): Heist {\n  return {\n    id: \"h1\",\n    title: \"Reorganize the snack drawer by color\",\n    description: \"Aesthetic sabotage.\",\n    createdBy: \"u1\",\n    createdByCodeName: \"WhisperKing\",\n    assignedTo: \"u2\",\n    assignedToCodeName: \"SilentNinja\",\n    deadline: new Date(2025, 11, 3, 14, 30),\n    finalStatus: \"success\",\n    createdAt: new Date(),\n    ...overrides,\n  }\n}\n\ndescribe(\"HeistHistoryRow\", () => {\n  it(\"shows title, operatives, datetime, and a SUCCESS badge\", () => {\n    render(<HeistHistoryRow heist={makeHeist()} />)\n\n    expect(\n      screen.getByText(\"Reorganize the snack drawer by color\")\n    ).toBeInTheDocument()\n    expect(screen.getByText(\"@SilentNinja\")).toBeInTheDocument()\n    expect(screen.getByText(\"@WhisperKing\")).toBeInTheDocument()\n    expect(screen.getByText(\"Dec 3, 02:30 PM\")).toBeInTheDocument()\n    expect(screen.getByText(\"success\")).toBeInTheDocument()\n  })\n\n  it(\"shows a FAILURE badge for a failed heist\", () => {\n    render(<HeistHistoryRow heist={makeHeist({ finalStatus: \"failure\" })} />)\n    expect(screen.getByText(\"failure\")).toBeInTheDocument()\n  })\n})\n"
+  },
+  "tool_response": {
+    "type": "create",
+    "filePath": "D:\\Learn\\AgenticAI\\pocket-heist\\tests\\components\\HeistHistoryRow.test.tsx",
+    "content": "import { render, screen } from \"@testing-library/react\"\nimport { describe, it, expect } from \"vitest\"\nimport HeistHistoryRow from \"@/components/HeistHistoryRow\"\nimport type { Heist } from \"@/types/firestore/heist\"\n\nfunction makeHeist(overrides: Partial<Heist> = {}): Heist {\n  return {\n    id: \"h1\",\n    title: \"Reorganize the snack drawer by color\",\n    description: \"Aesthetic sabotage.\",\n    createdBy: \"u1\",\n    createdByCodeName: \"WhisperKing\",\n    assignedTo: \"u2\",\n    assignedToCodeName: \"SilentNinja\",\n    deadline: new Date(2025, 11, 3, 14, 30),\n    finalStatus: \"success\",\n    createdAt: new Date(),\n    ...overrides,\n  }\n}\n\ndescribe(\"HeistHistoryRow\", () => {\n  it(\"shows title, operatives, datetime, and a SUCCESS badge\", () => {\n    render(<HeistHistoryRow heist={makeHeist()} />)\n\n    expect(\n      screen.getByText(\"Reorganize the snack drawer by color\")\n    ).toBeInTheDocument()\n    expect(screen.getByText(\"@SilentNinja\")).toBeInTheDocument()\n    expect(screen.getByText(\"@WhisperKing\")).toBeInTheDocument()\n    expect(screen.getByText(\"Dec 3, 02:30 PM\")).toBeInTheDocument()\n    expect(screen.getByText(\"success\")).toBeInTheDocument()\n  })\n\n  it(\"shows a FAILURE badge for a failed heist\", () => {\n    render(<HeistHistoryRow heist={makeHeist({ finalStatus: \"failure\" })} />)\n    expect(screen.getByText(\"failure\")).toBeInTheDocument()\n  })\n})\n",
+    "structuredPatch": [],
+    "originalFile": null,
+    "userModified": false
+  },
+  "tool_use_id": "toolu_014NY9o7tJuUnsXhzBWWBy6D",
+  "duration_ms": 80
+}
+{
+  "session_id": "2a90b3fe-c460-426e-a5c4-d86fd2606363",
+  "transcript_path": "C:\\Users\\Ahmed.Elhawary\\.claude\\projects\\D--Learn-AgenticAI-pocket-heist\\2a90b3fe-c460-426e-a5c4-d86fd2606363.jsonl",
+  "cwd": "D:\\Learn\\AgenticAI\\pocket-heist",
+  "permission_mode": "auto",
+  "effort": {
+    "level": "medium"
+  },
+  "hook_event_name": "PostToolUse",
+  "tool_name": "Write",
+  "tool_input": {
+    "file_path": "D:\\Learn\\AgenticAI\\pocket-heist\\tests\\pages\\HeistsPage.test.tsx",
+    "content": "import { render, screen } from \"@testing-library/react\"\nimport { describe, it, expect, beforeEach, vi } from \"vitest\"\nimport HeistsPage from \"@/app/(dashboard)/heists/page\"\nimport type { Heist } from \"@/types/firestore/heist\"\nimport type { HeistFilter } from \"@/hooks/useHeists\"\n\n// --- useHeists mock: returns fixtures keyed by the filter argument ---\nconst { mockUseHeists } = vi.hoisted(() => ({ mockUseHeists: vi.fn() }))\n\nvi.mock(\"@/hooks/useHeists\", () => ({\n  useHeists: (filter: HeistFilter) => mockUseHeists(filter),\n}))\n\nfunction makeHeist(overrides: Partial<Heist> = {}): Heist {\n  return {\n    id: \"h1\",\n    title: \"A Heist\",\n    description: \"\",\n    createdBy: \"u1\",\n    createdByCodeName: \"SecretSauceAgent\",\n    assignedTo: \"u2\",\n    assignedToCodeName: \"KeySmash\",\n    deadline: new Date(Date.now() + 5 * 60 * 60 * 1000),\n    finalStatus: null,\n    createdAt: new Date(),\n    ...overrides,\n  }\n}\n\nconst empty = { heists: [], loading: false, error: null }\n\nfunction mockBuckets(buckets: Partial<Record<HeistFilter, Heist[]>>) {\n  mockUseHeists.mockImplementation((filter: HeistFilter) => ({\n    heists: buckets[filter] ?? [],\n    loading: false,\n    error: null,\n  }))\n}\n\ndescribe(\"HeistsPage\", () => {\n  beforeEach(() => {\n    mockUseHeists.mockReset()\n    mockUseHeists.mockReturnValue(empty)\n  })\n\n  it(\"renders both section headings\", () => {\n    mockBuckets({})\n    render(<HeistsPage />)\n    expect(screen.getByText(\"Assigned Heists\")).toBeInTheDocument()\n    expect(screen.getByText(\"Heist History\")).toBeInTheDocument()\n  })\n\n  it(\"renders assigned cards merged from active + assigned, deduped by id\", () => {\n    const a = makeHeist({ id: \"h1\", title: \"Assigned To Me\" })\n    const b = makeHeist({ id: \"h2\", title: \"Created By Me\" })\n    // h1 appears in both buckets — should render once.\n    mockBuckets({ active: [a], assigned: [a, b] })\n\n    render(<HeistsPage />)\n\n    expect(screen.getByText(\"Assigned To Me\")).toBeInTheDocument()\n    expect(screen.getByText(\"Created By Me\")).toBeInTheDocument()\n    expect(screen.getAllByText(\"Assigned To Me\")).toHaveLength(1)\n  })\n\n  it(\"renders history rows with status badges\", () => {\n    mockBuckets({\n      expired: [\n        makeHeist({ id: \"e1\", title: \"Old Win\", finalStatus: \"success\" }),\n        makeHeist({ id: \"e2\", title: \"Old Loss\", finalStatus: \"failure\" }),\n      ],\n    })\n\n    render(<HeistsPage />)\n\n    expect(screen.getByText(\"Old Win\")).toBeInTheDocument()\n    expect(screen.getByText(\"Old Loss\")).toBeInTheDocument()\n    expect(screen.getByText(\"success\")).toBeInTheDocument()\n    expect(screen.getByText(\"failure\")).toBeInTheDocument()\n  })\n\n  it(\"shows empty states when a section has no data\", () => {\n    mockBuckets({})\n    render(<HeistsPage />)\n    expect(screen.getByText(\"No active heists assigned to you.\")).toBeInTheDocument()\n    expect(screen.getByText(\"No heist history yet.\")).toBeInTheDocument()\n  })\n})\n"
+  },
+  "tool_response": {
+    "type": "create",
+    "filePath": "D:\\Learn\\AgenticAI\\pocket-heist\\tests\\pages\\HeistsPage.test.tsx",
+    "content": "import { render, screen } from \"@testing-library/react\"\nimport { describe, it, expect, beforeEach, vi } from \"vitest\"\nimport HeistsPage from \"@/app/(dashboard)/heists/page\"\nimport type { Heist } from \"@/types/firestore/heist\"\nimport type { HeistFilter } from \"@/hooks/useHeists\"\n\n// --- useHeists mock: returns fixtures keyed by the filter argument ---\nconst { mockUseHeists } = vi.hoisted(() => ({ mockUseHeists: vi.fn() }))\n\nvi.mock(\"@/hooks/useHeists\", () => ({\n  useHeists: (filter: HeistFilter) => mockUseHeists(filter),\n}))\n\nfunction makeHeist(overrides: Partial<Heist> = {}): Heist {\n  return {\n    id: \"h1\",\n    title: \"A Heist\",\n    description: \"\",\n    createdBy: \"u1\",\n    createdByCodeName: \"SecretSauceAgent\",\n    assignedTo: \"u2\",\n    assignedToCodeName: \"KeySmash\",\n    deadline: new Date(Date.now() + 5 * 60 * 60 * 1000),\n    finalStatus: null,\n    createdAt: new Date(),\n    ...overrides,\n  }\n}\n\nconst empty = { heists: [], loading: false, error: null }\n\nfunction mockBuckets(buckets: Partial<Record<HeistFilter, Heist[]>>) {\n  mockUseHeists.mockImplementation((filter: HeistFilter) => ({\n    heists: buckets[filter] ?? [],\n    loading: false,\n    error: null,\n  }))\n}\n\ndescribe(\"HeistsPage\", () => {\n  beforeEach(() => {\n    mockUseHeists.mockReset()\n    mockUseHeists.mockReturnValue(empty)\n  })\n\n  it(\"renders both section headings\", () => {\n    mockBuckets({})\n    render(<HeistsPage />)\n    expect(screen.getByText(\"Assigned Heists\")).toBeInTheDocument()\n    expect(screen.getByText(\"Heist History\")).toBeInTheDocument()\n  })\n\n  it(\"renders assigned cards merged from active + assigned, deduped by id\", () => {\n    const a = makeHeist({ id: \"h1\", title: \"Assigned To Me\" })\n    const b = makeHeist({ id: \"h2\", title: \"Created By Me\" })\n    // h1 appears in both buckets — should render once.\n    mockBuckets({ active: [a], assigned: [a, b] })\n\n    render(<HeistsPage />)\n\n    expect(screen.getByText(\"Assigned To Me\")).toBeInTheDocument()\n    expect(screen.getByText(\"Created By Me\")).toBeInTheDocument()\n    expect(screen.getAllByText(\"Assigned To Me\")).toHaveLength(1)\n  })\n\n  it(\"renders history rows with status badges\", () => {\n    mockBuckets({\n      expired: [\n        makeHeist({ id: \"e1\", title: \"Old Win\", finalStatus: \"success\" }),\n        makeHeist({ id: \"e2\", title: \"Old Loss\", finalStatus: \"failure\" }),\n      ],\n    })\n\n    render(<HeistsPage />)\n\n    expect(screen.getByText(\"Old Win\")).toBeInTheDocument()\n    expect(screen.getByText(\"Old Loss\")).toBeInTheDocument()\n    expect(screen.getByText(\"success\")).toBeInTheDocument()\n    expect(screen.getByText(\"failure\")).toBeInTheDocument()\n  })\n\n  it(\"shows empty states when a section has no data\", () => {\n    mockBuckets({})\n    render(<HeistsPage />)\n    expect(screen.getByText(\"No active heists assigned to you.\")).toBeInTheDocument()\n    expect(screen.getByText(\"No heist history yet.\")).toBeInTheDocument()\n  })\n})\n",
+    "structuredPatch": [],
+    "originalFile": null,
+    "userModified": false
+  },
+  "tool_use_id": "toolu_01CWk2rFDv3MXsinnGZWjPc7",
+  "duration_ms": 78
+}
+{
+  "session_id": "2a90b3fe-c460-426e-a5c4-d86fd2606363",
+  "transcript_path": "C:\\Users\\Ahmed.Elhawary\\.claude\\projects\\D--Learn-AgenticAI-pocket-heist\\2a90b3fe-c460-426e-a5c4-d86fd2606363.jsonl",
+  "cwd": "D:\\Learn\\AgenticAI\\pocket-heist",
+  "permission_mode": "auto",
+  "agent_id": "a63bbb21fec5d684f",
+  "agent_type": "code-quality-reviewer",
+  "effort": {
+    "level": "medium"
+  },
+  "hook_event_name": "PostToolUse",
+  "tool_name": "Write",
+  "tool_input": {
+    "file_path": "D:\\Learn\\AgenticAI\\pocket-heist\\.claude\\agent-memory\\code-quality-reviewer\\project_date_utils_convention.md",
+    "content": "---\nname: project-date-utils-convention\ndescription: Pocket Heist favors pure date/format utilities with an injectable `now` param for testability\nmetadata:\n  type: project\n---\n\nDate/format utilities in `lib/format/` are written as pure functions that accept an injectable `now: Date = new Date()` parameter (e.g. `formatCountdown(deadline, now)`, `isNearDeadline(deadline, now)`). This makes time-dependent logic unit-testable without fake timers.\n\n**Why:** Observed across the `/heists` dashboard redesign — the team unit-tests these utils directly with controlled `now` values rather than mocking `Date`.\n\n**How to apply:** In reviews, reinforce this pattern (praise it when present); flag time-dependent logic that reads `new Date()` internally with no injection seam as a testability concern. Related: watch for locale/timezone-dependent assertions — `Intl.DateTimeFormat` without an explicit `timeZone` produces runner-dependent output and flaky exact-string test assertions.\n"
+  },
+  "tool_response": {
+    "type": "create",
+    "filePath": "D:\\Learn\\AgenticAI\\pocket-heist\\.claude\\agent-memory\\code-quality-reviewer\\project_date_utils_convention.md",
+    "content": "---\nname: project-date-utils-convention\ndescription: Pocket Heist favors pure date/format utilities with an injectable `now` param for testability\nmetadata:\n  type: project\n---\n\nDate/format utilities in `lib/format/` are written as pure functions that accept an injectable `now: Date = new Date()` parameter (e.g. `formatCountdown(deadline, now)`, `isNearDeadline(deadline, now)`). This makes time-dependent logic unit-testable without fake timers.\n\n**Why:** Observed across the `/heists` dashboard redesign — the team unit-tests these utils directly with controlled `now` values rather than mocking `Date`.\n\n**How to apply:** In reviews, reinforce this pattern (praise it when present); flag time-dependent logic that reads `new Date()` internally with no injection seam as a testability concern. Related: watch for locale/timezone-dependent assertions — `Intl.DateTimeFormat` without an explicit `timeZone` produces runner-dependent output and flaky exact-string test assertions.\n",
+    "structuredPatch": [],
+    "originalFile": null,
+    "userModified": false
+  },
+  "tool_use_id": "toolu_01AES3zjMJPgufNZQQV7EZJZ",
+  "duration_ms": 44
+}
+{
+  "session_id": "2a90b3fe-c460-426e-a5c4-d86fd2606363",
+  "transcript_path": "C:\\Users\\Ahmed.Elhawary\\.claude\\projects\\D--Learn-AgenticAI-pocket-heist\\2a90b3fe-c460-426e-a5c4-d86fd2606363.jsonl",
+  "cwd": "D:\\Learn\\AgenticAI\\pocket-heist",
+  "permission_mode": "auto",
+  "agent_id": "a63bbb21fec5d684f",
+  "agent_type": "code-quality-reviewer",
+  "effort": {
+    "level": "medium"
+  },
+  "hook_event_name": "PostToolUse",
+  "tool_name": "Write",
+  "tool_input": {
+    "file_path": "D:\\Learn\\AgenticAI\\pocket-heist\\.claude\\agent-memory\\code-quality-reviewer\\MEMORY.md",
+    "content": "- [Date utils convention](project_date_utils_convention.md) — pure `lib/format` fns take injectable `now`; watch for timezone-dependent test assertions\n"
+  },
+  "tool_response": {
+    "type": "create",
+    "filePath": "D:\\Learn\\AgenticAI\\pocket-heist\\.claude\\agent-memory\\code-quality-reviewer\\MEMORY.md",
+    "content": "- [Date utils convention](project_date_utils_convention.md) — pure `lib/format` fns take injectable `now`; watch for timezone-dependent test assertions\n",
+    "structuredPatch": [],
+    "originalFile": null,
+    "userModified": false
+  },
+  "tool_use_id": "toolu_015Wx5N1JbhUjzgKsoNLdMQZ",
+  "duration_ms": 21
+}
+{
+  "session_id": "2a90b3fe-c460-426e-a5c4-d86fd2606363",
+  "transcript_path": "C:\\Users\\Ahmed.Elhawary\\.claude\\projects\\D--Learn-AgenticAI-pocket-heist\\2a90b3fe-c460-426e-a5c4-d86fd2606363.jsonl",
+  "cwd": "D:\\Learn\\AgenticAI\\pocket-heist",
+  "permission_mode": "auto",
+  "agent_id": "ac124203315595cdb",
+  "agent_type": "a11y-reviewer",
+  "effort": {
+    "level": "medium"
+  },
+  "hook_event_name": "PostToolUse",
+  "tool_name": "Write",
+  "tool_input": {
+    "file_path": "D:\\Learn\\AgenticAI\\pocket-heist\\.claude\\agent-memory\\a11y-reviewer\\reference_theme_contrast.md",
+    "content": "---\nname: theme-contrast-ratios\ndescription: Verified WCAG contrast ratios for pocket-heist theme accent colors on card/page backgrounds\nmetadata:\n  type: reference\n---\n\nComputed WCAG 2.x contrast ratios for this project's theme tokens. Card surface is `lighter` #101828; page bg is `dark` #030712. All values clear the 4.5:1 AA normal-text threshold — do NOT flag these accent-on-card pairings as contrast failures.\n\nOn `lighter` #101828 (card/row surface):\n- secondary #FB64B6: 6.42:1\n- primary #C27AFF: 6.36:1\n- body #99A1AF: 6.82:1\n- success #05DF72: 9.98:1\n- error #FF6467: 6.14:1\n\nStatusBadge text over its own `color-mix(in srgb, color 15%, transparent)` tint over `lighter`:\n- success text on #0e3633: 7.40:1\n- failure text on #342331: 5.08:1 (lowest in the design, still passes AA)\n\nOn `dark` #030712:\n- body #99A1AF: 7.74:1\n\n**How to apply:** When reviewing these components, contrast is already a Win, not an issue. Recompute only if a new color/background pairing appears (e.g., accent on `dark` directly, or a lighter surface).\n"
+  },
+  "tool_response": {
+    "type": "create",
+    "filePath": "D:\\Learn\\AgenticAI\\pocket-heist\\.claude\\agent-memory\\a11y-reviewer\\reference_theme_contrast.md",
+    "content": "---\nname: theme-contrast-ratios\ndescription: Verified WCAG contrast ratios for pocket-heist theme accent colors on card/page backgrounds\nmetadata:\n  type: reference\n---\n\nComputed WCAG 2.x contrast ratios for this project's theme tokens. Card surface is `lighter` #101828; page bg is `dark` #030712. All values clear the 4.5:1 AA normal-text threshold — do NOT flag these accent-on-card pairings as contrast failures.\n\nOn `lighter` #101828 (card/row surface):\n- secondary #FB64B6: 6.42:1\n- primary #C27AFF: 6.36:1\n- body #99A1AF: 6.82:1\n- success #05DF72: 9.98:1\n- error #FF6467: 6.14:1\n\nStatusBadge text over its own `color-mix(in srgb, color 15%, transparent)` tint over `lighter`:\n- success text on #0e3633: 7.40:1\n- failure text on #342331: 5.08:1 (lowest in the design, still passes AA)\n\nOn `dark` #030712:\n- body #99A1AF: 7.74:1\n\n**How to apply:** When reviewing these components, contrast is already a Win, not an issue. Recompute only if a new color/background pairing appears (e.g., accent on `dark` directly, or a lighter surface).\n",
+    "structuredPatch": [],
+    "originalFile": null,
+    "userModified": false
+  },
+  "tool_use_id": "toolu_01CEsYV6RjPXkMQjGrXuzsiN",
+  "duration_ms": 44
+}
+{
+  "session_id": "2a90b3fe-c460-426e-a5c4-d86fd2606363",
+  "transcript_path": "C:\\Users\\Ahmed.Elhawary\\.claude\\projects\\D--Learn-AgenticAI-pocket-heist\\2a90b3fe-c460-426e-a5c4-d86fd2606363.jsonl",
+  "cwd": "D:\\Learn\\AgenticAI\\pocket-heist",
+  "permission_mode": "auto",
+  "agent_id": "ac124203315595cdb",
+  "agent_type": "a11y-reviewer",
+  "effort": {
+    "level": "medium"
+  },
+  "hook_event_name": "PostToolUse",
+  "tool_name": "Write",
+  "tool_input": {
+    "file_path": "D:\\Learn\\AgenticAI\\pocket-heist\\.claude\\agent-memory\\a11y-reviewer\\project_a11y_patterns.md",
+    "content": "---\nname: heist-ui-a11y-patterns\ndescription: Recurring a11y patterns and known issues in pocket-heist heist dashboard components\nmetadata:\n  type: project\n---\n\nPatterns observed while auditing the /heists redesign (HeistCard, HeistHistoryRow, StatusBadge, Countdown).\n\nGood patterns to expect (reference implementations):\n- lucide-react icons consistently carry `aria-hidden=\"true\"` when decorative — this is the established convention here. Don't flag missing aria-hidden on lucide icons without checking; they usually have it.\n- Heading hierarchy: dashboard `<main>` → page `<section>` with `<h2>` → card/row title `<h3>`. Correct and unskipped.\n\nKnown issue patterns to watch for:\n- StatusBadge (`components/StatusBadge/StatusBadge.tsx`) renders the raw status string (\"success\"/\"failure\") with no `role`/`aria-label`; CSS-only uppercase. It is the ONLY programmatic outcome signal (the CheckCircle2/XCircle icons in HeistHistoryRow are aria-hidden). Needs a contextual accessible name.\n- HeistCard uses `<dl>` but its date/countdown row has a `<dd>` with no `<dt>` — broken definition-list structure (1.3.1).\n- Countdown (`components/Countdown/Countdown.tsx`) ticks every 1000ms but `formatCountdown` only has minute granularity — per-second interval is wasteful churn. It has no aria-live, which is correct (don't recommend adding it — would flood AT).\n- Collections on heists/page.tsx are mapped into plain `<div>` containers, not `<ul>`/`role=list`.\n\nSee [[theme-contrast-ratios]] for verified contrast (not an issue area).\n\n**Why:** Captures the recurring decorative-icon convention and the specific structural gaps so future reviews focus on what's actually broken.\n**How to apply:** Use as a starting checklist when these components change again; re-verify against current file state before reporting.\n"
+  },
+  "tool_response": {
+    "type": "create",
+    "filePath": "D:\\Learn\\AgenticAI\\pocket-heist\\.claude\\agent-memory\\a11y-reviewer\\project_a11y_patterns.md",
+    "content": "---\nname: heist-ui-a11y-patterns\ndescription: Recurring a11y patterns and known issues in pocket-heist heist dashboard components\nmetadata:\n  type: project\n---\n\nPatterns observed while auditing the /heists redesign (HeistCard, HeistHistoryRow, StatusBadge, Countdown).\n\nGood patterns to expect (reference implementations):\n- lucide-react icons consistently carry `aria-hidden=\"true\"` when decorative — this is the established convention here. Don't flag missing aria-hidden on lucide icons without checking; they usually have it.\n- Heading hierarchy: dashboard `<main>` → page `<section>` with `<h2>` → card/row title `<h3>`. Correct and unskipped.\n\nKnown issue patterns to watch for:\n- StatusBadge (`components/StatusBadge/StatusBadge.tsx`) renders the raw status string (\"success\"/\"failure\") with no `role`/`aria-label`; CSS-only uppercase. It is the ONLY programmatic outcome signal (the CheckCircle2/XCircle icons in HeistHistoryRow are aria-hidden). Needs a contextual accessible name.\n- HeistCard uses `<dl>` but its date/countdown row has a `<dd>` with no `<dt>` — broken definition-list structure (1.3.1).\n- Countdown (`components/Countdown/Countdown.tsx`) ticks every 1000ms but `formatCountdown` only has minute granularity — per-second interval is wasteful churn. It has no aria-live, which is correct (don't recommend adding it — would flood AT).\n- Collections on heists/page.tsx are mapped into plain `<div>` containers, not `<ul>`/`role=list`.\n\nSee [[theme-contrast-ratios]] for verified contrast (not an issue area).\n\n**Why:** Captures the recurring decorative-icon convention and the specific structural gaps so future reviews focus on what's actually broken.\n**How to apply:** Use as a starting checklist when these components change again; re-verify against current file state before reporting.\n",
+    "structuredPatch": [],
+    "originalFile": null,
+    "userModified": false
+  },
+  "tool_use_id": "toolu_01QmEgotFLytJt9Kk3Yp4sKC",
+  "duration_ms": 32
+}
+{
+  "session_id": "2a90b3fe-c460-426e-a5c4-d86fd2606363",
+  "transcript_path": "C:\\Users\\Ahmed.Elhawary\\.claude\\projects\\D--Learn-AgenticAI-pocket-heist\\2a90b3fe-c460-426e-a5c4-d86fd2606363.jsonl",
+  "cwd": "D:\\Learn\\AgenticAI\\pocket-heist",
+  "permission_mode": "auto",
+  "agent_id": "ac124203315595cdb",
+  "agent_type": "a11y-reviewer",
+  "effort": {
+    "level": "medium"
+  },
+  "hook_event_name": "PostToolUse",
+  "tool_name": "Write",
+  "tool_input": {
+    "file_path": "D:\\Learn\\AgenticAI\\pocket-heist\\.claude\\agent-memory\\a11y-reviewer\\MEMORY.md",
+    "content": "# Memory Index\n\n- [Theme contrast ratios](reference_theme_contrast.md) — verified WCAG ratios for accent colors on card/page bg; all pass AA, don't reflag\n- [Heist UI a11y patterns](project_a11y_patterns.md) — recurring good patterns + known issues in heist dashboard components\n"
+  },
+  "tool_response": {
+    "type": "create",
+    "filePath": "D:\\Learn\\AgenticAI\\pocket-heist\\.claude\\agent-memory\\a11y-reviewer\\MEMORY.md",
+    "content": "# Memory Index\n\n- [Theme contrast ratios](reference_theme_contrast.md) — verified WCAG ratios for accent colors on card/page bg; all pass AA, don't reflag\n- [Heist UI a11y patterns](project_a11y_patterns.md) — recurring good patterns + known issues in heist dashboard components\n",
+    "structuredPatch": [],
+    "originalFile": null,
+    "userModified": false
+  },
+  "tool_use_id": "toolu_01Ng2tNpJeYDZBZFCxuMnrtZ",
+  "duration_ms": 21
+}
+{
+  "session_id": "2a90b3fe-c460-426e-a5c4-d86fd2606363",
+  "transcript_path": "C:\\Users\\Ahmed.Elhawary\\.claude\\projects\\D--Learn-AgenticAI-pocket-heist\\2a90b3fe-c460-426e-a5c4-d86fd2606363.jsonl",
+  "cwd": "D:\\Learn\\AgenticAI\\pocket-heist",
+  "permission_mode": "auto",
+  "effort": {
+    "level": "medium"
+  },
+  "hook_event_name": "PostToolUse",
+  "tool_name": "Edit",
+  "tool_input": {
+    "file_path": "D:\\Learn\\AgenticAI\\pocket-heist\\components\\Countdown\\Countdown.tsx",
+    "old_string": "  const [now, setNow] = useState(() => new Date())\n\n  useEffect(() => {\n    const id = setInterval(() => setNow(new Date()), 1000)\n    return () => clearInterval(id)\n  }, [])\n\n  const label = formatCountdown(deadline, now)\n  const expired = label === \"Expired\"\n  const near = isNearDeadline(deadline, now)",
+    "new_string": "  const [now, setNow] = useState(() => new Date())\n\n  // The label only changes at minute granularity, so a 30s tick keeps it\n  // current without re-rendering every second.\n  useEffect(() => {\n    const id = setInterval(() => setNow(new Date()), 30_000)\n    return () => clearInterval(id)\n  }, [])\n\n  const label = formatCountdown(deadline, now)\n  const expired = deadline.getTime() - now.getTime() <= 0\n  const near = isNearDeadline(deadline, now)",
+    "replace_all": false
+  },
+  "tool_response": {
+    "filePath": "D:\\Learn\\AgenticAI\\pocket-heist\\components\\Countdown\\Countdown.tsx",
+    "oldString": "  const [now, setNow] = useState(() => new Date())\n\n  useEffect(() => {\n    const id = setInterval(() => setNow(new Date()), 1000)\n    return () => clearInterval(id)\n  }, [])\n\n  const label = formatCountdown(deadline, now)\n  const expired = label === \"Expired\"\n  const near = isNearDeadline(deadline, now)",
+    "newString": "  const [now, setNow] = useState(() => new Date())\n\n  // The label only changes at minute granularity, so a 30s tick keeps it\n  // current without re-rendering every second.\n  useEffect(() => {\n    const id = setInterval(() => setNow(new Date()), 30_000)\n    return () => clearInterval(id)\n  }, [])\n\n  const label = formatCountdown(deadline, now)\n  const expired = deadline.getTime() - now.getTime() <= 0\n  const near = isNearDeadline(deadline, now)",
+    "originalFile": "\"use client\"\n\nimport { useEffect, useState } from \"react\"\nimport { formatCountdown, isNearDeadline } from \"@/lib/format/heistDate\"\n\ninterface CountdownProps {\n  deadline: Date\n}\n\n/** Live-ticking remaining-time label that updates every second. */\nexport default function Countdown({ deadline }: CountdownProps) {\n  const [now, setNow] = useState(() => new Date())\n\n  useEffect(() => {\n    const id = setInterval(() => setNow(new Date()), 1000)\n    return () => clearInterval(id)\n  }, [])\n\n  const label = formatCountdown(deadline, now)\n  const expired = label === \"Expired\"\n  const near = isNearDeadline(deadline, now)\n\n  // Pink (secondary) when close to the deadline, purple (primary) when further\n  // out, muted body grey once expired.\n  const color = expired\n    ? \"var(--color-body)\"\n    : near\n      ? \"var(--color-secondary)\"\n      : \"var(--color-primary)\"\n\n  return (\n    <span style={{ color }} className=\"font-medium\">\n      {label}\n    </span>\n  )\n}\n",
+    "structuredPatch": [
+      {
+        "oldStart": 11,
+        "oldLines": 13,
+        "newStart": 11,
+        "newLines": 15,
+        "lines": [
+          " export default function Countdown({ deadline }: CountdownProps) {",
+          "   const [now, setNow] = useState(() => new Date())",
+          " ",
+          "+  // The label only changes at minute granularity, so a 30s tick keeps it",
+          "+  // current without re-rendering every second.",
+          "   useEffect(() => {",
+          "-    const id = setInterval(() => setNow(new Date()), 1000)",
+          "+    const id = setInterval(() => setNow(new Date()), 30_000)",
+          "     return () => clearInterval(id)",
+          "   }, [])",
+          " ",
+          "   const label = formatCountdown(deadline, now)",
+          "-  const expired = label === \"Expired\"",
+          "+  const expired = deadline.getTime() - now.getTime() <= 0",
+          "   const near = isNearDeadline(deadline, now)",
+          " ",
+          "   // Pink (secondary) when close to the deadline, purple (primary) when further"
+        ]
+      }
+    ],
+    "userModified": false,
+    "replaceAll": false
+  },
+  "tool_use_id": "toolu_01ATiEiUXekx6QkkaDzWJztw",
+  "duration_ms": 34
+}
+{
+  "session_id": "2a90b3fe-c460-426e-a5c4-d86fd2606363",
+  "transcript_path": "C:\\Users\\Ahmed.Elhawary\\.claude\\projects\\D--Learn-AgenticAI-pocket-heist\\2a90b3fe-c460-426e-a5c4-d86fd2606363.jsonl",
+  "cwd": "D:\\Learn\\AgenticAI\\pocket-heist",
+  "permission_mode": "auto",
+  "effort": {
+    "level": "medium"
+  },
+  "hook_event_name": "PostToolUse",
+  "tool_name": "Edit",
+  "tool_input": {
+    "file_path": "D:\\Learn\\AgenticAI\\pocket-heist\\lib\\format\\heistDate.ts",
+    "old_string": "const dateFormatter = new Intl.DateTimeFormat(\"en-US\", {\n  month: \"short\",\n  day: \"numeric\",\n  hour: \"2-digit\",\n  minute: \"2-digit\",\n  hour12: true,\n})",
+    "new_string": "// Locale and timezone are pinned so formatted output is deterministic across\n// environments (and test runners) rather than depending on the host settings.\nconst dateFormatter = new Intl.DateTimeFormat(\"en-US\", {\n  month: \"short\",\n  day: \"numeric\",\n  hour: \"2-digit\",\n  minute: \"2-digit\",\n  hour12: true,\n  timeZone: \"UTC\",\n})",
+    "replace_all": false
+  },
+  "tool_response": {
+    "filePath": "D:\\Learn\\AgenticAI\\pocket-heist\\lib\\format\\heistDate.ts",
+    "oldString": "const dateFormatter = new Intl.DateTimeFormat(\"en-US\", {\n  month: \"short\",\n  day: \"numeric\",\n  hour: \"2-digit\",\n  minute: \"2-digit\",\n  hour12: true,\n})",
+    "newString": "// Locale and timezone are pinned so formatted output is deterministic across\n// environments (and test runners) rather than depending on the host settings.\nconst dateFormatter = new Intl.DateTimeFormat(\"en-US\", {\n  month: \"short\",\n  day: \"numeric\",\n  hour: \"2-digit\",\n  minute: \"2-digit\",\n  hour12: true,\n  timeZone: \"UTC\",\n})",
+    "originalFile": "/**\n * Formatting helpers for heist deadlines.\n *\n * Heist `deadline`/`createdAt` are native `Date`s (see the Firestore converter\n * in `types/firestore/heist.ts`). These helpers keep date/countdown rendering\n * pure and testable, with `now` injectable for the countdown.\n */\n\nconst dateFormatter = new Intl.DateTimeFormat(\"en-US\", {\n  month: \"short\",\n  day: \"numeric\",\n  hour: \"2-digit\",\n  minute: \"2-digit\",\n  hour12: true,\n})\n\n/** Formats a deadline like `\"Dec 7, 02:00 PM\"`. */\nexport function formatHeistDate(date: Date): string {\n  return dateFormatter.format(date)\n}\n\nconst MS_PER_MINUTE = 60 * 1000\nconst MS_PER_HOUR = 60 * MS_PER_MINUTE\nconst MS_PER_DAY = 24 * MS_PER_HOUR\n\n/**\n * Formats the time remaining until `deadline`.\n * - `\"Expired\"` once the deadline has passed\n * - `\"{d}d {h}h\"` when a day or more remains\n * - `\"{h}h {m}m\"` otherwise\n */\nexport function formatCountdown(deadline: Date, now: Date = new Date()): string {\n  const diff = deadline.getTime() - now.getTime()\n  if (diff <= 0) return \"Expired\"\n\n  if (diff >= MS_PER_DAY) {\n    const days = Math.floor(diff / MS_PER_DAY)\n    const hours = Math.floor((diff % MS_PER_DAY) / MS_PER_HOUR)\n    return `${days}d ${hours}h`\n  }\n\n  const hours = Math.floor(diff / MS_PER_HOUR)\n  const minutes = Math.floor((diff % MS_PER_HOUR) / MS_PER_MINUTE)\n  return `${hours}h ${minutes}m`\n}\n\n/** Whether a deadline is within the \"near\" window (< 24h) used to accent the countdown. */\nexport function isNearDeadline(deadline: Date, now: Date = new Date()): boolean {\n  const diff = deadline.getTime() - now.getTime()\n  return diff > 0 && diff < MS_PER_DAY\n}\n",
+    "structuredPatch": [
+      {
+        "oldStart": 6,
+        "oldLines": 12,
+        "newStart": 6,
+        "newLines": 15,
+        "lines": [
+          "  * pure and testable, with `now` injectable for the countdown.",
+          "  */",
+          " ",
+          "+// Locale and timezone are pinned so formatted output is deterministic across",
+          "+// environments (and test runners) rather than depending on the host settings.",
+          " const dateFormatter = new Intl.DateTimeFormat(\"en-US\", {",
+          "   month: \"short\",",
+          "   day: \"numeric\",",
+          "   hour: \"2-digit\",",
+          "   minute: \"2-digit\",",
+          "   hour12: true,",
+          "+  timeZone: \"UTC\",",
+          " })",
+          " ",
+          " /** Formats a deadline like `\"Dec 7, 02:00 PM\"`. */"
+        ]
+      }
+    ],
+    "userModified": false,
+    "replaceAll": false
+  },
+  "tool_use_id": "toolu_017o5EgPdbXyqVZqSGeSavSm",
+  "duration_ms": 40
+}
+{
+  "session_id": "2a90b3fe-c460-426e-a5c4-d86fd2606363",
+  "transcript_path": "C:\\Users\\Ahmed.Elhawary\\.claude\\projects\\D--Learn-AgenticAI-pocket-heist\\2a90b3fe-c460-426e-a5c4-d86fd2606363.jsonl",
+  "cwd": "D:\\Learn\\AgenticAI\\pocket-heist",
+  "permission_mode": "auto",
+  "effort": {
+    "level": "medium"
+  },
+  "hook_event_name": "PostToolUse",
+  "tool_name": "Edit",
+  "tool_input": {
+    "file_path": "D:\\Learn\\AgenticAI\\pocket-heist\\components\\StatusBadge\\StatusBadge.tsx",
+    "old_string": "  return (\n    <span className={`${styles.badge} ${styles[status]}`}>{status}</span>\n  )",
+    "new_string": "  return (\n    <span className={`${styles.badge} ${styles[status]}`} aria-label={`Heist ${status}`}>\n      {status}\n    </span>\n  )",
+    "replace_all": false
+  },
+  "tool_response": {
+    "filePath": "D:\\Learn\\AgenticAI\\pocket-heist\\components\\StatusBadge\\StatusBadge.tsx",
+    "oldString": "  return (\n    <span className={`${styles.badge} ${styles[status]}`}>{status}</span>\n  )",
+    "newString": "  return (\n    <span className={`${styles.badge} ${styles[status]}`} aria-label={`Heist ${status}`}>\n      {status}\n    </span>\n  )",
+    "originalFile": "import type { HeistFinalStatus } from \"@/types/firestore/heist\"\nimport styles from \"./StatusBadge.module.css\"\n\ninterface StatusBadgeProps {\n  status: HeistFinalStatus | null\n}\n\nexport default function StatusBadge({ status }: StatusBadgeProps) {\n  if (!status) return null\n\n  return (\n    <span className={`${styles.badge} ${styles[status]}`}>{status}</span>\n  )\n}\n",
+    "structuredPatch": [
+      {
+        "oldStart": 9,
+        "oldLines": 6,
+        "newStart": 9,
+        "newLines": 8,
+        "lines": [
+          "   if (!status) return null",
+          " ",
+          "   return (",
+          "-    <span className={`${styles.badge} ${styles[status]}`}>{status}</span>",
+          "+    <span className={`${styles.badge} ${styles[status]}`} aria-label={`Heist ${status}`}>",
+          "+      {status}",
+          "+    </span>",
+          "   )",
+          " }"
+        ]
+      }
+    ],
+    "userModified": false,
+    "replaceAll": false
+  },
+  "tool_use_id": "toolu_015aLoRAqAiBiDJRWLAGhwmh",
+  "duration_ms": 35
+}
+{
+  "session_id": "2a90b3fe-c460-426e-a5c4-d86fd2606363",
+  "transcript_path": "C:\\Users\\Ahmed.Elhawary\\.claude\\projects\\D--Learn-AgenticAI-pocket-heist\\2a90b3fe-c460-426e-a5c4-d86fd2606363.jsonl",
+  "cwd": "D:\\Learn\\AgenticAI\\pocket-heist",
+  "permission_mode": "auto",
+  "effort": {
+    "level": "medium"
+  },
+  "hook_event_name": "PostToolUse",
+  "tool_name": "Edit",
+  "tool_input": {
+    "file_path": "D:\\Learn\\AgenticAI\\pocket-heist\\components\\HeistCard\\HeistCard.tsx",
+    "old_string": "        <div className={styles.row}>\n          <Calendar size={14} aria-hidden=\"true\" />\n          <dd>{formatHeistDate(heist.deadline)}</dd>\n          <span className={styles.separator}>•</span>\n          <Countdown deadline={heist.deadline} />\n        </div>",
+    "new_string": "        <div className={styles.row}>\n          <Calendar size={14} aria-hidden=\"true\" />\n          <dt className=\"sr-only\">Deadline:</dt>\n          <dd className={styles.deadline}>\n            {formatHeistDate(heist.deadline)}\n            <span className={styles.separator}>•</span>\n            <Countdown deadline={heist.deadline} />\n          </dd>\n        </div>",
+    "replace_all": false
+  },
+  "tool_response": {
+    "filePath": "D:\\Learn\\AgenticAI\\pocket-heist\\components\\HeistCard\\HeistCard.tsx",
+    "oldString": "        <div className={styles.row}>\n          <Calendar size={14} aria-hidden=\"true\" />\n          <dd>{formatHeistDate(heist.deadline)}</dd>\n          <span className={styles.separator}>•</span>\n          <Countdown deadline={heist.deadline} />\n        </div>",
+    "newString": "        <div className={styles.row}>\n          <Calendar size={14} aria-hidden=\"true\" />\n          <dt className=\"sr-only\">Deadline:</dt>\n          <dd className={styles.deadline}>\n            {formatHeistDate(heist.deadline)}\n            <span className={styles.separator}>•</span>\n            <Countdown deadline={heist.deadline} />\n          </dd>\n        </div>",
+    "originalFile": "import { Calendar, Clock, User } from \"lucide-react\"\nimport Countdown from \"@/components/Countdown\"\nimport { formatHeistDate } from \"@/lib/format/heistDate\"\nimport type { Heist } from \"@/types/firestore/heist\"\nimport styles from \"./HeistCard.module.css\"\n\ninterface HeistCardProps {\n  heist: Heist\n}\n\nexport default function HeistCard({ heist }: HeistCardProps) {\n  return (\n    <article className={styles.card}>\n      <header className={styles.header}>\n        <h3 className={styles.title}>{heist.title}</h3>\n        <Clock className={styles.clock} size={18} aria-hidden=\"true\" />\n      </header>\n\n      <dl className={styles.meta}>\n        {heist.assignedToCodeName && (\n          <div className={styles.row}>\n            <User size={14} aria-hidden=\"true\" />\n            <dt>To:</dt>\n            <dd className={styles.to}>@{heist.assignedToCodeName}</dd>\n          </div>\n        )}\n        {heist.createdByCodeName && (\n          <div className={styles.row}>\n            <User size={14} aria-hidden=\"true\" />\n            <dt>By:</dt>\n            <dd className={styles.by}>@{heist.createdByCodeName}</dd>\n          </div>\n        )}\n        <div className={styles.row}>\n          <Calendar size={14} aria-hidden=\"true\" />\n          <dd>{formatHeistDate(heist.deadline)}</dd>\n          <span className={styles.separator}>•</span>\n          <Countdown deadline={heist.deadline} />\n        </div>\n      </dl>\n    </article>\n  )\n}\n",
+    "structuredPatch": [
+      {
+        "oldStart": 33,
+        "oldLines": 9,
+        "newStart": 33,
+        "newLines": 12,
+        "lines": [
+          "         )}",
+          "         <div className={styles.row}>",
+          "           <Calendar size={14} aria-hidden=\"true\" />",
+          "-          <dd>{formatHeistDate(heist.deadline)}</dd>",
+          "-          <span className={styles.separator}>•</span>",
+          "-          <Countdown deadline={heist.deadline} />",
+          "+          <dt className=\"sr-only\">Deadline:</dt>",
+          "+          <dd className={styles.deadline}>",
+          "+            {formatHeistDate(heist.deadline)}",
+          "+            <span className={styles.separator}>•</span>",
+          "+            <Countdown deadline={heist.deadline} />",
+          "+          </dd>",
+          "         </div>",
+          "       </dl>",
+          "     </article>"
+        ]
+      }
+    ],
+    "userModified": false,
+    "replaceAll": false
+  },
+  "tool_use_id": "toolu_01CwdVattMSt8dw8PetUcXUC",
+  "duration_ms": 29
+}
+{
+  "session_id": "2a90b3fe-c460-426e-a5c4-d86fd2606363",
+  "transcript_path": "C:\\Users\\Ahmed.Elhawary\\.claude\\projects\\D--Learn-AgenticAI-pocket-heist\\2a90b3fe-c460-426e-a5c4-d86fd2606363.jsonl",
+  "cwd": "D:\\Learn\\AgenticAI\\pocket-heist",
+  "permission_mode": "auto",
+  "effort": {
+    "level": "medium"
+  },
+  "hook_event_name": "PostToolUse",
+  "tool_name": "Edit",
+  "tool_input": {
+    "file_path": "D:\\Learn\\AgenticAI\\pocket-heist\\components\\HeistCard\\HeistCard.module.css",
+    "old_string": ".row dt {\n  @apply text-body;\n}",
+    "new_string": ".row dt {\n  @apply text-body;\n}\n\n.deadline {\n  @apply flex items-center gap-2;\n}",
+    "replace_all": false
+  },
+  "tool_response": {
+    "filePath": "D:\\Learn\\AgenticAI\\pocket-heist\\components\\HeistCard\\HeistCard.module.css",
+    "oldString": ".row dt {\n  @apply text-body;\n}",
+    "newString": ".row dt {\n  @apply text-body;\n}\n\n.deadline {\n  @apply flex items-center gap-2;\n}",
+    "originalFile": "@reference \"../../app/globals.css\";\n\n.card {\n  @apply bg-lighter rounded-xl p-5 flex flex-col gap-4;\n}\n\n.header {\n  @apply flex items-start justify-between gap-3;\n}\n\n.title {\n  @apply text-lg font-semibold leading-snug break-words;\n}\n\n.clock {\n  @apply text-primary shrink-0 mt-1;\n}\n\n.meta {\n  @apply flex flex-col gap-2 text-sm;\n}\n\n.row {\n  @apply flex items-center gap-2;\n}\n\n.row dt {\n  @apply text-body;\n}\n\n.to {\n  @apply text-primary font-medium;\n}\n\n.by {\n  @apply text-secondary font-medium;\n}\n\n.separator {\n  @apply text-body;\n}\n",
+    "structuredPatch": [
+      {
+        "oldStart": 28,
+        "oldLines": 6,
+        "newStart": 28,
+        "newLines": 10,
+        "lines": [
+          "   @apply text-body;",
+          " }",
+          " ",
+          "+.deadline {",
+          "+  @apply flex items-center gap-2;",
+          "+}",
+          "+",
+          " .to {",
+          "   @apply text-primary font-medium;",
+          " }"
+        ]
+      }
+    ],
+    "userModified": false,
+    "replaceAll": false
+  },
+  "tool_use_id": "toolu_01XS7JiH5qn1pqiw5zURFjpF",
+  "duration_ms": 92
+}
+{
+  "session_id": "2a90b3fe-c460-426e-a5c4-d86fd2606363",
+  "transcript_path": "C:\\Users\\Ahmed.Elhawary\\.claude\\projects\\D--Learn-AgenticAI-pocket-heist\\2a90b3fe-c460-426e-a5c4-d86fd2606363.jsonl",
+  "cwd": "D:\\Learn\\AgenticAI\\pocket-heist",
+  "permission_mode": "auto",
+  "effort": {
+    "level": "medium"
+  },
+  "hook_event_name": "PostToolUse",
+  "tool_name": "Edit",
+  "tool_input": {
+    "file_path": "D:\\Learn\\AgenticAI\\pocket-heist\\components\\HeistHistoryRow\\HeistHistoryRow.tsx",
+    "old_string": "  const failed = heist.finalStatus === \"failure\"\n\n  return (\n    <article className={styles.row}>\n      <div className={styles.icon}>\n        {failed ? (\n          <XCircle className={styles.failure} size={20} aria-hidden=\"true\" />\n        ) : (\n          <CheckCircle2 className={styles.success} size={20} aria-hidden=\"true\" />\n        )}\n      </div>",
+    "new_string": "  const succeeded = heist.finalStatus === \"success\"\n\n  return (\n    <article className={styles.row}>\n      <div className={styles.icon}>\n        {succeeded ? (\n          <CheckCircle2 className={styles.success} size={20} aria-hidden=\"true\" />\n        ) : (\n          <XCircle className={styles.failure} size={20} aria-hidden=\"true\" />\n        )}\n      </div>",
+    "replace_all": false
+  },
+  "tool_response": {
+    "filePath": "D:\\Learn\\AgenticAI\\pocket-heist\\components\\HeistHistoryRow\\HeistHistoryRow.tsx",
+    "oldString": "  const failed = heist.finalStatus === \"failure\"\n\n  return (\n    <article className={styles.row}>\n      <div className={styles.icon}>\n        {failed ? (\n          <XCircle className={styles.failure} size={20} aria-hidden=\"true\" />\n        ) : (\n          <CheckCircle2 className={styles.success} size={20} aria-hidden=\"true\" />\n        )}\n      </div>",
+    "newString": "  const succeeded = heist.finalStatus === \"success\"\n\n  return (\n    <article className={styles.row}>\n      <div className={styles.icon}>\n        {succeeded ? (\n          <CheckCircle2 className={styles.success} size={20} aria-hidden=\"true\" />\n        ) : (\n          <XCircle className={styles.failure} size={20} aria-hidden=\"true\" />\n        )}\n      </div>",
+    "originalFile": "import { Calendar, CheckCircle2, User, XCircle } from \"lucide-react\"\nimport StatusBadge from \"@/components/StatusBadge\"\nimport { formatHeistDate } from \"@/lib/format/heistDate\"\nimport type { Heist } from \"@/types/firestore/heist\"\nimport styles from \"./HeistHistoryRow.module.css\"\n\ninterface HeistHistoryRowProps {\n  heist: Heist\n}\n\nexport default function HeistHistoryRow({ heist }: HeistHistoryRowProps) {\n  const failed = heist.finalStatus === \"failure\"\n\n  return (\n    <article className={styles.row}>\n      <div className={styles.icon}>\n        {failed ? (\n          <XCircle className={styles.failure} size={20} aria-hidden=\"true\" />\n        ) : (\n          <CheckCircle2 className={styles.success} size={20} aria-hidden=\"true\" />\n        )}\n      </div>\n\n      <div className={styles.main}>\n        <h3 className={styles.title}>{heist.title}</h3>\n        <div className={styles.operatives}>\n          {heist.assignedToCodeName && (\n            <span className={styles.operative}>\n              <User size={14} aria-hidden=\"true\" />\n              To: <span className={styles.to}>@{heist.assignedToCodeName}</span>\n            </span>\n          )}\n          {heist.createdByCodeName && (\n            <span className={styles.operative}>\n              <User size={14} aria-hidden=\"true\" />\n              By: <span className={styles.by}>@{heist.createdByCodeName}</span>\n            </span>\n          )}\n        </div>\n      </div>\n\n      <div className={styles.aside}>\n        <span className={styles.date}>\n          <Calendar size={14} aria-hidden=\"true\" />\n          {formatHeistDate(heist.deadline)}\n        </span>\n        <StatusBadge status={heist.finalStatus} />\n      </div>\n    </article>\n  )\n}\n",
+    "structuredPatch": [
+      {
+        "oldStart": 9,
+        "oldLines": 15,
+        "newStart": 9,
+        "newLines": 15,
+        "lines": [
+          " }",
+          " ",
+          " export default function HeistHistoryRow({ heist }: HeistHistoryRowProps) {",
+          "-  const failed = heist.finalStatus === \"failure\"",
+          "+  const succeeded = heist.finalStatus === \"success\"",
+          " ",
+          "   return (",
+          "     <article className={styles.row}>",
+          "       <div className={styles.icon}>",
+          "-        {failed ? (",
+          "-          <XCircle className={styles.failure} size={20} aria-hidden=\"true\" />",
+          "-        ) : (",
+          "+        {succeeded ? (",
+          "           <CheckCircle2 className={styles.success} size={20} aria-hidden=\"true\" />",
+          "+        ) : (",
+          "+          <XCircle className={styles.failure} size={20} aria-hidden=\"true\" />",
+          "         )}",
+          "       </div>",
+          " "
+        ]
+      }
+    ],
+    "userModified": false,
+    "replaceAll": false
+  },
+  "tool_use_id": "toolu_01PXRheJPmZLwYHL1ZJojVPH",
+  "duration_ms": 41
+}
+{
+  "session_id": "2a90b3fe-c460-426e-a5c4-d86fd2606363",
+  "transcript_path": "C:\\Users\\Ahmed.Elhawary\\.claude\\projects\\D--Learn-AgenticAI-pocket-heist\\2a90b3fe-c460-426e-a5c4-d86fd2606363.jsonl",
+  "cwd": "D:\\Learn\\AgenticAI\\pocket-heist",
+  "permission_mode": "auto",
+  "effort": {
+    "level": "medium"
+  },
+  "hook_event_name": "PostToolUse",
+  "tool_name": "Edit",
+  "tool_input": {
+    "file_path": "D:\\Learn\\AgenticAI\\pocket-heist\\tests\\components\\HeistCard.test.tsx",
+    "old_string": "    render(<HeistCard heist={makeHeist({ assignedToCodeName: \"\" })} />)\n    expect(screen.queryByText(/^@/)).toHaveTextContent(\"@SecretSauceAgent\")\n    expect(screen.queryByText(\"To:\")).not.toBeInTheDocument()",
+    "new_string": "    render(<HeistCard heist={makeHeist({ assignedToCodeName: \"\" })} />)\n    expect(screen.queryByText(\"To:\")).not.toBeInTheDocument()\n    expect(screen.getByText(\"@SecretSauceAgent\")).toBeInTheDocument()",
+    "replace_all": false
+  },
+  "tool_response": {
+    "filePath": "D:\\Learn\\AgenticAI\\pocket-heist\\tests\\components\\HeistCard.test.tsx",
+    "oldString": "    render(<HeistCard heist={makeHeist({ assignedToCodeName: \"\" })} />)\n    expect(screen.queryByText(/^@/)).toHaveTextContent(\"@SecretSauceAgent\")\n    expect(screen.queryByText(\"To:\")).not.toBeInTheDocument()",
+    "newString": "    render(<HeistCard heist={makeHeist({ assignedToCodeName: \"\" })} />)\n    expect(screen.queryByText(\"To:\")).not.toBeInTheDocument()\n    expect(screen.getByText(\"@SecretSauceAgent\")).toBeInTheDocument()",
+    "originalFile": "import { render, screen } from \"@testing-library/react\"\nimport { describe, it, expect } from \"vitest\"\nimport HeistCard from \"@/components/HeistCard\"\nimport type { Heist } from \"@/types/firestore/heist\"\n\nfunction makeHeist(overrides: Partial<Heist> = {}): Heist {\n  return {\n    id: \"h1\",\n    title: \"Swap the keyboard keys on a colleague's desk\",\n    description: \"A classic.\",\n    createdBy: \"u1\",\n    createdByCodeName: \"SecretSauceAgent\",\n    assignedTo: \"u2\",\n    assignedToCodeName: \"KeySmash\",\n    deadline: new Date(Date.now() + 5 * 60 * 60 * 1000),\n    finalStatus: null,\n    createdAt: new Date(),\n    ...overrides,\n  }\n}\n\ndescribe(\"HeistCard\", () => {\n  it(\"shows the title, operatives, datetime, and a countdown\", () => {\n    render(<HeistCard heist={makeHeist()} />)\n\n    expect(\n      screen.getByText(\"Swap the keyboard keys on a colleague's desk\")\n    ).toBeInTheDocument()\n    expect(screen.getByText(\"@KeySmash\")).toBeInTheDocument()\n    expect(screen.getByText(\"@SecretSauceAgent\")).toBeInTheDocument()\n    // Countdown renders an \"Nh Nm\" value for a deadline within the day.\n    expect(screen.getByText(/^\\d+h \\d+m$/)).toBeInTheDocument()\n  })\n\n  it(\"omits the assignee row when there is no assignee codename\", () => {\n    render(<HeistCard heist={makeHeist({ assignedToCodeName: \"\" })} />)\n    expect(screen.queryByText(/^@/)).toHaveTextContent(\"@SecretSauceAgent\")\n    expect(screen.queryByText(\"To:\")).not.toBeInTheDocument()\n  })\n})\n",
+    "structuredPatch": [
+      {
+        "oldStart": 34,
+        "oldLines": 7,
+        "newStart": 34,
+        "newLines": 7,
+        "lines": [
+          " ",
+          "   it(\"omits the assignee row when there is no assignee codename\", () => {",
+          "     render(<HeistCard heist={makeHeist({ assignedToCodeName: \"\" })} />)",
+          "-    expect(screen.queryByText(/^@/)).toHaveTextContent(\"@SecretSauceAgent\")",
+          "     expect(screen.queryByText(\"To:\")).not.toBeInTheDocument()",
+          "+    expect(screen.getByText(\"@SecretSauceAgent\")).toBeInTheDocument()",
+          "   })",
+          " })"
+        ]
+      }
+    ],
+    "userModified": false,
+    "replaceAll": false
+  },
+  "tool_use_id": "toolu_01CV2jakgvfsQ1fh48TSciRo",
+  "duration_ms": 11
+}
+{
+  "session_id": "2a90b3fe-c460-426e-a5c4-d86fd2606363",
+  "transcript_path": "C:\\Users\\Ahmed.Elhawary\\.claude\\projects\\D--Learn-AgenticAI-pocket-heist\\2a90b3fe-c460-426e-a5c4-d86fd2606363.jsonl",
+  "cwd": "D:\\Learn\\AgenticAI\\pocket-heist",
+  "permission_mode": "auto",
+  "effort": {
+    "level": "medium"
+  },
+  "hook_event_name": "PostToolUse",
+  "tool_name": "Edit",
+  "tool_input": {
+    "file_path": "D:\\Learn\\AgenticAI\\pocket-heist\\tests\\lib\\heistDate.test.ts",
+    "old_string": "  it(\"formats a date as 'MMM D, hh:mm AM/PM'\", () => {\n    // Dec 7 2025, 14:00 local time\n    const date = new Date(2025, 11, 7, 14, 0)\n    expect(formatHeistDate(date)).toBe(\"Dec 7, 02:00 PM\")\n  })",
+    "new_string": "  it(\"formats a date as 'MMM D, hh:mm AM/PM'\", () => {\n    // Dec 7 2025, 14:00 UTC — the formatter is pinned to UTC.\n    const date = new Date(Date.UTC(2025, 11, 7, 14, 0))\n    expect(formatHeistDate(date)).toBe(\"Dec 7, 02:00 PM\")\n  })",
+    "replace_all": false
+  },
+  "tool_response": {
+    "filePath": "D:\\Learn\\AgenticAI\\pocket-heist\\tests\\lib\\heistDate.test.ts",
+    "oldString": "  it(\"formats a date as 'MMM D, hh:mm AM/PM'\", () => {\n    // Dec 7 2025, 14:00 local time\n    const date = new Date(2025, 11, 7, 14, 0)\n    expect(formatHeistDate(date)).toBe(\"Dec 7, 02:00 PM\")\n  })",
+    "newString": "  it(\"formats a date as 'MMM D, hh:mm AM/PM'\", () => {\n    // Dec 7 2025, 14:00 UTC — the formatter is pinned to UTC.\n    const date = new Date(Date.UTC(2025, 11, 7, 14, 0))\n    expect(formatHeistDate(date)).toBe(\"Dec 7, 02:00 PM\")\n  })",
+    "originalFile": "import { describe, it, expect } from \"vitest\"\nimport {\n  formatHeistDate,\n  formatCountdown,\n  isNearDeadline,\n} from \"@/lib/format/heistDate\"\n\ndescribe(\"formatHeistDate\", () => {\n  it(\"formats a date as 'MMM D, hh:mm AM/PM'\", () => {\n    // Dec 7 2025, 14:00 local time\n    const date = new Date(2025, 11, 7, 14, 0)\n    expect(formatHeistDate(date)).toBe(\"Dec 7, 02:00 PM\")\n  })\n})\n\ndescribe(\"formatCountdown\", () => {\n  const now = new Date(2025, 11, 7, 12, 0)\n\n  it(\"returns 'Expired' for a past deadline\", () => {\n    const past = new Date(now.getTime() - 60 * 1000)\n    expect(formatCountdown(past, now)).toBe(\"Expired\")\n  })\n\n  it(\"returns 'Expired' exactly at the deadline\", () => {\n    expect(formatCountdown(now, now)).toBe(\"Expired\")\n  })\n\n  it(\"uses 'Nd Nh' when a day or more remains\", () => {\n    const deadline = new Date(now.getTime() + 2 * 24 * 60 * 60 * 1000 + 3 * 60 * 60 * 1000)\n    expect(formatCountdown(deadline, now)).toBe(\"2d 3h\")\n  })\n\n  it(\"uses 'Nh Nm' when less than a day remains\", () => {\n    const deadline = new Date(now.getTime() + 4 * 60 * 60 * 1000 + 42 * 60 * 1000)\n    expect(formatCountdown(deadline, now)).toBe(\"4h 42m\")\n  })\n})\n\ndescribe(\"isNearDeadline\", () => {\n  const now = new Date(2025, 11, 7, 12, 0)\n\n  it(\"is true within 24h\", () => {\n    const deadline = new Date(now.getTime() + 3 * 60 * 60 * 1000)\n    expect(isNearDeadline(deadline, now)).toBe(true)\n  })\n\n  it(\"is false beyond 24h\", () => {\n    const deadline = new Date(now.getTime() + 30 * 60 * 60 * 1000)\n    expect(isNearDeadline(deadline, now)).toBe(false)\n  })\n\n  it(\"is false once expired\", () => {\n    const deadline = new Date(now.getTime() - 60 * 1000)\n    expect(isNearDeadline(deadline, now)).toBe(false)\n  })\n})\n",
+    "structuredPatch": [
+      {
+        "oldStart": 7,
+        "oldLines": 8,
+        "newStart": 7,
+        "newLines": 8,
+        "lines": [
+          " ",
+          " describe(\"formatHeistDate\", () => {",
+          "   it(\"formats a date as 'MMM D, hh:mm AM/PM'\", () => {",
+          "-    // Dec 7 2025, 14:00 local time",
+          "-    const date = new Date(2025, 11, 7, 14, 0)",
+          "+    // Dec 7 2025, 14:00 UTC — the formatter is pinned to UTC.",
+          "+    const date = new Date(Date.UTC(2025, 11, 7, 14, 0))",
+          "     expect(formatHeistDate(date)).toBe(\"Dec 7, 02:00 PM\")",
+          "   })",
+          " })"
+        ]
+      }
+    ],
+    "userModified": false,
+    "replaceAll": false
+  },
+  "tool_use_id": "toolu_01MMrxBDbYXfzXYjXT6jfw84",
+  "duration_ms": 44
+}
+{
+  "session_id": "2a90b3fe-c460-426e-a5c4-d86fd2606363",
+  "transcript_path": "C:\\Users\\Ahmed.Elhawary\\.claude\\projects\\D--Learn-AgenticAI-pocket-heist\\2a90b3fe-c460-426e-a5c4-d86fd2606363.jsonl",
+  "cwd": "D:\\Learn\\AgenticAI\\pocket-heist",
+  "permission_mode": "auto",
+  "effort": {
+    "level": "medium"
+  },
+  "hook_event_name": "PostToolUse",
+  "tool_name": "Edit",
+  "tool_input": {
+    "file_path": "D:\\Learn\\AgenticAI\\pocket-heist\\tests\\components\\HeistHistoryRow.test.tsx",
+    "old_string": "    deadline: new Date(2025, 11, 3, 14, 30),",
+    "new_string": "    deadline: new Date(Date.UTC(2025, 11, 3, 14, 30)),",
+    "replace_all": false
+  },
+  "tool_response": {
+    "filePath": "D:\\Learn\\AgenticAI\\pocket-heist\\tests\\components\\HeistHistoryRow.test.tsx",
+    "oldString": "    deadline: new Date(2025, 11, 3, 14, 30),",
+    "newString": "    deadline: new Date(Date.UTC(2025, 11, 3, 14, 30)),",
+    "originalFile": "import { render, screen } from \"@testing-library/react\"\nimport { describe, it, expect } from \"vitest\"\nimport HeistHistoryRow from \"@/components/HeistHistoryRow\"\nimport type { Heist } from \"@/types/firestore/heist\"\n\nfunction makeHeist(overrides: Partial<Heist> = {}): Heist {\n  return {\n    id: \"h1\",\n    title: \"Reorganize the snack drawer by color\",\n    description: \"Aesthetic sabotage.\",\n    createdBy: \"u1\",\n    createdByCodeName: \"WhisperKing\",\n    assignedTo: \"u2\",\n    assignedToCodeName: \"SilentNinja\",\n    deadline: new Date(2025, 11, 3, 14, 30),\n    finalStatus: \"success\",\n    createdAt: new Date(),\n    ...overrides,\n  }\n}\n\ndescribe(\"HeistHistoryRow\", () => {\n  it(\"shows title, operatives, datetime, and a SUCCESS badge\", () => {\n    render(<HeistHistoryRow heist={makeHeist()} />)\n\n    expect(\n      screen.getByText(\"Reorganize the snack drawer by color\")\n    ).toBeInTheDocument()\n    expect(screen.getByText(\"@SilentNinja\")).toBeInTheDocument()\n    expect(screen.getByText(\"@WhisperKing\")).toBeInTheDocument()\n    expect(screen.getByText(\"Dec 3, 02:30 PM\")).toBeInTheDocument()\n    expect(screen.getByText(\"success\")).toBeInTheDocument()\n  })\n\n  it(\"shows a FAILURE badge for a failed heist\", () => {\n    render(<HeistHistoryRow heist={makeHeist({ finalStatus: \"failure\" })} />)\n    expect(screen.getByText(\"failure\")).toBeInTheDocument()\n  })\n})\n",
+    "structuredPatch": [
+      {
+        "oldStart": 12,
+        "oldLines": 7,
+        "newStart": 12,
+        "newLines": 7,
+        "lines": [
+          "     createdByCodeName: \"WhisperKing\",",
+          "     assignedTo: \"u2\",",
+          "     assignedToCodeName: \"SilentNinja\",",
+          "-    deadline: new Date(2025, 11, 3, 14, 30),",
+          "+    deadline: new Date(Date.UTC(2025, 11, 3, 14, 30)),",
+          "     finalStatus: \"success\",",
+          "     createdAt: new Date(),",
+          "     ...overrides,"
+        ]
+      }
+    ],
+    "userModified": false,
+    "replaceAll": false
+  },
+  "tool_use_id": "toolu_01RXv2XM1Rr3RZjdVLwsxZxW",
+  "duration_ms": 70
+}
