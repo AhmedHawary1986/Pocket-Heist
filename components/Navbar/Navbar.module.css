@@ -15,3 +15,7 @@
 svg.logo {
   display: inline-block;
 }
+
+.avatarPlaceholder {
+  @apply w-9 h-9 rounded-full bg-lighter animate-pulse;
+}

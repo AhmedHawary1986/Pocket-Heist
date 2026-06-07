@@ -1,0 +1,1 @@
+- [Date utils convention](project_date_utils_convention.md) — pure `lib/format` fns take injectable `now`; watch for timezone-dependent test assertions

@@ -33,8 +33,8 @@ The app uses two Next.js route groups that enforce separate layouts:
 
 **`app/(dashboard)/`** — Authenticated pages. Layout injects `<Navbar />` above `<main>`. Pages:
 - `/heists` — lists active, assigned, and expired heists
-- `/heists/create` — create heist form
-- `/heists/[id]` — heist detail view
+- `/heists/create` — create heist form (skeleton, not yet implemented)
+- `/heists/[id]` — heist detail view (skeleton, not yet implemented)
 
 ### Component Structure
 
@@ -49,6 +49,8 @@ components/
 ```
 
 Import components via the folder name: `import Navbar from "@/components/Navbar"`. The `index.ts` barrel file is what enables this.
+
+**Existing components:** `AuthForm`, `Avatar`, `Navbar`, `Skeleton` (loading placeholder), `Footer` (not currently injected in any layout).
 
 ### Styling System
 
@@ -66,6 +68,7 @@ Two layers of styling work together:
 - `.page-content` — centered, max-width container (`my-4 mx-auto w-6xl min-w-2xl max-w-full`)
 - `.center-content` — vertically centered full-height column (`flex flex-col justify-center min-h-lvh`)
 - `.form-title` — centered bold heading for form pages
+- `.btn` — primary button (`bg-primary text-dark`, hover switches to `bg-secondary`)
 
 ### Path Aliases
 
@@ -82,6 +85,16 @@ Strict mode enabled. `vitest/globals` types are included so `describe`, `it`, `e
 - **Setup file:** `vitest.setup.ts` imports `@testing-library/jest-dom/vitest` to extend Vitest matchers with DOM assertions (`toBeInTheDocument`, `toHaveAttribute`, etc.)
 - **Test location:** `tests/` directory, mirroring source structure (e.g., `tests/components/Navbar.test.tsx`)
 - **Globals:** Vitest globals (`describe`, `it`, `expect`) are available without imports — configured in both `vitest.config.mts` and `tsconfig.json`
+
+## Claude Code Skills
+
+Three slash commands live in `.claude/commands/`:
+
+- `/component` — TDD workflow: write failing test → create component → implement until tests pass → add to `/preview` page
+- `/spec` — Parses a feature idea into a markdown spec saved to `_specs/<slug>.md` and creates a matching git branch
+- `/commit-message` — Analyzes staged diff and generates a conventional commit message with emoji type prefix
+
+Feature specs land in `_specs/`. Check there for context on in-progress or planned features.
 
 ## Next.js Version Note
 

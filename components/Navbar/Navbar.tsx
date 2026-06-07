@@ -1,8 +1,23 @@
+"use client"
+
 import { Clock8 } from "lucide-react"
 import Link from "next/link"
+import Avatar from "@/components/Avatar"
+import { useUser } from "@/components/UserProvider"
+import { logout } from "@/lib/auth/logout"
 import styles from "./Navbar.module.css"
 
 export default function Navbar() {
+  const { user, loading } = useUser()
+
+  async function handleLogout() {
+    try {
+      await logout()
+    } catch {
+      window.alert("Failed to sign out. Please try again.")
+    }
+  }
+
   return (
     <div className={styles.siteNav}>
       <nav>
@@ -16,8 +31,21 @@ export default function Navbar() {
           <div>Tiny missions. Big office mischief.</div>
         </header>
         <ul>
+          {!loading && user && (
+            <li>
+              <button onClick={handleLogout} className="btn">Log Out</button>
+            </li>
+          )}
           <li>
-            <Link href="/heists/create" className="btn">Create Heist</Link>
+            <Link href="/heists/create" className="btn"><span>+</span> Create New Heist</Link>
+          </li>
+          <li>
+            {loading && (
+              <div className={styles.avatarPlaceholder} aria-hidden="true" />
+            )}
+            {!loading && user && (
+              <Avatar name={user.email ?? "?"} />
+            )}
           </li>
         </ul>
       </nav>
