@@ -6121,3 +6121,247 @@
   "tool_use_id": "toolu_01RXv2XM1Rr3RZjdVLwsxZxW",
   "duration_ms": 70
 }
+{
+  "session_id": "85483e59-37d5-513d-8aaa-9892180bd121",
+  "transcript_path": "/root/.claude/projects/-home-user-Pocket-Heist/85483e59-37d5-513d-8aaa-9892180bd121.jsonl",
+  "cwd": "/home/user/Pocket-Heist",
+  "permission_mode": "default",
+  "effort": {
+    "level": "high"
+  },
+  "hook_event_name": "PostToolUse",
+  "tool_name": "Write",
+  "tool_input": {
+    "file_path": "/home/user/Pocket-Heist/hooks/useHeist.ts",
+    "content": "\"use client\"\n\nimport { useEffect, useState } from \"react\"\nimport { doc, onSnapshot } from \"firebase/firestore\"\nimport { db } from \"@/lib/firebase\"\nimport { heistConverter, type Heist } from \"@/types/firestore/heist\"\n\ninterface UseHeistResult {\n  heist: Heist | null\n  loading: boolean\n  error: Error | null\n}\n\n/** Subscribes to a single heist document by id. `heist` is null while loading,\n *  when the document doesn't exist, or on error. */\nexport function useHeist(id: string | undefined): UseHeistResult {\n  const [state, setState] = useState<UseHeistResult>({\n    heist: null,\n    loading: true,\n    error: null,\n  })\n\n  useEffect(() => {\n    if (!id) return\n\n    const ref = doc(db, \"heists\", id).withConverter(heistConverter)\n\n    const unsubscribe = onSnapshot(\n      ref,\n      (snapshot) => {\n        setState({\n          // The converter's `toFirestore` types its model as `Partial<Heist>`, so\n          // `data()` is widened to that on reads; `fromFirestore` always yields a full Heist.\n          heist: snapshot.exists() ? (snapshot.data() as Heist) : null,\n          loading: false,\n          error: null,\n        })\n      },\n      (err) => {\n        setState({ heist: null, loading: false, error: err })\n      }\n    )\n\n    return unsubscribe\n  }, [id])\n\n  // No id to look up: nothing to subscribe to, return an empty result.\n  if (!id) {\n    return { heist: null, loading: false, error: null }\n  }\n\n  return state\n}\n"
+  },
+  "tool_response": {
+    "type": "create",
+    "filePath": "/home/user/Pocket-Heist/hooks/useHeist.ts",
+    "content": "\"use client\"\n\nimport { useEffect, useState } from \"react\"\nimport { doc, onSnapshot } from \"firebase/firestore\"\nimport { db } from \"@/lib/firebase\"\nimport { heistConverter, type Heist } from \"@/types/firestore/heist\"\n\ninterface UseHeistResult {\n  heist: Heist | null\n  loading: boolean\n  error: Error | null\n}\n\n/** Subscribes to a single heist document by id. `heist` is null while loading,\n *  when the document doesn't exist, or on error. */\nexport function useHeist(id: string | undefined): UseHeistResult {\n  const [state, setState] = useState<UseHeistResult>({\n    heist: null,\n    loading: true,\n    error: null,\n  })\n\n  useEffect(() => {\n    if (!id) return\n\n    const ref = doc(db, \"heists\", id).withConverter(heistConverter)\n\n    const unsubscribe = onSnapshot(\n      ref,\n      (snapshot) => {\n        setState({\n          // The converter's `toFirestore` types its model as `Partial<Heist>`, so\n          // `data()` is widened to that on reads; `fromFirestore` always yields a full Heist.\n          heist: snapshot.exists() ? (snapshot.data() as Heist) : null,\n          loading: false,\n          error: null,\n        })\n      },\n      (err) => {\n        setState({ heist: null, loading: false, error: err })\n      }\n    )\n\n    return unsubscribe\n  }, [id])\n\n  // No id to look up: nothing to subscribe to, return an empty result.\n  if (!id) {\n    return { heist: null, loading: false, error: null }\n  }\n\n  return state\n}\n",
+    "structuredPatch": [],
+    "originalFile": null,
+    "userModified": false,
+    "gitDiff": {
+      "filename": "hooks/useHeist.ts",
+      "status": "added",
+      "additions": 53,
+      "deletions": 0,
+      "changes": 53,
+      "patch": "@@ -0,0 +1,53 @@\n+\"use client\"\n+\n+import { useEffect, useState } from \"react\"\n+import { doc, onSnapshot } from \"firebase/firestore\"\n+import { db } from \"@/lib/firebase\"\n+import { heistConverter, type Heist } from \"@/types/firestore/heist\"\n+\n+interface UseHeistResult {\n+  heist: Heist | null\n+  loading: boolean\n+  error: Error | null\n+}\n+\n+/** Subscribes to a single heist document by id. `heist` is null while loading,\n+ *  when the document doesn't exist, or on error. */\n+export function useHeist(id: string | undefined): UseHeistResult {\n+  const [state, setState] = useState<UseHeistResult>({\n+    heist: null,\n+    loading: true,\n+    error: null,\n+  })\n+\n+  useEffect(() => {\n+    if (!id) return\n+\n+    const ref = doc(db, \"heists\", id).withConverter(heistConverter)\n+\n+    const unsubscribe = onSnapshot(\n+      ref,\n+      (snapshot) => {\n+        setState({\n+          // The converter's `toFirestore` types its model as `Partial<Heist>`, so\n+          // `data()` is widened to that on reads; `fromFirestore` always yields a full Heist.\n+          heist: snapshot.exists() ? (snapshot.data() as Heist) : null,\n+          loading: false,\n+          error: null,\n+        })\n+      },\n+      (err) => {\n+        setState({ heist: null, loading: false, error: err })\n+      }\n+    )\n+\n+    return unsubscribe\n+  }, [id])\n+\n+  // No id to look up: nothing to subscribe to, return an empty result.\n+  if (!id) {\n+    return { heist: null, loading: false, error: null }\n+  }\n+\n+  return state\n+}",
+      "repository": null
+    }
+  },
+  "tool_use_id": "toolu_01VsD3ygPBy1s4VJQP3sNRRX",
+  "duration_ms": 1051
+}
+{
+  "session_id": "85483e59-37d5-513d-8aaa-9892180bd121",
+  "transcript_path": "/root/.claude/projects/-home-user-Pocket-Heist/85483e59-37d5-513d-8aaa-9892180bd121.jsonl",
+  "cwd": "/home/user/Pocket-Heist",
+  "permission_mode": "default",
+  "effort": {
+    "level": "high"
+  },
+  "hook_event_name": "PostToolUse",
+  "tool_name": "Write",
+  "tool_input": {
+    "file_path": "/home/user/Pocket-Heist/app/(dashboard)/heists/[id]/page.tsx",
+    "content": "\"use client\"\n\nimport { useParams } from \"next/navigation\"\nimport { Calendar, Clock, FileText, User } from \"lucide-react\"\nimport Avatar from \"@/components/Avatar\"\nimport Countdown from \"@/components/Countdown\"\nimport Spinner from \"@/components/Spinner\"\nimport StatusBadge from \"@/components/StatusBadge\"\nimport { formatHeistDate } from \"@/lib/format/heistDate\"\nimport { useHeist } from \"@/hooks/useHeist\"\n\nexport default function HeistDetailsPage() {\n  const { id } = useParams<{ id: string }>()\n  const { heist, loading, error } = useHeist(id)\n\n  if (loading) {\n    return <Spinner />\n  }\n\n  if (error || !heist) {\n    return (\n      <div className=\"page-content flex flex-col gap-2\">\n        <h2 className=\"text-xl font-semibold\">Heist not found</h2>\n        <p className=\"text-body\">\n          This heist doesn&apos;t exist or you don&apos;t have access to it.\n        </p>\n      </div>\n    )\n  }\n\n  return (\n    <div className=\"page-content flex flex-col gap-8\">\n      <header className=\"flex items-start justify-between gap-4\">\n        <h2 className=\"text-2xl font-bold leading-snug break-words\">\n          {heist.title}\n        </h2>\n        {heist.finalStatus ? (\n          <StatusBadge status={heist.finalStatus} />\n        ) : (\n          <Clock className=\"text-primary shrink-0 mt-1\" size={22} aria-hidden=\"true\" />\n        )}\n      </header>\n\n      <section className=\"grid grid-cols-1 sm:grid-cols-2 gap-4\">\n        <div className=\"bg-lighter rounded-xl p-5 flex items-center gap-4\">\n          <Avatar name={heist.assignedToCodeName} />\n          <div className=\"flex flex-col\">\n            <span className=\"flex items-center gap-1 text-sm text-body\">\n              <User size={14} aria-hidden=\"true\" />\n              Assigned to\n            </span>\n            <span className=\"text-primary font-medium\">\n              @{heist.assignedToCodeName}\n            </span>\n          </div>\n        </div>\n\n        <div className=\"bg-lighter rounded-xl p-5 flex items-center gap-4\">\n          <Avatar name={heist.createdByCodeName} />\n          <div className=\"flex flex-col\">\n            <span className=\"flex items-center gap-1 text-sm text-body\">\n              <User size={14} aria-hidden=\"true\" />\n              Created by\n            </span>\n            <span className=\"text-secondary font-medium\">\n              @{heist.createdByCodeName}\n            </span>\n          </div>\n        </div>\n      </section>\n\n      <section className=\"flex flex-col gap-3\">\n        <h3 className=\"flex items-center gap-2 text-lg font-semibold\">\n          <FileText className=\"text-primary\" size={18} aria-hidden=\"true\" />\n          Details\n        </h3>\n        <p className=\"text-body whitespace-pre-wrap\">\n          {heist.description || \"No details provided.\"}\n        </p>\n      </section>\n\n      <section className=\"flex flex-col gap-3\">\n        <h3 className=\"flex items-center gap-2 text-lg font-semibold\">\n          <Calendar className=\"text-primary\" size={18} aria-hidden=\"true\" />\n          Deadline\n        </h3>\n        <p className=\"flex items-center gap-2\">\n          {formatHeistDate(heist.deadline)}\n          <span className=\"text-body\">•</span>\n          <Countdown deadline={heist.deadline} />\n        </p>\n      </section>\n    </div>\n  )\n}\n"
+  },
+  "tool_response": {
+    "type": "update",
+    "filePath": "/home/user/Pocket-Heist/app/(dashboard)/heists/[id]/page.tsx",
+    "content": "\"use client\"\n\nimport { useParams } from \"next/navigation\"\nimport { Calendar, Clock, FileText, User } from \"lucide-react\"\nimport Avatar from \"@/components/Avatar\"\nimport Countdown from \"@/components/Countdown\"\nimport Spinner from \"@/components/Spinner\"\nimport StatusBadge from \"@/components/StatusBadge\"\nimport { formatHeistDate } from \"@/lib/format/heistDate\"\nimport { useHeist } from \"@/hooks/useHeist\"\n\nexport default function HeistDetailsPage() {\n  const { id } = useParams<{ id: string }>()\n  const { heist, loading, error } = useHeist(id)\n\n  if (loading) {\n    return <Spinner />\n  }\n\n  if (error || !heist) {\n    return (\n      <div className=\"page-content flex flex-col gap-2\">\n        <h2 className=\"text-xl font-semibold\">Heist not found</h2>\n        <p className=\"text-body\">\n          This heist doesn&apos;t exist or you don&apos;t have access to it.\n        </p>\n      </div>\n    )\n  }\n\n  return (\n    <div className=\"page-content flex flex-col gap-8\">\n      <header className=\"flex items-start justify-between gap-4\">\n        <h2 className=\"text-2xl font-bold leading-snug break-words\">\n          {heist.title}\n        </h2>\n        {heist.finalStatus ? (\n          <StatusBadge status={heist.finalStatus} />\n        ) : (\n          <Clock className=\"text-primary shrink-0 mt-1\" size={22} aria-hidden=\"true\" />\n        )}\n      </header>\n\n      <section className=\"grid grid-cols-1 sm:grid-cols-2 gap-4\">\n        <div className=\"bg-lighter rounded-xl p-5 flex items-center gap-4\">\n          <Avatar name={heist.assignedToCodeName} />\n          <div className=\"flex flex-col\">\n            <span className=\"flex items-center gap-1 text-sm text-body\">\n              <User size={14} aria-hidden=\"true\" />\n              Assigned to\n            </span>\n            <span className=\"text-primary font-medium\">\n              @{heist.assignedToCodeName}\n            </span>\n          </div>\n        </div>\n\n        <div className=\"bg-lighter rounded-xl p-5 flex items-center gap-4\">\n          <Avatar name={heist.createdByCodeName} />\n          <div className=\"flex flex-col\">\n            <span className=\"flex items-center gap-1 text-sm text-body\">\n              <User size={14} aria-hidden=\"true\" />\n              Created by\n            </span>\n            <span className=\"text-secondary font-medium\">\n              @{heist.createdByCodeName}\n            </span>\n          </div>\n        </div>\n      </section>\n\n      <section className=\"flex flex-col gap-3\">\n        <h3 className=\"flex items-center gap-2 text-lg font-semibold\">\n          <FileText className=\"text-primary\" size={18} aria-hidden=\"true\" />\n          Details\n        </h3>\n        <p className=\"text-body whitespace-pre-wrap\">\n          {heist.description || \"No details provided.\"}\n        </p>\n      </section>\n\n      <section className=\"flex flex-col gap-3\">\n        <h3 className=\"flex items-center gap-2 text-lg font-semibold\">\n          <Calendar className=\"text-primary\" size={18} aria-hidden=\"true\" />\n          Deadline\n        </h3>\n        <p className=\"flex items-center gap-2\">\n          {formatHeistDate(heist.deadline)}\n          <span className=\"text-body\">•</span>\n          <Countdown deadline={heist.deadline} />\n        </p>\n      </section>\n    </div>\n  )\n}\n",
+    "structuredPatch": [
+      {
+        "oldStart": 1,
+        "oldLines": 7,
+        "newStart": 1,
+        "newLines": 95,
+        "lines": [
+          "+\"use client\"",
+          "+",
+          "+import { useParams } from \"next/navigation\"",
+          "+import { Calendar, Clock, FileText, User } from \"lucide-react\"",
+          "+import Avatar from \"@/components/Avatar\"",
+          "+import Countdown from \"@/components/Countdown\"",
+          "+import Spinner from \"@/components/Spinner\"",
+          "+import StatusBadge from \"@/components/StatusBadge\"",
+          "+import { formatHeistDate } from \"@/lib/format/heistDate\"",
+          "+import { useHeist } from \"@/hooks/useHeist\"",
+          "+",
+          " export default function HeistDetailsPage() {",
+          "+  const { id } = useParams<{ id: string }>()",
+          "+  const { heist, loading, error } = useHeist(id)",
+          "+",
+          "+  if (loading) {",
+          "+    return <Spinner />",
+          "+  }",
+          "+",
+          "+  if (error || !heist) {",
+          "+    return (",
+          "+      <div className=\"page-content flex flex-col gap-2\">",
+          "+        <h2 className=\"text-xl font-semibold\">Heist not found</h2>",
+          "+        <p className=\"text-body\">",
+          "+          This heist doesn&apos;t exist or you don&apos;t have access to it.",
+          "+        </p>",
+          "+      </div>",
+          "+    )",
+          "+  }",
+          "+",
+          "   return (",
+          "-    <div className=\"page-content\">",
+          "-      <h2>Heist Details</h2>",
+          "+    <div className=\"page-content flex flex-col gap-8\">",
+          "+      <header className=\"flex items-start justify-between gap-4\">",
+          "+        <h2 className=\"text-2xl font-bold leading-snug break-words\">",
+          "+          {heist.title}",
+          "+        </h2>",
+          "+        {heist.finalStatus ? (",
+          "+          <StatusBadge status={heist.finalStatus} />",
+          "+        ) : (",
+          "+          <Clock className=\"text-primary shrink-0 mt-1\" size={22} aria-hidden=\"true\" />",
+          "+        )}",
+          "+      </header>",
+          "+",
+          "+      <section className=\"grid grid-cols-1 sm:grid-cols-2 gap-4\">",
+          "+        <div className=\"bg-lighter rounded-xl p-5 flex items-center gap-4\">",
+          "+          <Avatar name={heist.assignedToCodeName} />",
+          "+          <div className=\"flex flex-col\">",
+          "+            <span className=\"flex items-center gap-1 text-sm text-body\">",
+          "+              <User size={14} aria-hidden=\"true\" />",
+          "+              Assigned to",
+          "+            </span>",
+          "+            <span className=\"text-primary font-medium\">",
+          "+              @{heist.assignedToCodeName}",
+          "+            </span>",
+          "+          </div>",
+          "+        </div>",
+          "+",
+          "+        <div className=\"bg-lighter rounded-xl p-5 flex items-center gap-4\">",
+          "+          <Avatar name={heist.createdByCodeName} />",
+          "+          <div className=\"flex flex-col\">",
+          "+            <span className=\"flex items-center gap-1 text-sm text-body\">",
+          "+              <User size={14} aria-hidden=\"true\" />",
+          "+              Created by",
+          "+            </span>",
+          "+            <span className=\"text-secondary font-medium\">",
+          "+              @{heist.createdByCodeName}",
+          "+            </span>",
+          "+          </div>",
+          "+        </div>",
+          "+      </section>",
+          "+",
+          "+      <section className=\"flex flex-col gap-3\">",
+          "+        <h3 className=\"flex items-center gap-2 text-lg font-semibold\">",
+          "+          <FileText className=\"text-primary\" size={18} aria-hidden=\"true\" />",
+          "+          Details",
+          "+        </h3>",
+          "+        <p className=\"text-body whitespace-pre-wrap\">",
+          "+          {heist.description || \"No details provided.\"}",
+          "+        </p>",
+          "+      </section>",
+          "+",
+          "+      <section className=\"flex flex-col gap-3\">",
+          "+        <h3 className=\"flex items-center gap-2 text-lg font-semibold\">",
+          "+          <Calendar className=\"text-primary\" size={18} aria-hidden=\"true\" />",
+          "+          Deadline",
+          "+        </h3>",
+          "+        <p className=\"flex items-center gap-2\">",
+          "+          {formatHeistDate(heist.deadline)}",
+          "+          <span className=\"text-body\">•</span>",
+          "+          <Countdown deadline={heist.deadline} />",
+          "+        </p>",
+          "+      </section>",
+          "     </div>",
+          "   )",
+          "-}",
+          "\\ No newline at end of file",
+          "+}"
+        ]
+      }
+    ],
+    "originalFile": "export default function HeistDetailsPage() {\n  return (\n    <div className=\"page-content\">\n      <h2>Heist Details</h2>\n    </div>\n  )\n}",
+    "userModified": false,
+    "gitDiff": {
+      "filename": "app/(dashboard)/heists/[id]/page.tsx",
+      "status": "modified",
+      "additions": 91,
+      "deletions": 3,
+      "changes": 94,
+      "patch": "@@ -1,7 +1,95 @@\n+\"use client\"\n+\n+import { useParams } from \"next/navigation\"\n+import { Calendar, Clock, FileText, User } from \"lucide-react\"\n+import Avatar from \"@/components/Avatar\"\n+import Countdown from \"@/components/Countdown\"\n+import Spinner from \"@/components/Spinner\"\n+import StatusBadge from \"@/components/StatusBadge\"\n+import { formatHeistDate } from \"@/lib/format/heistDate\"\n+import { useHeist } from \"@/hooks/useHeist\"\n+\n export default function HeistDetailsPage() {\n+  const { id } = useParams<{ id: string }>()\n+  const { heist, loading, error } = useHeist(id)\n+\n+  if (loading) {\n+    return <Spinner />\n+  }\n+\n+  if (error || !heist) {\n+    return (\n+      <div className=\"page-content flex flex-col gap-2\">\n+        <h2 className=\"text-xl font-semibold\">Heist not found</h2>\n+        <p className=\"text-body\">\n+          This heist doesn&apos;t exist or you don&apos;t have access to it.\n+        </p>\n+      </div>\n+    )\n+  }\n+\n   return (\n-    <div className=\"page-content\">\n-      <h2>Heist Details</h2>\n+    <div className=\"page-content flex flex-col gap-8\">\n+      <header className=\"flex items-start justify-between gap-4\">\n+        <h2 className=\"text-2xl font-bold leading-snug break-words\">\n+          {heist.title}\n+        </h2>\n+        {heist.finalStatus ? (\n+          <StatusBadge status={heist.finalStatus} />\n+        ) : (\n+          <Clock className=\"text-primary shrink-0 mt-1\" size={22} aria-hidden=\"true\" />\n+        )}\n+      </header>\n+\n+      <section className=\"grid grid-cols-1 sm:grid-cols-2 gap-4\">\n+        <div className=\"bg-lighter rounded-xl p-5 flex items-center gap-4\">\n+          <Avatar name={heist.assignedToCodeName} />\n+          <div className=\"flex flex-col\">\n+            <span className=\"flex items-center gap-1 text-sm text-body\">\n+              <User size={14} aria-hidden=\"true\" />\n+              Assigned to\n+            </span>\n+            <span className=\"text-primary font-medium\">\n+              @{heist.assignedToCodeName}\n+            </span>\n+          </div>\n+        </div>\n+\n+        <div className=\"bg-lighter rounded-xl p-5 flex items-center gap-4\">\n+          <Avatar name={heist.createdByCodeName} />\n+          <div className=\"flex flex-col\">\n+            <span className=\"flex items-center gap-1 text-sm text-body\">\n+              <User size={14} aria-hidden=\"true\" />\n+              Created by\n+            </span>\n+            <span className=\"text-secondary font-medium\">\n+              @{heist.createdByCodeName}\n+            </span>\n+          </div>\n+        </div>\n+      </section>\n+\n+      <section className=\"flex flex-col gap-3\">\n+        <h3 className=\"flex items-center gap-2 text-lg font-semibold\">\n+          <FileText className=\"text-primary\" size={18} aria-hidden=\"true\" />\n+          Details\n+        </h3>\n+        <p className=\"text-body whitespace-pre-wrap\">\n+          {heist.description || \"No details provided.\"}\n+        </p>\n+      </section>\n+\n+      <section className=\"flex flex-col gap-3\">\n+        <h3 className=\"flex items-center gap-2 text-lg font-semibold\">\n+          <Calendar className=\"text-primary\" size={18} aria-hidden=\"true\" />\n+          Deadline\n+        </h3>\n+        <p className=\"flex items-center gap-2\">\n+          {formatHeistDate(heist.deadline)}\n+          <span className=\"text-body\">•</span>\n+          <Countdown deadline={heist.deadline} />\n+        </p>\n+      </section>\n     </div>\n   )\n-}\n\\ No newline at end of file\n+}",
+      "repository": null
+    }
+  },
+  "tool_use_id": "toolu_01E6WmCNpQ4P4o5QVqoKnQbc",
+  "duration_ms": 1174
+}
+{
+  "session_id": "85483e59-37d5-513d-8aaa-9892180bd121",
+  "transcript_path": "/root/.claude/projects/-home-user-Pocket-Heist/85483e59-37d5-513d-8aaa-9892180bd121.jsonl",
+  "cwd": "/home/user/Pocket-Heist",
+  "permission_mode": "default",
+  "effort": {
+    "level": "high"
+  },
+  "hook_event_name": "PostToolUse",
+  "tool_name": "Write",
+  "tool_input": {
+    "file_path": "/home/user/Pocket-Heist/tests/hooks/useHeist.test.tsx",
+    "content": "import { renderHook, act } from \"@testing-library/react\"\nimport { describe, it, expect, vi, beforeEach } from \"vitest\"\nimport { useHeist } from \"@/hooks/useHeist\"\nimport type { Heist } from \"@/types/firestore/heist\"\n\n// --- Firestore mocks ---\nconst { mockDoc, mockOnSnapshot, mockUnsubscribe } = vi.hoisted(() => {\n  const mockUnsubscribe = vi.fn()\n  const mockWithConverter = vi.fn(() => ({ __ref: true }))\n  return {\n    mockDoc: vi.fn(() => ({ withConverter: mockWithConverter })),\n    mockOnSnapshot: vi.fn(\n      (_ref: unknown, _onNext: (snap: unknown) => void, _onError: (err: Error) => void) =>\n        mockUnsubscribe\n    ),\n    mockUnsubscribe,\n  }\n})\n\nvi.mock(\"firebase/firestore\", () => ({\n  doc: mockDoc,\n  onSnapshot: mockOnSnapshot,\n}))\nvi.mock(\"@/lib/firebase\", () => ({ db: {} }))\n\n/** Emit a document snapshot through the most recent onSnapshot subscription. */\nfunction emit(heist: Partial<Heist> | null) {\n  const onNext = mockOnSnapshot.mock.calls.at(-1)![1] as (snap: unknown) => void\n  act(() => {\n    onNext({ exists: () => heist !== null, data: () => heist })\n  })\n}\n\n/** Emit an error through the most recent onSnapshot subscription. */\nfunction emitError(err: Error) {\n  const onError = mockOnSnapshot.mock.calls.at(-1)![2] as (err: Error) => void\n  act(() => {\n    onError(err)\n  })\n}\n\ndescribe(\"useHeist\", () => {\n  beforeEach(() => {\n    vi.clearAllMocks()\n  })\n\n  it(\"subscribes to the heist document for the given id\", () => {\n    renderHook(() => useHeist(\"h1\"))\n    expect(mockDoc).toHaveBeenCalledWith({}, \"heists\", \"h1\")\n    expect(mockOnSnapshot).toHaveBeenCalledOnce()\n  })\n\n  it(\"returns the heist when the snapshot emits, and updates on re-emit\", () => {\n    const { result } = renderHook(() => useHeist(\"h1\"))\n    expect(result.current.loading).toBe(true)\n\n    emit({ id: \"h1\", title: \"First Job\" })\n    expect(result.current.heist).toEqual({ id: \"h1\", title: \"First Job\" })\n    expect(result.current.loading).toBe(false)\n\n    emit({ id: \"h1\", title: \"Renamed Job\" })\n    expect(result.current.heist?.title).toBe(\"Renamed Job\")\n  })\n\n  it(\"returns null when the document does not exist\", () => {\n    const { result } = renderHook(() => useHeist(\"missing\"))\n\n    emit(null)\n    expect(result.current.heist).toBeNull()\n    expect(result.current.loading).toBe(false)\n    expect(result.current.error).toBeNull()\n  })\n\n  it(\"returns the error when the subscription fails\", () => {\n    const { result } = renderHook(() => useHeist(\"h1\"))\n\n    const err = new Error(\"permission-denied\")\n    emitError(err)\n    expect(result.current.heist).toBeNull()\n    expect(result.current.loading).toBe(false)\n    expect(result.current.error).toBe(err)\n  })\n\n  it(\"returns an empty result and never subscribes without an id\", () => {\n    const { result } = renderHook(() => useHeist(undefined))\n\n    expect(result.current.heist).toBeNull()\n    expect(result.current.loading).toBe(false)\n    expect(mockOnSnapshot).not.toHaveBeenCalled()\n  })\n\n  it(\"unsubscribes from the snapshot listener on unmount\", () => {\n    const { unmount } = renderHook(() => useHeist(\"h1\"))\n    expect(mockOnSnapshot).toHaveBeenCalledOnce()\n\n    unmount()\n    expect(mockUnsubscribe).toHaveBeenCalledOnce()\n  })\n})\n"
+  },
+  "tool_response": {
+    "type": "create",
+    "filePath": "/home/user/Pocket-Heist/tests/hooks/useHeist.test.tsx",
+    "content": "import { renderHook, act } from \"@testing-library/react\"\nimport { describe, it, expect, vi, beforeEach } from \"vitest\"\nimport { useHeist } from \"@/hooks/useHeist\"\nimport type { Heist } from \"@/types/firestore/heist\"\n\n// --- Firestore mocks ---\nconst { mockDoc, mockOnSnapshot, mockUnsubscribe } = vi.hoisted(() => {\n  const mockUnsubscribe = vi.fn()\n  const mockWithConverter = vi.fn(() => ({ __ref: true }))\n  return {\n    mockDoc: vi.fn(() => ({ withConverter: mockWithConverter })),\n    mockOnSnapshot: vi.fn(\n      (_ref: unknown, _onNext: (snap: unknown) => void, _onError: (err: Error) => void) =>\n        mockUnsubscribe\n    ),\n    mockUnsubscribe,\n  }\n})\n\nvi.mock(\"firebase/firestore\", () => ({\n  doc: mockDoc,\n  onSnapshot: mockOnSnapshot,\n}))\nvi.mock(\"@/lib/firebase\", () => ({ db: {} }))\n\n/** Emit a document snapshot through the most recent onSnapshot subscription. */\nfunction emit(heist: Partial<Heist> | null) {\n  const onNext = mockOnSnapshot.mock.calls.at(-1)![1] as (snap: unknown) => void\n  act(() => {\n    onNext({ exists: () => heist !== null, data: () => heist })\n  })\n}\n\n/** Emit an error through the most recent onSnapshot subscription. */\nfunction emitError(err: Error) {\n  const onError = mockOnSnapshot.mock.calls.at(-1)![2] as (err: Error) => void\n  act(() => {\n    onError(err)\n  })\n}\n\ndescribe(\"useHeist\", () => {\n  beforeEach(() => {\n    vi.clearAllMocks()\n  })\n\n  it(\"subscribes to the heist document for the given id\", () => {\n    renderHook(() => useHeist(\"h1\"))\n    expect(mockDoc).toHaveBeenCalledWith({}, \"heists\", \"h1\")\n    expect(mockOnSnapshot).toHaveBeenCalledOnce()\n  })\n\n  it(\"returns the heist when the snapshot emits, and updates on re-emit\", () => {\n    const { result } = renderHook(() => useHeist(\"h1\"))\n    expect(result.current.loading).toBe(true)\n\n    emit({ id: \"h1\", title: \"First Job\" })\n    expect(result.current.heist).toEqual({ id: \"h1\", title: \"First Job\" })\n    expect(result.current.loading).toBe(false)\n\n    emit({ id: \"h1\", title: \"Renamed Job\" })\n    expect(result.current.heist?.title).toBe(\"Renamed Job\")\n  })\n\n  it(\"returns null when the document does not exist\", () => {\n    const { result } = renderHook(() => useHeist(\"missing\"))\n\n    emit(null)\n    expect(result.current.heist).toBeNull()\n    expect(result.current.loading).toBe(false)\n    expect(result.current.error).toBeNull()\n  })\n\n  it(\"returns the error when the subscription fails\", () => {\n    const { result } = renderHook(() => useHeist(\"h1\"))\n\n    const err = new Error(\"permission-denied\")\n    emitError(err)\n    expect(result.current.heist).toBeNull()\n    expect(result.current.loading).toBe(false)\n    expect(result.current.error).toBe(err)\n  })\n\n  it(\"returns an empty result and never subscribes without an id\", () => {\n    const { result } = renderHook(() => useHeist(undefined))\n\n    expect(result.current.heist).toBeNull()\n    expect(result.current.loading).toBe(false)\n    expect(mockOnSnapshot).not.toHaveBeenCalled()\n  })\n\n  it(\"unsubscribes from the snapshot listener on unmount\", () => {\n    const { unmount } = renderHook(() => useHeist(\"h1\"))\n    expect(mockOnSnapshot).toHaveBeenCalledOnce()\n\n    unmount()\n    expect(mockUnsubscribe).toHaveBeenCalledOnce()\n  })\n})\n",
+    "structuredPatch": [],
+    "originalFile": null,
+    "userModified": false,
+    "gitDiff": {
+      "filename": "tests/hooks/useHeist.test.tsx",
+      "status": "added",
+      "additions": 99,
+      "deletions": 0,
+      "changes": 99,
+      "patch": "@@ -0,0 +1,99 @@\n+import { renderHook, act } from \"@testing-library/react\"\n+import { describe, it, expect, vi, beforeEach } from \"vitest\"\n+import { useHeist } from \"@/hooks/useHeist\"\n+import type { Heist } from \"@/types/firestore/heist\"\n+\n+// --- Firestore mocks ---\n+const { mockDoc, mockOnSnapshot, mockUnsubscribe } = vi.hoisted(() => {\n+  const mockUnsubscribe = vi.fn()\n+  const mockWithConverter = vi.fn(() => ({ __ref: true }))\n+  return {\n+    mockDoc: vi.fn(() => ({ withConverter: mockWithConverter })),\n+    mockOnSnapshot: vi.fn(\n+      (_ref: unknown, _onNext: (snap: unknown) => void, _onError: (err: Error) => void) =>\n+        mockUnsubscribe\n+    ),\n+    mockUnsubscribe,\n+  }\n+})\n+\n+vi.mock(\"firebase/firestore\", () => ({\n+  doc: mockDoc,\n+  onSnapshot: mockOnSnapshot,\n+}))\n+vi.mock(\"@/lib/firebase\", () => ({ db: {} }))\n+\n+/** Emit a document snapshot through the most recent onSnapshot subscription. */\n+function emit(heist: Partial<Heist> | null) {\n+  const onNext = mockOnSnapshot.mock.calls.at(-1)![1] as (snap: unknown) => void\n+  act(() => {\n+    onNext({ exists: () => heist !== null, data: () => heist })\n+  })\n+}\n+\n+/** Emit an error through the most recent onSnapshot subscription. */\n+function emitError(err: Error) {\n+  const onError = mockOnSnapshot.mock.calls.at(-1)![2] as (err: Error) => void\n+  act(() => {\n+    onError(err)\n+  })\n+}\n+\n+describe(\"useHeist\", () => {\n+  beforeEach(() => {\n+    vi.clearAllMocks()\n+  })\n+\n+  it(\"subscribes to the heist document for the given id\", () => {\n+    renderHook(() => useHeist(\"h1\"))\n+    expect(mockDoc).toHaveBeenCalledWith({}, \"heists\", \"h1\")\n+    expect(mockOnSnapshot).toHaveBeenCalledOnce()\n+  })\n+\n+  it(\"returns the heist when the snapshot emits, and updates on re-emit\", () => {\n+    const { result } = renderHook(() => useHeist(\"h1\"))\n+    expect(result.current.loading).toBe(true)\n+\n+    emit({ id: \"h1\", title: \"First Job\" })\n+    expect(result.current.heist).toEqual({ id: \"h1\", title: \"First Job\" })\n+    expect(result.current.loading).toBe(false)\n+\n+    emit({ id: \"h1\", title: \"Renamed Job\" })\n+    expect(result.current.heist?.title).toBe(\"Renamed Job\")\n+  })\n+\n+  it(\"returns null when the document does not exist\", () => {\n+    const { result } = renderHook(() => useHeist(\"missing\"))\n+\n+    emit(null)\n+    expect(result.current.heist).toBeNull()\n+    expect(result.current.loading).toBe(false)\n+    expect(result.current.error).toBeNull()\n+  })\n+\n+  it(\"returns the error when the subscription fails\", () => {\n+    const { result } = renderHook(() => useHeist(\"h1\"))\n+\n+    const err = new Error(\"permission-denied\")\n+    emitError(err)\n+    expect(result.current.heist).toBeNull()\n+    expect(result.current.loading).toBe(false)\n+    expect(result.current.error).toBe(err)\n+  })\n+\n+  it(\"returns an empty result and never subscribes without an id\", () => {\n+    const { result } = renderHook(() => useHeist(undefined))\n+\n+    expect(result.current.heist).toBeNull()\n+    expect(result.current.loading).toBe(false)\n+    expect(mockOnSnapshot).not.toHaveBeenCalled()\n+  })\n+\n+  it(\"unsubscribes from the snapshot listener on unmount\", () => {\n+    const { unmount } = renderHook(() => useHeist(\"h1\"))\n+    expect(mockOnSnapshot).toHaveBeenCalledOnce()\n+\n+    unmount()\n+    expect(mockUnsubscribe).toHaveBeenCalledOnce()\n+  })\n+})",
+      "repository": null
+    }
+  },
+  "tool_use_id": "toolu_01P2GCfHBDGdQzCeaLSifiDv",
+  "duration_ms": 18
+}
+{
+  "session_id": "85483e59-37d5-513d-8aaa-9892180bd121",
+  "transcript_path": "/root/.claude/projects/-home-user-Pocket-Heist/85483e59-37d5-513d-8aaa-9892180bd121.jsonl",
+  "cwd": "/home/user/Pocket-Heist",
+  "permission_mode": "default",
+  "effort": {
+    "level": "high"
+  },
+  "hook_event_name": "PostToolUse",
+  "tool_name": "Write",
+  "tool_input": {
+    "file_path": "/home/user/Pocket-Heist/tests/pages/HeistDetailsPage.test.tsx",
+    "content": "import { render, screen } from \"@testing-library/react\"\nimport { describe, it, expect, beforeEach, vi } from \"vitest\"\nimport HeistDetailsPage from \"@/app/(dashboard)/heists/[id]/page\"\nimport type { Heist } from \"@/types/firestore/heist\"\n\n// --- next/navigation mock: the page reads the heist id from the route ---\nvi.mock(\"next/navigation\", () => ({\n  useParams: () => ({ id: \"h1\" }),\n}))\n\n// --- useHeist mock ---\nconst { mockUseHeist } = vi.hoisted(() => ({ mockUseHeist: vi.fn() }))\n\nvi.mock(\"@/hooks/useHeist\", () => ({\n  useHeist: (id: string) => mockUseHeist(id),\n}))\n\nfunction makeHeist(overrides: Partial<Heist> = {}): Heist {\n  return {\n    id: \"h1\",\n    title: \"The Louvre Job\",\n    description: \"In through the skylight, out through the gift shop.\",\n    createdBy: \"u1\",\n    createdByCodeName: \"SecretSauceAgent\",\n    assignedTo: \"u2\",\n    assignedToCodeName: \"KeySmash\",\n    deadline: new Date(Date.now() + 5 * 60 * 60 * 1000),\n    finalStatus: null,\n    createdAt: new Date(),\n    ...overrides,\n  }\n}\n\ndescribe(\"HeistDetailsPage\", () => {\n  beforeEach(() => {\n    mockUseHeist.mockReset()\n  })\n\n  it(\"requests the heist matching the route id\", () => {\n    mockUseHeist.mockReturnValue({ heist: makeHeist(), loading: false, error: null })\n    render(<HeistDetailsPage />)\n    expect(mockUseHeist).toHaveBeenCalledWith(\"h1\")\n  })\n\n  it(\"renders the title, agents, details, and time remaining\", () => {\n    mockUseHeist.mockReturnValue({ heist: makeHeist(), loading: false, error: null })\n    render(<HeistDetailsPage />)\n\n    expect(screen.getByText(\"The Louvre Job\")).toBeInTheDocument()\n    expect(screen.getByText(\"Assigned to\")).toBeInTheDocument()\n    expect(screen.getByText(\"@KeySmash\")).toBeInTheDocument()\n    expect(screen.getByText(\"Created by\")).toBeInTheDocument()\n    expect(screen.getByText(\"@SecretSauceAgent\")).toBeInTheDocument()\n    expect(\n      screen.getByText(\"In through the skylight, out through the gift shop.\")\n    ).toBeInTheDocument()\n    // ~5h from now → the live countdown renders \"4h 59m\"/\"5h 0m\"-style remaining time.\n    expect(screen.getByText(/^4h 5\\dm$|^5h 0m$/)).toBeInTheDocument()\n  })\n\n  it(\"renders a status badge instead of a countdown accent for finished heists\", () => {\n    mockUseHeist.mockReturnValue({\n      heist: makeHeist({ finalStatus: \"success\", deadline: new Date(Date.now() - 1000) }),\n      loading: false,\n      error: null,\n    })\n    render(<HeistDetailsPage />)\n\n    expect(screen.getByText(\"success\")).toBeInTheDocument()\n    expect(screen.getByText(\"Expired\")).toBeInTheDocument()\n  })\n\n  it(\"shows a fallback for a missing description\", () => {\n    mockUseHeist.mockReturnValue({\n      heist: makeHeist({ description: \"\" }),\n      loading: false,\n      error: null,\n    })\n    render(<HeistDetailsPage />)\n    expect(screen.getByText(\"No details provided.\")).toBeInTheDocument()\n  })\n\n  it(\"shows a spinner while loading\", () => {\n    mockUseHeist.mockReturnValue({ heist: null, loading: true, error: null })\n    render(<HeistDetailsPage />)\n    expect(screen.getByRole(\"status\", { name: \"Loading\" })).toBeInTheDocument()\n  })\n\n  it(\"shows a not-found message when the heist is missing\", () => {\n    mockUseHeist.mockReturnValue({ heist: null, loading: false, error: null })\n    render(<HeistDetailsPage />)\n    expect(screen.getByText(\"Heist not found\")).toBeInTheDocument()\n  })\n\n  it(\"shows the not-found message on error\", () => {\n    mockUseHeist.mockReturnValue({\n      heist: null,\n      loading: false,\n      error: new Error(\"permission-denied\"),\n    })\n    render(<HeistDetailsPage />)\n    expect(screen.getByText(\"Heist not found\")).toBeInTheDocument()\n  })\n})\n"
+  },
+  "tool_response": {
+    "type": "create",
+    "filePath": "/home/user/Pocket-Heist/tests/pages/HeistDetailsPage.test.tsx",
+    "content": "import { render, screen } from \"@testing-library/react\"\nimport { describe, it, expect, beforeEach, vi } from \"vitest\"\nimport HeistDetailsPage from \"@/app/(dashboard)/heists/[id]/page\"\nimport type { Heist } from \"@/types/firestore/heist\"\n\n// --- next/navigation mock: the page reads the heist id from the route ---\nvi.mock(\"next/navigation\", () => ({\n  useParams: () => ({ id: \"h1\" }),\n}))\n\n// --- useHeist mock ---\nconst { mockUseHeist } = vi.hoisted(() => ({ mockUseHeist: vi.fn() }))\n\nvi.mock(\"@/hooks/useHeist\", () => ({\n  useHeist: (id: string) => mockUseHeist(id),\n}))\n\nfunction makeHeist(overrides: Partial<Heist> = {}): Heist {\n  return {\n    id: \"h1\",\n    title: \"The Louvre Job\",\n    description: \"In through the skylight, out through the gift shop.\",\n    createdBy: \"u1\",\n    createdByCodeName: \"SecretSauceAgent\",\n    assignedTo: \"u2\",\n    assignedToCodeName: \"KeySmash\",\n    deadline: new Date(Date.now() + 5 * 60 * 60 * 1000),\n    finalStatus: null,\n    createdAt: new Date(),\n    ...overrides,\n  }\n}\n\ndescribe(\"HeistDetailsPage\", () => {\n  beforeEach(() => {\n    mockUseHeist.mockReset()\n  })\n\n  it(\"requests the heist matching the route id\", () => {\n    mockUseHeist.mockReturnValue({ heist: makeHeist(), loading: false, error: null })\n    render(<HeistDetailsPage />)\n    expect(mockUseHeist).toHaveBeenCalledWith(\"h1\")\n  })\n\n  it(\"renders the title, agents, details, and time remaining\", () => {\n    mockUseHeist.mockReturnValue({ heist: makeHeist(), loading: false, error: null })\n    render(<HeistDetailsPage />)\n\n    expect(screen.getByText(\"The Louvre Job\")).toBeInTheDocument()\n    expect(screen.getByText(\"Assigned to\")).toBeInTheDocument()\n    expect(screen.getByText(\"@KeySmash\")).toBeInTheDocument()\n    expect(screen.getByText(\"Created by\")).toBeInTheDocument()\n    expect(screen.getByText(\"@SecretSauceAgent\")).toBeInTheDocument()\n    expect(\n      screen.getByText(\"In through the skylight, out through the gift shop.\")\n    ).toBeInTheDocument()\n    // ~5h from now → the live countdown renders \"4h 59m\"/\"5h 0m\"-style remaining time.\n    expect(screen.getByText(/^4h 5\\dm$|^5h 0m$/)).toBeInTheDocument()\n  })\n\n  it(\"renders a status badge instead of a countdown accent for finished heists\", () => {\n    mockUseHeist.mockReturnValue({\n      heist: makeHeist({ finalStatus: \"success\", deadline: new Date(Date.now() - 1000) }),\n      loading: false,\n      error: null,\n    })\n    render(<HeistDetailsPage />)\n\n    expect(screen.getByText(\"success\")).toBeInTheDocument()\n    expect(screen.getByText(\"Expired\")).toBeInTheDocument()\n  })\n\n  it(\"shows a fallback for a missing description\", () => {\n    mockUseHeist.mockReturnValue({\n      heist: makeHeist({ description: \"\" }),\n      loading: false,\n      error: null,\n    })\n    render(<HeistDetailsPage />)\n    expect(screen.getByText(\"No details provided.\")).toBeInTheDocument()\n  })\n\n  it(\"shows a spinner while loading\", () => {\n    mockUseHeist.mockReturnValue({ heist: null, loading: true, error: null })\n    render(<HeistDetailsPage />)\n    expect(screen.getByRole(\"status\", { name: \"Loading\" })).toBeInTheDocument()\n  })\n\n  it(\"shows a not-found message when the heist is missing\", () => {\n    mockUseHeist.mockReturnValue({ heist: null, loading: false, error: null })\n    render(<HeistDetailsPage />)\n    expect(screen.getByText(\"Heist not found\")).toBeInTheDocument()\n  })\n\n  it(\"shows the not-found message on error\", () => {\n    mockUseHeist.mockReturnValue({\n      heist: null,\n      loading: false,\n      error: new Error(\"permission-denied\"),\n    })\n    render(<HeistDetailsPage />)\n    expect(screen.getByText(\"Heist not found\")).toBeInTheDocument()\n  })\n})\n",
+    "structuredPatch": [],
+    "originalFile": null,
+    "userModified": false,
+    "gitDiff": {
+      "filename": "tests/pages/HeistDetailsPage.test.tsx",
+      "status": "added",
+      "additions": 104,
+      "deletions": 0,
+      "changes": 104,
+      "patch": "@@ -0,0 +1,104 @@\n+import { render, screen } from \"@testing-library/react\"\n+import { describe, it, expect, beforeEach, vi } from \"vitest\"\n+import HeistDetailsPage from \"@/app/(dashboard)/heists/[id]/page\"\n+import type { Heist } from \"@/types/firestore/heist\"\n+\n+// --- next/navigation mock: the page reads the heist id from the route ---\n+vi.mock(\"next/navigation\", () => ({\n+  useParams: () => ({ id: \"h1\" }),\n+}))\n+\n+// --- useHeist mock ---\n+const { mockUseHeist } = vi.hoisted(() => ({ mockUseHeist: vi.fn() }))\n+\n+vi.mock(\"@/hooks/useHeist\", () => ({\n+  useHeist: (id: string) => mockUseHeist(id),\n+}))\n+\n+function makeHeist(overrides: Partial<Heist> = {}): Heist {\n+  return {\n+    id: \"h1\",\n+    title: \"The Louvre Job\",\n+    description: \"In through the skylight, out through the gift shop.\",\n+    createdBy: \"u1\",\n+    createdByCodeName: \"SecretSauceAgent\",\n+    assignedTo: \"u2\",\n+    assignedToCodeName: \"KeySmash\",\n+    deadline: new Date(Date.now() + 5 * 60 * 60 * 1000),\n+    finalStatus: null,\n+    createdAt: new Date(),\n+    ...overrides,\n+  }\n+}\n+\n+describe(\"HeistDetailsPage\", () => {\n+  beforeEach(() => {\n+    mockUseHeist.mockReset()\n+  })\n+\n+  it(\"requests the heist matching the route id\", () => {\n+    mockUseHeist.mockReturnValue({ heist: makeHeist(), loading: false, error: null })\n+    render(<HeistDetailsPage />)\n+    expect(mockUseHeist).toHaveBeenCalledWith(\"h1\")\n+  })\n+\n+  it(\"renders the title, agents, details, and time remaining\", () => {\n+    mockUseHeist.mockReturnValue({ heist: makeHeist(), loading: false, error: null })\n+    render(<HeistDetailsPage />)\n+\n+    expect(screen.getByText(\"The Louvre Job\")).toBeInTheDocument()\n+    expect(screen.getByText(\"Assigned to\")).toBeInTheDocument()\n+    expect(screen.getByText(\"@KeySmash\")).toBeInTheDocument()\n+    expect(screen.getByText(\"Created by\")).toBeInTheDocument()\n+    expect(screen.getByText(\"@SecretSauceAgent\")).toBeInTheDocument()\n+    expect(\n+      screen.getByText(\"In through the skylight, out through the gift shop.\")\n+    ).toBeInTheDocument()\n+    // ~5h from now → the live countdown renders \"4h 59m\"/\"5h 0m\"-style remaining time.\n+    expect(screen.getByText(/^4h 5\\dm$|^5h 0m$/)).toBeInTheDocument()\n+  })\n+\n+  it(\"renders a status badge instead of a countdown accent for finished heists\", () => {\n+    mockUseHeist.mockReturnValue({\n+      heist: makeHeist({ finalStatus: \"success\", deadline: new Date(Date.now() - 1000) }),\n+      loading: false,\n+      error: null,\n+    })\n+    render(<HeistDetailsPage />)\n+\n+    expect(screen.getByText(\"success\")).toBeInTheDocument()\n+    expect(screen.getByText(\"Expired\")).toBeInTheDocument()\n+  })\n+\n+  it(\"shows a fallback for a missing description\", () => {\n+    mockUseHeist.mockReturnValue({\n+      heist: makeHeist({ description: \"\" }),\n+      loading: false,\n+      error: null,\n+    })\n+    render(<HeistDetailsPage />)\n+    expect(screen.getByText(\"No details provided.\")).toBeInTheDocument()\n+  })\n+\n+  it(\"shows a spinner while loading\", () => {\n+    mockUseHeist.mockReturnValue({ heist: null, loading: true, error: null })\n+    render(<HeistDetailsPage />)\n+    expect(screen.getByRole(\"status\", { name: \"Loading\" })).toBeInTheDocument()\n+  })\n+\n+  it(\"shows a not-found message when the heist is missing\", () => {\n+    mockUseHeist.mockReturnValue({ heist: null, loading: false, error: null })\n+    render(<HeistDetailsPage />)\n+    expect(screen.getByText(\"Heist not found\")).toBeInTheDocument()\n+  })\n+\n+  it(\"shows the not-found message on error\", () => {\n+    mockUseHeist.mockReturnValue({\n+      heist: null,\n+      loading: false,\n+      error: new Error(\"permission-denied\"),\n+    })\n+    render(<HeistDetailsPage />)\n+    expect(screen.getByText(\"Heist not found\")).toBeInTheDocument()\n+  })\n+})",
+      "repository": null
+    }
+  },
+  "tool_use_id": "toolu_011Mi5wXhUKdGg3Z2egdXBZF",
+  "duration_ms": 16
+}
